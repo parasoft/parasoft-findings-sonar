@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules>
+  <builtin>
+    <category description="Collection Usage Guidelines" name="ARRU">
+      <rule header="Do not use non-generic collection for making custom collection class" id="DNUNGIF" impl="ARRU.DNUNGIF" severity="3">
+	    <file path="CollectionUsageGuidelines\NoNonGenColIFfCustCol.rule"/>
+	  </rule>
+      <rule header="Do not use non-generic collection for local variable" id="NNGCLC" impl="ARRU.NNGCLC" severity="3">
+	    <file path="CollectionUsageGuidelines\NoNonGenClassLocalVar.rule"/>
+	  </rule>
+      <rule header="Do not declare local variables of non-generic collections types" id="NGLVD" impl="ARRU.NGLVD" severity="3">
+	    <file path="CollectionUsageGuidelines\NoNonGenClassLocalVarDeclaration.rule"/>
+	  </rule>
+    </category>
+    <category description="CLS Compliance" name="CLS">
+      <rule header="Use get_ and set_ prefixes while naming accessor names of a property" id="ACNM" impl="CLS.ACNM" severity="3">
+	    <file path="clscompliance\CLSAccessorNames.rule"/>
+	  </rule>
+      <rule header="Provide the same accessibility for the property and its accessors" id="ACAC" impl="CLS.ACAC" severity="3">
+	    <file path="clscompliance\CLSAccessorsAccessibility.rule"/>
+	  </rule>
+      <rule header="Make array dimensions CLS-compliant" id="ARRD" impl="CLS.ARRD" severity="3">
+	    <file path="clscompliance\CLSArrayDimensions.rule"/>
+	  </rule>
+      <rule header="Provide alternate methods for conversion if you provide conversion operators" id="CONV" impl="CLS.CONV" severity="3">
+	    <file path="clscompliance\CLSConversionOperators.rule"/>
+	  </rule>
+      <rule header="Make the underlying type of enum an inegral type" id="ENTY" impl="CLS.ENTY" severity="3">
+	    <file path="clscompliance\CLSEnumerationType.rule"/>
+	  </rule>
+      <rule header="Literal static fields of an enum must be the same type as the type of the enum itself" id="ENFI" impl="CLS.ENFI" severity="3">
+	    <file path="clscompliance\CLSEnumFields.rule"/>
+	  </rule>
+      <rule header="Do not overload events in a class or struct" id="EVOL" impl="CLS.EVOL" severity="3">
+	    <file path="clscompliance\CLSEventOverloading.rule"/>
+	  </rule>
+      <rule header="Use only types derived from System.Delegate for event types" id="EVTY" impl="CLS.EVTY" severity="3">
+	    <file path="clscompliance\CLSEventType.rule"/>
+	  </rule>
+      <rule header="Avoid overloading of fields" id="FIOL" impl="CLS.FIOL" severity="3">
+	    <file path="clscompliance\CLSFieldOverloading.rule"/>
+	  </rule>
+      <rule header="Do not use global fields and methods" id="GLBL" impl="CLS.GLBL" severity="3">
+	    <file path="clscompliance\CLSGlobals.rule"/>
+	  </rule>
+      <rule header="Use unique names for members of a class unless the members are overloaded" id="IDUN" impl="CLS.IDUN" severity="3">
+	    <file path="clscompliance\CLSMemberNameUniqueness.rule"/>
+	  </rule>
+      <!--
+      Rule disabled due to PR 93454
+      <rule header="Make namespace names unique" id="NSNM" impl="CLS.NSNM" severity="3"/>
+      -->
+      <rule header="Avoid members whose types are less visible than the members themselves" id="MTV" impl="CLS.MTV" severity="3">
+	    <file path="clscompliance\CLSMemberTypeVisibility.rule"/>
+	  </rule>
+      <rule header="Do not use operator overloading if you want to be CLS compliant " id="NOOO" impl="CLS.NOOO" severity="3">
+	    <file path="clscompliance\CLSOperatorOverloading.rule"/>
+	  </rule>
+      <rule header="Make the names of the parameters unique" id="UPN" impl="CLS.UPN" severity="3">
+	    <file path="clscompliance\CLSParameterNameUniqueness.rule"/>
+	  </rule>
+      <rule header="Do not use pointer types if you want to be CLS-compliant" id="NOPT" impl="CLS.NOPT" severity="3">
+	    <file path="clscompliance\CLSPointerTypes.rule"/>
+	  </rule>
+      <rule header="Use only CLS-compliant primitive types" id="PRMT" impl="CLS.PRMT" severity="3">
+	    <file path="clscompliance\CLSPrimitiveTypes.rule"/>
+	  </rule>
+      <rule header="Do not define properties with the same name and different return types" id="PROL" impl="CLS.PROL" severity="3">
+	    <file path="clscompliance\CLSPropertyOverloading.rule"/>
+	  </rule>
+      <rule header="Avoid using typed references" id="TYPR" impl="CLS.TYPR" severity="3">
+	    <file path="clscompliance\CLSTypedReferences.rule"/>
+	  </rule>
+      <rule header="Use unique names for types if you want to be CLS-compliant" id="UTN" impl="CLS.UTN" severity="3">
+	    <file path="clscompliance\CLSTypeNameUniqueness.rule"/>
+	  </rule>
+    </category>
+    <category description="C# only" name="CS">
+      <rule header="Avoid multiple classes or interfaces in a single file" id="MCI" impl="CS.MCI" severity="3">
+	    <file path="csharp\CSMultipleClassesInterfaces.rule"/>
+	  </rule>
+      <rule header="Avoid &quot;switch&quot; statements with many &quot;case&quot; statements" id="SMC" impl="CS.SMC" severity="5">
+	    <file path="csharp\CSSwitchWithManyCases.rule"/>
+	  </rule>
+      <category description="Exceptions" name="EXCEPT">
+      </category>
+      <category description="Metrics" name="OOM">
+        <rule header="Avoid casts to concrete Collection types" id="CAST2CONCRETE" impl="CS.OOM.CAST2CONCRETE" severity="3">
+		  <file path="metrics\MetricCast2ConceteCollection.rule"/>
+		</rule>
+      </category>
+      <category description="Threads &amp; Synchronization" name="TRS">
+        <rule header="Lock both when either set or get is locked for a property." id="LOCKSETGET" impl="CS.TRS.LOCKSETGET" severity="3">
+		  <file path="csharp\LockBothSetGet.rule"/>
+		</rule>
+      </category>
+      <category description="Implementing Finalize and Dispose" name="IFD">
+        <rule header="Do not pass a reference to 'this' from inside a destructor or dispose method." id="DNPTHIS" impl="CS.IFD.DNPTHIS" severity="3">
+		  <file path="csharp\AvoidPassingReferenceToThisOutOfFinalizerOrDispose.rule"/>
+		</rule>
+      </category>
+      <category description="Possible Bugs" name="PB">
+        <rule header="Prefer asynchronous calls to synchronized calls." id="INVOKE" impl="CS.PB.INVOKE" severity="3">
+		  <file path="csharp\AvoidUsingInvoke.rule"/>
+		</rule>
+      </category>
+    </category>
+    <category description="Casting Types Guidelines" name="CT">
+      <rule header="Avoid improper casting of the results of the 'NextDouble' method in the System.Random class." id="RANDDOUBLE" impl="CT.RANDDOUBLE" severity="3">
+	    <file path="csharp\AvoidIntCastOfRandNextDouble.rule"/>
+	  </rule>
+    </category>
+    <category description="Serialization Guidelines" name="SERIAL">
+      <rule header="Call WriteObjectdata while implementing ISerializable.GetObjectData." id="GETOBJ" impl="SERIAL.GETOBJ" severity="2">
+	    <file path="csharp\CallWriteObjectdataWithGetObjectData.rule"/>
+	  </rule>
+    </category>
+    <category description="Type Member Usage Guidelines" name="CMUG">
+      <category description="Method Usage" name="MU">
+        <rule header="Do not use value types for returning values from methods or properties." id="VALRETURN" impl="CMUG.MU.VALRETURN" severity="4">
+		  <file path="ClassMemberUsageGuidelines\MethodUsage\AvoidValueTypeReturn.rule"/>
+		</rule>
+      </category>
+      <category description="Property Usage" name="PRU">
+        <rule header="Declare properties in classes that derive from classes using nHibernate as virtual." id="DPAV" impl="CMUG.PRU.DPAV" severity="3">
+		  <file path="ClassMemberUsageGuidelines\PropertyUsage\DeclareVirtualProperties.rule"/>
+		</rule>
+      </category>
+    </category>
+    <category description="Exceptions" name="EXCEPT">
+      <rule header="Do not catch  'NullReferenceException''" id="NCNRE" impl="EXCEPT.NCNRE" severity="2">
+	    <file path="exception\EXCEPTNotCatchNullReferenceException.rule"/>
+	  </rule>
+    </category>
+    <category description="Garbage Collector" name="GC">
+      <rule header="Do not explicitly call 'System.GC.Collect()' or 'System.GC.Collect(int)'" id="DCGC" impl="GC.DCGC" severity="3">
+	    <file path="garbagecollector\GCGarbageCollector.rule"/>
+	  </rule>
+      <rule header="Reuse calls to 'ClipBounds'" id="RCCB" impl="GC.RCCB" severity="3">
+	    <file path="garbagecollector\GCReuseCallsToClipBounds.rule"/>
+	  </rule>
+    </category>
+    <category description="Possible Bugs" name="PB">
+      <rule header="Avoid boxing/unboxing when possible" id="BOXING" impl="PB.BOXING" severity="5">
+	    <file path="miscellaneous\MISCAvoidBoxingWhenPossible.rule"/>
+	  </rule>
+      <rule header="Do not declare &quot;public&quot; constructors in non-public classes" id="PUBLICCTOR" impl="PB.PUBLICCTOR" severity="4">
+	    <file path="miscellaneous\MISCPublicConstructor.rule"/>
+	  </rule>
+      <rule header="Avoid System.Console 'Write()' or 'WriteLine()' statements" id="CONSOLEWRITE" impl="PB.CONSOLEWRITE" severity="3">
+	    <file path="miscellaneous\MISCConsoleWriteLine.rule"/>
+	  </rule>
+      <rule header="Do not check whether the result of 'String.IndexOf()' is positive or not." id="STRIDX" impl="PB.STRIDX" severity="2">
+	    <file path="csharp\ImproperStringIndexComparison.rule"/>
+	  </rule>
+      <rule header="Avoid suspicious octal escapes." id="OCTESC" impl="PB.OCTESC" severity="3">
+	    <file path="csharp\AvoidSuspiciousOctalEscapes.rule"/>
+	  </rule>
+      <rule header="Do not overload 'Finalize()'." id="OF" impl="PB.OF" severity="3">
+	    <file path="miscellaneous\DoNotOverloadFinalize.rule"/>
+	  </rule>
+    </category>
+    <category description="Better Readability and Maintainability" name="BRM">
+      <rule header="Use 'Is...'  only for naming methods that return a &quot;boolean&quot;" id="ISPREFIX" impl="BRM.ISPREFIX" severity="3">
+	    <file path="miscellaneous\NAMINGIsForMethodReturnBoolean.rule"/>
+	  </rule>
+      <rule header="Avoid class, struct, or interface names which are more than 14 characters long" id="LONGNAMES" impl="BRM.LONGNAMES" severity="4">
+	    <file path="miscellaneous\NAMINGLongClassInterfaceName.rule"/>
+	  </rule>
+      <rule header="Use plural name for a property of type collection/array and avoid collection/array in the name." id="COLLPLURALNAME" impl="BRM.COLLPLURALNAME" severity="3">
+	    <file path="miscellaneous\PluralNamingCollection.rule"/>
+	  </rule>
+      <rule header="Use positive instead of negative terms for naming properies/methods that return a 'boolean'." id="BOOLNEGNAME" impl="BRM.BOOLNEGNAME" severity="3">
+	    <file path="miscellaneous\PositiveNameForMethodReturnBoolean.rule"/>
+	  </rule>
+    </category>
+    <category description="Operator Overloading Usage Guidelines" name="OPU">
+      <rule header="Do not override ReferenceEquals() method" id="NOREFEQUAL" impl="OPU.NOREFEQUAL" severity="3">
+	    <file path="miscellaneous\OPUDotNotOverrideReferenceEquals.rule"/>
+	  </rule>
+      <rule header="Do not override static Object.Equals() method" id="NOSTATICEQUAL" impl="OPU.NOSTATICEQUAL" severity="3">
+	    <file path="miscellaneous\OPUDoNotOverrideStaticEquals.rule"/>
+	  </rule>
+    </category>
+    <category description="Metrics" name="OOM">
+      <rule header="Avoid too many function calls from a single function" id="FCSF" impl="OOM.FCSF" severity="4">
+	    <file path="metrics\MetricFuncCall.rule"/>
+	  </rule>
+      <rule header="Avoid too many levels of class inheritance" id="MLCI" impl="OOM.MLCI" severity="4">
+	    <file path="metrics\MetricInheritance.rule"/>
+	  </rule>
+      <rule header="Avoid a large number of data members per class" id="LNDM" impl="OOM.LNDM" severity="4">
+	    <file path="metrics\MetricMembers.rule"/>
+	  </rule>
+      <rule header="Avoid a large number of methods per class" id="LNMM" impl="OOM.LNMM" severity="4">
+	    <file path="metrics\MetricMethod.rule"/>
+	  </rule>
+      <rule header="Avoid a large number of parameters per method" id="LNPM" impl="OOM.LNPM" severity="4">
+	    <file path="metrics\MetricParam.rule"/>
+	  </rule>
+      <rule header="Avoid a large number of private data members per class" id="LNPVD" impl="OOM.LNPVD" severity="4">
+	    <file path="metrics\MetricPrivateMembers.rule"/>
+	  </rule>
+      <rule header="Avoid a large number of private methods per class" id="LNPVM" impl="OOM.LNPVM" severity="4">
+	    <file path="metrics\MetricPrivateMethod.rule"/>
+	  </rule>
+      <rule header="Avoid a large number of protected data members per class" id="LNPTD" impl="OOM.LNPTD" severity="4">
+	    <file path="metrics\MetricProtectedMembers.rule"/>
+	  </rule>
+      <rule header="Avoid a large number of protected methods per class" id="LNPTM" impl="OOM.LNPTM" severity="4">
+	    <file path="metrics\MetricProtectedMethod.rule"/>
+	  </rule>
+      <rule header="Avoid a large number of public data members per class" id="LNPBD" impl="OOM.LNPBD" severity="4">
+	    <file path="metrics\MetricPublicMembers.rule"/>
+	  </rule>
+      <rule header="Avoid a large number of public methods per class" id="LNPBM" impl="OOM.LNPBM" severity="4">
+	    <file path="metrics\MetricPubliMethod.rule"/>
+	  </rule>
+    </category>
+    <category description="Security Inspection" name="SEC">
+      <rule header="Do not call the 'StackTrace' property of System.Exception." id="ACPST" impl="SEC.ACPST" severity="3">
+	    <file path="miscellaneous\MISCStackTrace.rule"/>
+	  </rule>
+      <rule header="Use System.Security.Cryptography.RandomNumberGenerator instead of System.Random" id="USSCR" impl="SEC.USSCR" severity="2">
+	    <file path="security\Security-01_NoSystemRandom.rule"/>
+	  </rule>
+      <rule header="Inspect uses of System.DateTime for security holes" id="AUSD" impl="SEC.AUSD" severity="4">
+	    <file path="security\Security-02_DateTimeWarn.rule"/>
+	  </rule>
+      <rule header="Inspect uses of Millisecond on System.DateTime for security problems" id="AUMS" impl="SEC.AUMS" severity="4">
+	    <file path="security\Security-03_MiliTimeWarn.rule"/>
+	  </rule>
+      <rule header="Inspect calls to access environment variables" id="AASV" impl="SEC.AASV" severity="4">
+	    <file path="security\Security-05_AccessingSystemVariables.rule"/>
+	  </rule>
+      <rule header="Avoid protected instance fields that could be accessed by untrusted classes" id="APTIF" impl="SEC.APTIF" severity="4">
+	    <file path="security\Security-07_AvoidProtectedFields.rule"/>
+	  </rule>
+      <rule header="Inspect static fields that are not readonly and consider making them readonly" id="ASNRF" impl="SEC.ASNRF" severity="4">
+	    <file path="security\Security-10_StaticReadOnly.rule"/>
+	  </rule>
+      <rule header="Avoid using public inner classes to prevent access from untrusted classes" id="AUIC" impl="SEC.AUIC" severity="4">
+	    <file path="security\Security-11_InnerClass.rule"/>
+	  </rule>
+      <rule header="For security, avoid making your 'Clone()' method &quot; virtual &quot;" id="MCMF" impl="SEC.MCMF" severity="3">
+	    <file path="security\Security-15_CloneFinal.rule"/>
+	  </rule>
+      <rule header="Inspect modifications to security settings" id="DMSC" impl="SEC.DMSC" severity="4">
+	    <file path="security\Security-16_SecurityManager.rule"/>
+	  </rule>
+      <rule header="Inspect calls to Process.Start()" id="AUPS" impl="SEC.AUPS" severity="5">
+	    <file path="security\Security-20_NoExecWithString.rule"/>
+	  </rule>
+      <rule header="Make static constructors private" id="MSCPV" impl="SEC.MSCPV" severity="3">
+	    <file path="security\Security-21_StaticConstructorsShouldBePrivate.rule"/>
+	  </rule>
+      <rule header="Make pointer type fields private" id="HPTR" impl="SEC.HPTR" severity="3">
+	    <file path="security\Security-22_PointersShouldNotBeVisible.rule"/>
+	  </rule>
+      <rule header="Inspect array fields that are declared as readonly" id="AFNRO" impl="SEC.AFNRO" severity="3">
+	    <file path="security\Security-23_ArrayFieldsShouldNotBeReadOnly.rule"/>
+	  </rule>
+      <rule header="Inspect calls to late-binding methods" id="ALBM" impl="SEC.ALBM" severity="3">
+	    <file path="security\Security-24_AvoidLateBindingMethods.rule"/>
+	  </rule>
+      <rule header="Seal methods which implement internal interfaces" id="SMIII" impl="SEC.SMIII" severity="3">
+	    <file path="security\Security-25_SealMethodsImplementingInternalInterfaces.rule"/>
+	  </rule>
+      <rule header="Do not attempt to deny the SkipVerification security permission" id="ADSVSP" impl="SEC.ADSVSP" severity="1">
+	    <file path="security\Security-26_AvoidDenyingSkipVerificationPermission.rule"/>
+	  </rule>
+    </category>
+    <category description="Security Policy Rules" name="SPR">
+      <rule header="Ensure all sensitive function invocations are logged" id="ENFL" impl="SPR.ENFL" severity="3">
+	    <file path="SPR\SensitiveFunctionInvocations.rule"/>
+	  </rule>
+      <rule header="Do not call tainted methods outside the wrapper methods" id="VPPD" impl="SPR.VPPD" severity="3">
+	    <file path="SPR\EncapsulateTaintedMethods.rule"/>
+	  </rule>
+      <rule header="Do not pass exception messages into output in order to prevent the application from leaking sensitive information" id="PEO" impl="SPR.PEO" severity="3">
+	    <file path="SPR\PassExceptionMessageToOutput.rule"/>
+	  </rule>
+      <rule header="Ensure all 'dangerous' functions are called within wrapper methods" id="VPPDIMPL" impl="SPR.VPPDIMPL" severity="3">
+	    <file path="SPR\functionCalledOutsideWrapper.rule"/>
+	  </rule>
+      <rule header="Avoid select * statements" id="SELSPLAT" impl="SPR.SELSPLAT" severity="3">
+	    <file path="SPR\AvoidSelectSplat.rule"/>
+	  </rule>
+      <rule header="Avoid hard coded connection strings" id="HARDCONN" impl="SPR.HARDCONN" severity="3">
+	    <file path="SPR\AvoidHardCodedConnectionStrings.rule"/>
+	  </rule>
+    </category>
+	<category description="Threads &amp; Synchronization" name="TRS">
+	</category>
+    <category description="Internationalization" name="INTER">
+      <rule header="Do not use directly ToLower(), ToUpper() string methods." id="TOLOWERTOUPPER" impl="INTER.TOLOWERTOUPPER" severity="3">
+	    <file path="internationalization\INTERToLowerToUpper.rule"/>
+	  </rule>
+    </category>
+  </builtin>
+</rules>
