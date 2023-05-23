@@ -1,0 +1,65 @@
+<project name="copy-parasoft-rules" basedir=".">
+    <target name="copy-rules">
+        <condition property="emptyJtestRootPath">
+            <equals arg1="${jtestRootPath}" arg2=""/>
+        </condition>
+        <condition property="emptyDottestRootPath">
+            <equals arg1="${dottestRootPath}" arg2=""/>
+        </condition>
+        <condition property="emptyCpptestRootPath">
+            <equals arg1="${cpptestRootPath}" arg2=""/>
+        </condition>
+
+        <if>
+            <and>
+                <istrue value="${emptyJtestRootPath}"/>
+                <istrue value="${emptyDottestRootPath}"/>
+                <istrue value="${emptyCpptestRootPath}"/>
+            </and>
+            <then>
+                <fail message="Rules from Parasoft products are required. Please specify at least one of the following arguments to load from Parasoft tool installation folders: -DjtestRootPath, -DdottestRootPath, -DcpptestRootPath"/>
+            </then>
+
+            <else>
+                <if>
+                    <isfalse value="${emptyJtestRootPath}"/>
+                    <then>
+                        <copy todir="${project.build.rulesPath}/jtest/integration/dtpserver/jtest/model">
+                            <fileset dir="${jtestRootPath}/integration/dtpserver/jtest/model" includes="metrics/*.xml, rules/*.xml"/>
+                        </copy>
+                        <copy todir="${project.build.rulesPath}/jtest/rules/doc">
+                            <fileset dir="${jtestRootPath}/rules/doc" includes="*.html"/>
+                        </copy>
+                        <echo message="Rules from Jtest installation are loaded." level="info"/>
+                    </then>
+                </if>
+
+                <if>
+                    <isfalse value="${emptyDottestRootPath}"/>
+                    <then>
+                        <copy todir="${project.build.rulesPath}/dottest/integration/DTPServer/dotTEST/model">
+                            <fileset dir="${dottestRootPath}/integration/DTPServer/dotTEST/model" includes="metrics/*.xml, rules/*.xml"/>
+                        </copy>
+                        <copy todir="${project.build.rulesPath}/dottest/rules/doc">
+                            <fileset dir="${dottestRootPath}/rules/doc" includes="*.html"/>
+                        </copy>
+                        <echo message="Rules from Dottest installation are loaded." level="info"/>
+                    </then>
+                </if>
+
+                <if>
+                    <isfalse value="${emptyCpptestRootPath}"/>
+                    <then>
+                        <copy todir="${project.build.rulesPath}/cpptest/integration/dtpserver/cpptest/model">
+                            <fileset dir="${cpptestRootPath}/integration/dtpserver/cpptest/model" includes="metrics/*.xml, rules/*.xml"/>
+                        </copy>
+                        <copy todir="${project.build.rulesPath}/cpptest/rules/docs">
+                            <fileset dir="${cpptestRootPath}/rules/docs" includes="*.html"/>
+                        </copy>
+                        <echo message="Rules from Cpptest installation are loaded." level="info"/>
+                    </then>
+                </if>
+            </else>
+        </if>
+    </target>
+</project>
