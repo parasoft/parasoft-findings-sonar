@@ -19,44 +19,23 @@ public class ParasoftConfigurationTest
     {
         var result = ParasoftConfiguration.getProperties();
 
-        assertEquals(6, result.size());
+        assertEquals(3, result.size());
 
         var def = result.get(0);
-        assertEquals("External Analyzers / Java\n"
-                + "Parasoft Jtest Root Path\n"
-                + "Path to root directory of Jtest. To reload rules restart Sonar server.\n"
-                + "sonar.parasoft.jtest.root\n"
-                + "Default: ", getDefinitionString(def));
-
-        def = result.get(1);
         assertEquals("External Analyzers / Java\n"
                 + "Parasoft Jtest Report Files\n"
                 + "Path (absolute or relative) to Jtest xml report files.\n"
                 + "sonar.parasoft.jtest.reportPaths\n"
                 + "Default: ", getDefinitionString(def));
 
-        def = result.get(2);
-        assertEquals("External Analyzers / C#\n"
-                + "Parasoft dotTest Root Path\n"
-                + "Path to root directory of dotTest. To reload rules restart Sonar server.\n"
-                + "sonar.parasoft.dottest.root\n"
-                + "Default: ", getDefinitionString(def));
-
-        def = result.get(3);
+        def = result.get(1);
         assertEquals("External Analyzers / C#\n"
                 + "Parasoft dotTest Report Files\n"
                 + "Path (absolute or relative) to dotTest xml report files.\n"
                 + "sonar.parasoft.dottest.reportPaths\n"
                 + "Default: ", getDefinitionString(def));
 
-        def = result.get(4);
-        assertEquals("External Analyzers / C++\n"
-                + "Parasoft C/C++Test Root Path\n"
-                + "Path to root directory of C/C++Test. To reload rules restart Sonar server.\n"
-                + "sonar.parasoft.cpptest.root\n"
-                + "Default: ", getDefinitionString(def));
-
-        def = result.get(5);
+        def = result.get(2);
         assertEquals("External Analyzers / C++\n"
                 + "Parasoft C/C++Test Report Files\n"
                 + "Path (absolute or relative) to C/C++Test xml report files.\n"

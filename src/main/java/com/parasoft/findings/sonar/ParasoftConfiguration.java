@@ -19,12 +19,6 @@ public class ParasoftConfiguration
     {
         List<PropertyDefinition> items = new ArrayList<>();
         for (var product : ParasoftProduct.values()) {
-            items.add(PropertyDefinition.builder(product.rootPathKey)
-                .name(product.rootPathName)
-                .description(product.rootPathDesc)
-                .category(ParasoftConstants.EXTERNAL_ANALYZERS_CATEGORY)
-                .subCategory(product.subcategory)
-                .build());
             items.add(PropertyDefinition.builder(product.reportPathKey)
                 .name(product.reportPathName)
                 .description(product.reportPathDesc)

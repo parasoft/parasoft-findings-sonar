@@ -8,33 +8,32 @@
 
 package com.parasoft.findings.sonar;
 
+import com.parasoft.findings.sonar.rules.LanguageRules;
+import com.parasoft.xtest.results.api.IRuleViolation;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.parasoft.findings.sonar.rules.LanguageRules;
-import com.parasoft.xtest.results.api.IRuleViolation;
+import static com.parasoft.findings.sonar.rules.AbstractRulesDefinition.BUILTIN_RULES_DIR_NAME;
 
 @SuppressWarnings("nls")
 public enum ParasoftProduct {
     JTEST("Parasoft Jtest", "Java", Arrays.asList("java", "xml", "text"),
-        Arrays.asList("parasoft-jtest-java", "parasoft-jtest-xml", "parasoft-jtest-text"),
-        "sonar.parasoft.jtest.root", Messages.JtestRootPathName, Messages.JtestRootPathDesc,
+        Arrays.asList("parasoft-jtest-java", "parasoft-jtest-xml", "parasoft-jtest-text"), BUILTIN_RULES_DIR_NAME + "/jtest",
         "sonar.parasoft.jtest.reportPaths", Messages.JtestReportPathName, Messages.JtestReportPathDesc,
         "integration/dtpserver/jtest/model", "rules/doc",
         "com.parasoft.jtest.flowanalyzer.rules.builtin", "com.parasoft.jtest.flowanalyzer"),
 
     DOTTEST("Parasoft dotTest", "C#", Arrays.asList("cs", "vbnet"),
-        Arrays.asList("parasoft-dottest-cs", "parasoft-dottest-vbnet"),
-        "sonar.parasoft.dottest.root", Messages.dotTestRootPathName, Messages.dotTestRootPathDesc,
+        Arrays.asList("parasoft-dottest-cs", "parasoft-dottest-vbnet"), BUILTIN_RULES_DIR_NAME + "/dottest",
         "sonar.parasoft.dottest.reportPaths", Messages.dotTestReportPathName, Messages.dotTestReportPathDesc,
         "integration/DTPServer/dotTEST/model", "rules/doc",
         "com.parasoft.dottest.flowanalyzer.rules.builtin", "com.parasoft.dottest.flowanalyzer"),
 
     CPPTEST("Parasoft C/C++Test", "C++", Arrays.asList("c", "cpp"),
-        Arrays.asList("parasoft-cpptest-c", "parasoft-cpptest-cpp"),
-        "sonar.parasoft.cpptest.root", Messages.CppTestRootPathName, Messages.CppTestRootPathDesc,
+        Arrays.asList("parasoft-cpptest-c", "parasoft-cpptest-cpp"), BUILTIN_RULES_DIR_NAME + "/cpptest",
         "sonar.parasoft.cpptest.reportPaths", Messages.CppTestReportPathName, Messages.CppTestReportPathDesc,
         "integration/dtpserver/cpptest/model", "rules/docs",
         "com.parasoft.cpptest.flowanalyzer.rules.builtin", "com.parasoft.cpptest.flowanalyzer");
@@ -43,9 +42,7 @@ public enum ParasoftProduct {
     public final String subcategory;
     public final List<String> languages;
     public final List<String> ruleRepoIds;
-    public final String rootPathKey;
-    public final String rootPathName;
-    public final String rootPathDesc;
+    public final String builtinRulesPath;
     public final String reportPathKey;
     public final String reportPathName;
     public final String reportPathDesc;
@@ -55,16 +52,14 @@ public enum ParasoftProduct {
     public final String analyzerId;
 
     private ParasoftProduct(String profileName, String subcategory, List<String> languages, List<String> ruleRepoIds,
-        String rootPathKey, String rootPathName, String rootPathDesc, String reportPathKey, String reportPathName,
+        String builtinRulesPath, String reportPathKey, String reportPathName,
         String reportPathDesc, String rulesPath, String docPath, String ruleProvider, String analyzerId)
     {
         this.profileName = profileName;
         this.subcategory = subcategory;
         this.languages = languages;
         this.ruleRepoIds = ruleRepoIds;
-        this.rootPathKey = rootPathKey;
-        this.rootPathName = rootPathName;
-        this.rootPathDesc = rootPathDesc;
+        this.builtinRulesPath = builtinRulesPath;
         this.reportPathKey = reportPathKey;
         this.reportPathName = reportPathName;
         this.reportPathDesc = reportPathDesc;
