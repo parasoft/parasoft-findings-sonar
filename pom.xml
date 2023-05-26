@@ -18,6 +18,10 @@
         <jdk.min.version>11</jdk.min.version>
         <xtest.version>10.6.2.20230410</xtest.version>
         <parasoft.repository.url>file:///${basedir}/repository</parasoft.repository.url>
+        <project.build.rulesPath>${project.basedir}/target/classes/com/parasoft/findings/sonar/builtinRules</project.build.rulesPath>
+        <jtestRootPath/>
+        <dottestRootPath/>
+        <cpptestRootPath/>
     </properties>
     <repositories>
         <repository>
@@ -29,6 +33,39 @@
     <build>
         <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
         <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>ant-contrib</groupId>
+                        <artifactId>ant-contrib</artifactId>
+                        <version>1.0b3</version>
+                        <exclusions>
+                            <exclusion>
+                                <groupId>ant</groupId>
+                                <artifactId>ant</artifactId>
+                            </exclusion>
+                        </exclusions>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <target>
+                                <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpathref="maven.plugin.classpath"/>
+                                <ant antfile="copy-rules.xml">
+                                    <target name="copy-rules"/>
+                                </ant>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.sonarsource.sonar-packaging-maven-plugin</groupId>
                 <artifactId>sonar-packaging-maven-plugin</artifactId>
