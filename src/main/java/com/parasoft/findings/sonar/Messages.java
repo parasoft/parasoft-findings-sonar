@@ -13,19 +13,13 @@ public final class Messages
 {
     public static String CppTestReportPathDesc;
     public static String CppTestReportPathName;
-    public static String CppTestRootPathDesc;
-    public static String CppTestRootPathName;
     public static String CreatedIssues;
     public static String JtestName;
     public static String JtestReportPathDesc;
     public static String JtestReportPathName;
-    public static String JtestRootPathDesc;
-    public static String JtestRootPathName;
     public static String dotTestName;
     public static String dotTestReportPathDesc;
     public static String dotTestReportPathName;
-    public static String dotTestRootPathDesc;
-    public static String dotTestRootPathName;
     public static String FindingsImported;
     public static String NoDescription;
     public static String NoFindingsFor;

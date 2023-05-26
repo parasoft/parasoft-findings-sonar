@@ -8,19 +8,24 @@
 
 package com.parasoft.findings.sonar.rules;
 
+import static com.parasoft.findings.sonar.rules.AbstractRulesDefinition.BUILTIN_RULES_DIR_NAME;
+import static com.parasoft.findings.sonar.rules.AbstractRulesDefinition.BUILTIN_RULES_PATH;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -28,11 +33,16 @@ import java.util.stream.Stream;
 import com.parasoft.findings.sonar.Messages;
 import com.parasoft.findings.sonar.ParasoftConstants;
 import com.parasoft.findings.sonar.ParasoftProduct;
+import com.parasoft.findings.sonar.SonarServicesProvider;
+import net.lingala.zip4j.ZipFile;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.MockedConstruction;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.sonar.api.config.Configuration;
 import org.sonar.api.rule.Severity;
 import org.sonar.api.server.profile.BuiltInQualityProfilesDefinition.NewBuiltInQualityProfile;
@@ -54,7 +64,7 @@ class RulesDefinitionTest
 
         NewRule rule = mock(NewRule.class);
         NewRepository repo = mockRepository(rule);
-        
+
         def.addUnknownRule(repo);
 
         verify(rule).setName(Messages.UnknownRuleName);
@@ -72,7 +82,7 @@ class RulesDefinitionTest
 
     static Stream<Arguments> testBasic_Params() {
         Configuration config = mock(Configuration.class);
-        
+
         return Stream.of(
             Arguments.of(new JtestRulesDefinition(config), new JtestProfile(), 3),
             Arguments.of(new DottestRulesDefinition(config), new DottestProfile(), 2),
@@ -88,7 +98,7 @@ class RulesDefinitionTest
         assertEquals("xml", def.getLanguageFor(null, "xmlrules.xml"));
         assertEquals("text", def.getLanguageFor(null, "proprules.xml"));
         assertEquals("java", def.getLanguageFor(null, "anything else"));
-        
+
         def = new DottestRulesDefinition(config);
         IRuleDescription rule = mock(IRuleDescription.class);
         when(rule.getRuleId()).thenReturn("VB.");
@@ -96,7 +106,7 @@ class RulesDefinitionTest
         rule = mock(IRuleDescription.class);
         when(rule.getRuleId()).thenReturn("Something Else");
         assertEquals("cs", def.getLanguageFor(rule, null));
-        
+
         def = new CpptestRulesDefinition(config);
         rule = mock(IRuleDescription.class);
         when(rule.getCategoryId()).thenReturn("cdd");
@@ -108,44 +118,61 @@ class RulesDefinitionTest
 
     @ParameterizedTest
     @MethodSource("testDefine_Params")
-    void testDefine(AbstractRulesDefinition def) throws FileNotFoundException, IOException {
-        Context context = mock(Context.class);
-        NewRule rule = mock(NewRule.class);
-        NewRepository repo = mockRepository(rule);
+    void testDefine(AbstractRulesDefinition def) throws IOException {
+        try(MockedStatic<Files> filesClassMock = mockStatic(Files.class)) {
+            Path targetPath = Paths.get("target");
+            filesClassMock.when(() -> Files.createTempDirectory("parasoft_findings_sonar_")).thenReturn(targetPath);
+            try(MockedConstruction<ZipFile> mockedZipFileConstruction = Mockito.mockConstruction(ZipFile.class)) {
+                Context context = mock(Context.class);
+                NewRule rule = mock(NewRule.class);
+                NewRepository repo = mockRepository(rule);
 
-        String ruleFile = null;
-        switch (def._product) {
-        case JTEST:
-            ruleFile = "jtest_corerules.xml";
-            break;
-        case CPPTEST:
-            ruleFile = "rules_cpp.xml";
-            break;
-        default:
-        case DOTTEST:
-            ruleFile = "rules_dot_wizard.xml";
-            break;
+                String ruleFile = null;
+                switch (def._product) {
+                    case JTEST:
+                        ruleFile = "jtest_corerules.xml";
+                        break;
+                    case CPPTEST:
+                        ruleFile = "rules_cpp.xml";
+                        break;
+                    default:
+                    case DOTTEST:
+                        ruleFile = "rules_dot_wizard.xml";
+                        break;
+                }
+                copyRuleFile(ruleFile, def._product);
+
+                when(context.createRepository(any(), any())).thenReturn(repo);
+
+                def.define(context);
+
+                int zipFileConstructionCalledTimes = mockedZipFileConstruction.constructed().size();
+                switch (def._product) {
+                    case JTEST:
+                        assertEquals(1, zipFileConstructionCalledTimes);
+                        filesClassMock.verify(() -> Files.createTempDirectory("parasoft_findings_sonar_"), times(1));
+                        verify(mockedZipFileConstruction.constructed().get(0), times(1))
+                                .extractFile(BUILTIN_RULES_PATH, targetPath.toFile().getAbsolutePath(), BUILTIN_RULES_DIR_NAME);
+                        break;
+                    case CPPTEST:
+                    case DOTTEST:
+                    default:
+                        assertEquals(0, zipFileConstructionCalledTimes);
+                        filesClassMock.verify(() -> Files.createTempDirectory("parasoft_findings_sonar_"), times(0));
+                }
+
+                var profileContext = mock(org.sonar.api.server.profile.BuiltInQualityProfilesDefinition.Context.class);
+                NewBuiltInQualityProfile newProfile = mock(NewBuiltInQualityProfile.class);
+                when(profileContext.createBuiltInQualityProfile(any(), any())).thenReturn(newProfile);
+
+                def._profile.define(profileContext);
+            }
         }
-        var rulesPath = new File("target", def._product.rulesPath + "/rules");
-        rulesPath.mkdirs();
-        
-        copyRuleFile(ruleFile, def._product);
-        
-        when(context.createRepository(any(), any())).thenReturn(repo);
-        when(def._config.get(def._product.rootPathKey)).thenReturn(Optional.of("target"));
-
-        def.define(context);
-
-        var profileContext = mock(org.sonar.api.server.profile.BuiltInQualityProfilesDefinition.Context.class);
-        NewBuiltInQualityProfile newProfile = mock(NewBuiltInQualityProfile.class);
-        when(profileContext.createBuiltInQualityProfile(any(), any())).thenReturn(newProfile);
-
-        def._profile.define(profileContext);
     }
 
     static Stream<Arguments> testDefine_Params() {
         Configuration config = mock(Configuration.class);
-        
+
         return Stream.of(
             Arguments.of(new JtestRulesDefinition(config)),
             Arguments.of(new DottestRulesDefinition(config)),
@@ -155,9 +182,9 @@ class RulesDefinitionTest
 
     void copyRuleFile(String filename, ParasoftProduct product) throws FileNotFoundException, IOException
     {
-        var rulesPath = new File("target", product.rulesPath + "/rules");
+        var rulesPath = new File("target", product.builtinRulesPath + "/" +product.rulesPath + "/rules");
         rulesPath.mkdirs();
-        
+
         IOUtils.copy(new FileInputStream(new File("src/test/java", filename)),
                 new FileOutputStream(new File(rulesPath, filename)));
     }

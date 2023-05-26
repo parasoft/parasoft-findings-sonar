@@ -18,7 +18,7 @@
         <jdk.min.version>11</jdk.min.version>
         <xtest.version>10.6.2.20230410</xtest.version>
         <parasoft.repository.url>file:///${basedir}/repository</parasoft.repository.url>
-        <project.build.rulesPath>${project.basedir}/target/classes/com/parasoft/findings/sonar/builtinRules</project.build.rulesPath>
+        <project.build.rulesPath>${project.basedir}/target/classes/com/parasoft/findings/sonar/res/builtinRules</project.build.rulesPath>
         <jtestRootPath/>
         <dottestRootPath/>
         <cpptestRootPath/>
@@ -160,6 +160,12 @@
             <artifactId>commons-logging</artifactId>
             <version>1.2</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.lingala.zip4j</groupId>
+            <artifactId>zip4j</artifactId>
+            <version>2.11.5</version>
         </dependency>
 
         <dependency>

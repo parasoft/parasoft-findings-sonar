@@ -1,18 +1,12 @@
 package com.parasoft.findings.sonar.rules;
 
+import com.parasoft.xtest.configuration.api.rules.IRuleDescription;
+import org.sonar.api.config.Configuration;
+
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.sonar.api.config.Configuration;
-
-import com.parasoft.xtest.common.api.variables.IVariablesResolver;
-import com.parasoft.xtest.configuration.api.rules.IRuleDescription;
-import com.parasoft.findings.sonar.Logger;
-import com.parasoft.findings.sonar.ParasoftConstants;
-import com.parasoft.findings.sonar.SonarVariablesResolver;
-import com.parasoft.xtest.services.api.ServiceUtil;
 
 public class CpptestRulesDefinition
     extends AbstractRulesDefinition
@@ -25,19 +19,6 @@ public class CpptestRulesDefinition
     public CpptestRulesDefinition(Configuration config)
     {
         super(config, new CpptestProfile());
-    }
-
-    @Override
-    protected void initializeVariables()
-    {
-        // get resolver service and set variables
-        var resolver = ServiceUtil.getService(IVariablesResolver.class);
-        if (resolver instanceof SonarVariablesResolver) {
-            var dotTestRoot = _config.get(_product.rootPathKey).orElse("");
-            ((SonarVariablesResolver) resolver).addVariable(ParasoftConstants.CPPTEST_HOME_KEY, dotTestRoot);
-        } else {
-            Logger.getLogger().error("Expected SonarVariablesResolver but was " + resolver); //$NON-NLS-1$
-        }
     }
 
     @Override

@@ -5,6 +5,9 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URL;
+import java.nio.file.Files;
+import java.security.CodeSource;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -12,6 +15,8 @@ import java.util.Map;
 import java.util.Set;
 
 import com.parasoft.findings.sonar.SonarServicesProvider;
+import net.lingala.zip4j.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
 import org.sonar.api.config.Configuration;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.api.rule.Severity;
@@ -35,6 +40,9 @@ import com.parasoft.findings.sonar.importer.ParasoftFindingsParser;
 public abstract class AbstractRulesDefinition
     implements RulesDefinition
 {
+    public static final String BUILTIN_RULES_PATH = "com/parasoft/findings/sonar/res/builtinRules/"; //$NON-NLS-1$
+    public static final String BUILTIN_RULES_DIR_NAME = "builtinRules"; //$NON-NLS-1$
+
     protected final Configuration _config;
     protected final AbstractRuleProfile _profile;
     protected final ParasoftProduct _product;
@@ -42,6 +50,10 @@ public abstract class AbstractRulesDefinition
 
     private static Object Y2021_VERSION = null;
     private static Method ADD_OWASP_METHOD = null;
+
+    private static ZipFile _pluginJarFile;
+    private static String _tempPath;
+
     static {
         try {
             Class<?> versionClass = Class.forName("org.sonar.api.server.rule.RulesDefinition$OwaspTop10Version"); //$NON-NLS-1$
@@ -58,7 +70,6 @@ public abstract class AbstractRulesDefinition
         _profile = profile;
         _product = profile._product;
         SonarServicesProvider.getInstance();
-        initializeVariables();
 
         _rulesMap.put(_product.profileName, _product.getLanguageRules());
     }
@@ -72,18 +83,22 @@ public abstract class AbstractRulesDefinition
         return _rulesMap.get(productProfileName);
     }
 
-    abstract void initializeVariables();
     abstract String getLanguageFor(IRuleDescription rule, String fileName);
 
     @Override
     public void define(Context context)
     {
+        boolean isSuccess = extractBuiltinRulesIntoTempDirIfNotExist();
+        if(!isSuccess) {
+            return;
+        }
+
         Logger.getLogger().info("Initializing " + getClass().getSimpleName()); //$NON-NLS-1$
-        var productRoot = getRootDir();
-        if (productRoot != null) {
+        var builtinRulesDir = getBuiltinRulesDir();
+        if (builtinRulesDir != null) {
             var rulesDirs = getRulesDirs();
             if (rulesDirs.isEmpty()) {
-                Logger.getLogger().error(NLS.bind(Messages.NotLoadingRules, _product.profileName, _product.rootPathKey));
+                Logger.getLogger().error(NLS.bind(Messages.NotLoadingRules, _product.profileName, builtinRulesDir.getAbsolutePath() + "/" + _product.builtinRulesPath)); //$NON-NLS-1$
                 return;
             }
             for (File rulesDir : rulesDirs) {
@@ -105,7 +120,7 @@ public abstract class AbstractRulesDefinition
                 }
             }
         } else {
-            Logger.getLogger().warn("Product Root not found: " + _config.get(_product.rootPathKey)); //$NON-NLS-1$
+            Logger.getLogger().warn("Built-in rules root directory not found: " + _tempPath + "/" + _product.builtinRulesPath); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         for (LanguageRules lr : _rulesMap.get(_product.profileName)) {
@@ -118,30 +133,62 @@ public abstract class AbstractRulesDefinition
         }
     }
 
+    private boolean extractBuiltinRulesIntoTempDirIfNotExist()
+    {
+        if(_tempPath == null) {
+            try {
+                _tempPath = Files.createTempDirectory("parasoft_findings_sonar_").toFile().getAbsolutePath();
+                Logger.getLogger().info("Temporary folder is created: " + _tempPath); //$NON-NLS-1$
+            } catch (IOException e) {
+                Logger.getLogger().error("Failed to create temporary folder", e); //$NON-NLS-1$
+                return false;
+            }
+        }
+        if(_pluginJarFile == null) {
+            CodeSource src = AbstractRulesDefinition.class.getProtectionDomain().getCodeSource();
+            if( src != null ) {
+                URL jar = src.getLocation();
+                _pluginJarFile = new ZipFile(jar.getFile());
+                String expectedBuiltinRulesStoragePath = new File(_tempPath, BUILTIN_RULES_DIR_NAME).getAbsolutePath();
+                try {
+                    _pluginJarFile.extractFile(BUILTIN_RULES_PATH, _tempPath, BUILTIN_RULES_DIR_NAME);
+                    Logger.getLogger().info("The built-in rule files have been extracted to: " + expectedBuiltinRulesStoragePath); //$NON-NLS-1$
+                } catch (ZipException e) {
+                    Logger.getLogger().error("Failed to extract built-in rule files from " + _pluginJarFile, e); //$NON-NLS-1$
+                    return false;
+                }
+            } else {
+                // Generally, this code block will never be accessed.
+                Logger.getLogger().error("No plugin JAR file is found, please contact Parasoft support."); //$NON-NLS-1$
+                return false;
+            }
+        }
+        return true;
+    }
+
     protected boolean isRulesFile(File file)
     {
         return file.isFile() && file.getName().endsWith(".xml"); //$NON-NLS-1$
     }
 
-    protected File getRootDir()
+    protected File getBuiltinRulesDir()
     {
-        var rootPath = _config.get(_product.rootPathKey).orElse("");
-        if (!UString.isNonEmptyTrimmed(rootPath)) {
+        if (_tempPath == null) {
             return null;
         }
-        var rootDir = new File(rootPath);
-        return rootDir.isDirectory() ? rootDir : null;
+        var builtinRulesDir = new File(_tempPath, _product.builtinRulesPath);
+        return builtinRulesDir.isDirectory() ? builtinRulesDir : null;
     }
 
     protected Set<File> getRulesDirs()
     {
-        var rootDir = getRootDir();
+        var builtinRulesDir = getBuiltinRulesDir();
         Set<File> dirs = new HashSet<>();
-        var rulesDir = new File(rootDir, _product.rulesPath + "/rules"); //$NON-NLS-1$
+        var rulesDir = new File(builtinRulesDir, _product.rulesPath + "/rules"); //$NON-NLS-1$
         if (rulesDir.isDirectory()) {
             dirs.add(rulesDir);
         }
-        var metricsDir = new File(rootDir, _product.rulesPath + "/metrics"); //$NON-NLS-1$
+        var metricsDir = new File(builtinRulesDir, _product.rulesPath + "/metrics"); //$NON-NLS-1$
         if (metricsDir.isDirectory()) {
             dirs.add(metricsDir);
         }
@@ -175,7 +222,7 @@ public abstract class AbstractRulesDefinition
             var tag = ruleDescription.getCategoryId().toLowerCase().replace('_', '-');
             var name = getValidRuleName(ruleDescription);
             var ruleKey = RuleKey.of(rules.repositoryId, ruleDescription.getRuleId());
-            var desc = getRuleDescription(_product.rootPathKey, ruleDescription.getRuleId());
+            var desc = getRuleDescription(_tempPath + "/" + _product.builtinRulesPath, ruleDescription.getRuleId()); //$NON-NLS-1$
             var type = getType(tag, ruleDescription.getSeverity() == ISeverityConsts.SEVERITY_HIGHEST);
             var sev = ParasoftFindingsParser.mapToSonarSeverity(ruleDescription.getSeverity()).name();
 
@@ -285,9 +332,8 @@ public abstract class AbstractRulesDefinition
         return RuleType.CODE_SMELL;
     }
 
-    private String getRuleDescription(String pathKey, String ruleId)
+    private String getRuleDescription(String root, String ruleId)
     {
-        String root = _config.get(pathKey).orElse("");
         if (UString.isNonEmptyTrimmed(root)) {
             var docRoot = new File(root, _product.docPath);
             var docFile = guessRuleFile(docRoot, ruleId);
