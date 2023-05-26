@@ -25,6 +25,7 @@ public final class Messages
     public static String NoFindingsFor;
     public static String NoReportFile;
     public static String NoSourcesFound;
+    public static String NotLoadingRules;
     public static String ParsingReportFile;
     public static String PluginName;
     public static String RuleDocNotFound;

@@ -40,8 +40,8 @@ import com.parasoft.findings.sonar.importer.ParasoftFindingsParser;
 public abstract class AbstractRulesDefinition
     implements RulesDefinition
 {
-    public static final String BUILTIN_RULES_PATH = "com/parasoft/findings/sonar/res/builtinRules/";
-    public static final String BUILTIN_RULES_DIR_NAME = "builtinRules";
+    public static final String BUILTIN_RULES_PATH = "com/parasoft/findings/sonar/res/builtinRules/"; //$NON-NLS-1$
+    public static final String BUILTIN_RULES_DIR_NAME = "builtinRules"; //$NON-NLS-1$
 
     protected final Configuration _config;
     protected final AbstractRuleProfile _profile;
@@ -98,7 +98,7 @@ public abstract class AbstractRulesDefinition
         if (builtinRulesDir != null) {
             var rulesDirs = getRulesDirs();
             if (rulesDirs.isEmpty()) {
-                Logger.getLogger().error("Not loading rules for " + _product.profileName + " because " + builtinRulesDir.getAbsolutePath() + "/" + _product.builtinRulesPath + " is not found"); //$NON-NLS-1$
+                Logger.getLogger().error(NLS.bind(Messages.NotLoadingRules, _product.profileName, builtinRulesDir.getAbsolutePath() + "/" + _product.builtinRulesPath)); //$NON-NLS-1$
                 return;
             }
             for (File rulesDir : rulesDirs) {
@@ -120,7 +120,7 @@ public abstract class AbstractRulesDefinition
                 }
             }
         } else {
-            Logger.getLogger().warn("Builtin rules root not found: " + _tempPath + "/" + _product.builtinRulesPath); //$NON-NLS-1$
+            Logger.getLogger().warn("Built-in rules root directory not found: " + _tempPath + "/" + _product.builtinRulesPath); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         for (LanguageRules lr : _rulesMap.get(_product.profileName)) {
@@ -138,7 +138,7 @@ public abstract class AbstractRulesDefinition
         if(_tempPath == null) {
             try {
                 _tempPath = Files.createTempDirectory("parasoft_findings_sonar_").toFile().getAbsolutePath();
-                Logger.getLogger().info("Temporary folder was created: " + _tempPath); //$NON-NLS-1$
+                Logger.getLogger().info("Temporary folder is created: " + _tempPath); //$NON-NLS-1$
             } catch (IOException e) {
                 Logger.getLogger().error("Failed to create temporary folder", e); //$NON-NLS-1$
                 return false;
@@ -152,13 +152,14 @@ public abstract class AbstractRulesDefinition
                 String expectedBuiltinRulesStoragePath = new File(_tempPath, BUILTIN_RULES_DIR_NAME).getAbsolutePath();
                 try {
                     _pluginJarFile.extractFile(BUILTIN_RULES_PATH, _tempPath, BUILTIN_RULES_DIR_NAME);
-                    Logger.getLogger().info("Builtin rule files was extracted to: " + expectedBuiltinRulesStoragePath); //$NON-NLS-1$
+                    Logger.getLogger().info("The built-in rule files have been extracted to: " + expectedBuiltinRulesStoragePath); //$NON-NLS-1$
                 } catch (ZipException e) {
-                    Logger.getLogger().error("Failed to extract builtin rule files from " + _pluginJarFile + " to " + expectedBuiltinRulesStoragePath + " folder", e); //$NON-NLS-1$
+                    Logger.getLogger().error("Failed to extract built-in rule files from " + _pluginJarFile, e); //$NON-NLS-1$
                     return false;
                 }
             } else {
-                Logger.getLogger().error("Can not find plugin jar file, please contact Parasoft support."); //$NON-NLS-1$
+                // Generally, this code block will never be accessed.
+                Logger.getLogger().error("No plugin JAR file is found, please contact Parasoft support."); //$NON-NLS-1$
                 return false;
             }
         }
@@ -221,7 +222,7 @@ public abstract class AbstractRulesDefinition
             var tag = ruleDescription.getCategoryId().toLowerCase().replace('_', '-');
             var name = getValidRuleName(ruleDescription);
             var ruleKey = RuleKey.of(rules.repositoryId, ruleDescription.getRuleId());
-            var desc = getRuleDescription(_tempPath + "/" + _product.builtinRulesPath, ruleDescription.getRuleId());
+            var desc = getRuleDescription(_tempPath + "/" + _product.builtinRulesPath, ruleDescription.getRuleId()); //$NON-NLS-1$
             var type = getType(tag, ruleDescription.getSeverity() == ISeverityConsts.SEVERITY_HIGHEST);
             var sev = ParasoftFindingsParser.mapToSonarSeverity(ruleDescription.getSeverity()).name();
 
