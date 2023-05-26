@@ -1,15 +1,29 @@
 <project name="copy-parasoft-rules" basedir=".">
     <target name="copy-rules">
         <condition property="emptyJtestRootPath">
-            <equals arg1="${jtestRootPath}" arg2=""/>
+            <or>
+                <not>
+                    <isset property="jtestRootPath" />
+                </not>
+                <length string="${jtestRootPath}" when="equal" length="0" />
+            </or>
         </condition>
         <condition property="emptyDottestRootPath">
-            <equals arg1="${dottestRootPath}" arg2=""/>
+            <or>
+                <not>
+                    <isset property="dottestRootPath" />
+                </not>
+                <length string="${dottestRootPath}" when="equal" length="0" />
+            </or>
         </condition>
         <condition property="emptyCpptestRootPath">
-            <equals arg1="${cpptestRootPath}" arg2=""/>
+            <or>
+                <not>
+                    <isset property="cpptestRootPath" />
+                </not>
+                <length string="${cpptestRootPath}" when="equal" length="0" />
+            </or>
         </condition>
-
         <if>
             <and>
                 <istrue value="${emptyJtestRootPath}"/>
