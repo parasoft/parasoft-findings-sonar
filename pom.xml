@@ -19,9 +19,6 @@
         <xtest.version>10.6.2.20230410</xtest.version>
         <parasoft.repository.url>file:///${basedir}/repository</parasoft.repository.url>
         <project.build.rulesPath>${project.basedir}/target/classes/com/parasoft/findings/sonar/res/builtinRules</project.build.rulesPath>
-        <jtestRootPath/>
-        <dottestRootPath/>
-        <cpptestRootPath/>
     </properties>
     <repositories>
         <repository>
