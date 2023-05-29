@@ -19,6 +19,7 @@
         <xtest.version>10.6.2.20230410</xtest.version>
         <parasoft.repository.url>file:///${basedir}/repository</parasoft.repository.url>
         <project.build.rulesPath>${project.basedir}/target/classes/com/parasoft/findings/sonar/res/builtinRules</project.build.rulesPath>
+        <toolsVersion>${project.version}</toolsVersion>
     </properties>
     <repositories>
         <repository>
@@ -109,6 +110,7 @@
                 </configuration>
             </plugin>
         </plugins>
+        <finalName>${project.artifactId}-${toolsVersion}</finalName>
     </build>
     <profiles>
         <profile>
