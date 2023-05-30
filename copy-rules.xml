@@ -39,7 +39,7 @@
                     <isfalse value="${emptyJtestRootPath}"/>
                     <then>
                         <copy todir="${project.build.rulesPath}/jtest/integration/dtpserver/jtest/model">
-                            <fileset dir="${jtestRootPath}/integration/dtpserver/jtest/model" includes="metrics/*.xml, rules/*.xml"/>
+                            <fileset dir="${jtestRootPath}/integration/dtpserver/jtest/model"/>
                         </copy>
                         <copy todir="${project.build.rulesPath}/jtest/rules/doc">
                             <fileset dir="${jtestRootPath}/rules/doc" includes="*.html"/>
@@ -52,7 +52,7 @@
                     <isfalse value="${emptyDottestRootPath}"/>
                     <then>
                         <copy todir="${project.build.rulesPath}/dottest/integration/DTPServer/dotTEST/model">
-                            <fileset dir="${dottestRootPath}/integration/DTPServer/dotTEST/model" includes="metrics/*.xml, rules/*.xml"/>
+                            <fileset dir="${dottestRootPath}/integration/DTPServer/dotTEST/model"/>
                         </copy>
                         <copy todir="${project.build.rulesPath}/dottest/rules/doc">
                             <fileset dir="${dottestRootPath}/rules/doc" includes="*.html"/>
@@ -65,7 +65,7 @@
                     <isfalse value="${emptyCpptestRootPath}"/>
                     <then>
                         <copy todir="${project.build.rulesPath}/cpptest/integration/dtpserver/cpptest/model">
-                            <fileset dir="${cpptestRootPath}/integration/dtpserver/cpptest/model" includes="metrics/*.xml, rules/*.xml"/>
+                            <fileset dir="${cpptestRootPath}/integration/dtpserver/cpptest/model"/>
                         </copy>
                         <copy todir="${project.build.rulesPath}/cpptest/rules/docs">
                             <fileset dir="${cpptestRootPath}/rules/docs" includes="*.html"/>
