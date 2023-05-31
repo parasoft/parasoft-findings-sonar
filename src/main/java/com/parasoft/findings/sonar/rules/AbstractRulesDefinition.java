@@ -5,7 +5,10 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.security.CodeSource;
 import java.util.HashMap;
@@ -147,13 +150,13 @@ public abstract class AbstractRulesDefinition
         if(_pluginJarFile == null) {
             CodeSource src = AbstractRulesDefinition.class.getProtectionDomain().getCodeSource();
             if( src != null ) {
-                URL jar = src.getLocation();
-                _pluginJarFile = new ZipFile(jar.getFile());
-                String expectedBuiltinRulesStoragePath = new File(_tempPath, BUILTIN_RULES_DIR_NAME).getAbsolutePath();
                 try {
+                    URI jar = src.getLocation().toURI();
+                    _pluginJarFile = new ZipFile(jar.getPath());
+                    String expectedBuiltinRulesStoragePath = new File(_tempPath, BUILTIN_RULES_DIR_NAME).getAbsolutePath();
                     _pluginJarFile.extractFile(BUILTIN_RULES_PATH, _tempPath, BUILTIN_RULES_DIR_NAME);
                     Logger.getLogger().info("The built-in rule files have been extracted to: " + expectedBuiltinRulesStoragePath); //$NON-NLS-1$
-                } catch (ZipException e) {
+                } catch (ZipException | URISyntaxException e) {
                     Logger.getLogger().error("Failed to extract built-in rule files from " + _pluginJarFile, e); //$NON-NLS-1$
                     return false;
                 }
