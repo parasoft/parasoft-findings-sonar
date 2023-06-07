@@ -193,7 +193,8 @@
                                     <target>
                                         <mkdir dir="${docs.directory}"/>
                                         <get src="${docs.url}"
-                                             dest="${docs.directory}/Parasoft_Findings_for_SonarQube.pdf"/>
+                                             dest="${docs.directory}/Parasoft_Findings_for_SonarQube.pdf"
+                                             username="${env.SVN_USER}" password="${env.SVN_PASSWORD}"/>
                                     </target>
                                 </configuration>
                             </execution>
