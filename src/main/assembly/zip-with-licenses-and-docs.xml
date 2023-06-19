@@ -1,0 +1,34 @@
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.2.0 https://maven.apache.org/xsd/assembly-2.2.0.xsd">
+    <id>zip-with-licenses-and-docs.xml</id>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <formats>
+        <format>zip</format>
+    </formats>
+    <dependencySets>
+        <dependencySet>
+            <useStrictFiltering>true</useStrictFiltering>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
+                <include>${project.groupId}:${project.artifactId}</include>
+            </includes>
+            <outputFileNameMapping>${artifact.artifactId}-${toolsVersion}.${artifact.extension}</outputFileNameMapping>
+        </dependencySet>
+    </dependencySets>
+    <fileSets>
+        <fileSet>
+            <directory>${docs.directory}</directory>
+            <outputDirectory>/</outputDirectory>
+            <includes>
+                <include>*.pdf</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>licenses</directory>
+            <outputDirectory>licenses</outputDirectory>
+            <includes>
+                <include>*.txt</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+</assembly>
