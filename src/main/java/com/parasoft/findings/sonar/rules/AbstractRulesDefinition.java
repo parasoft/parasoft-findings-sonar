@@ -9,11 +9,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.security.CodeSource;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import com.parasoft.findings.sonar.SonarServicesProvider;
 import net.lingala.zip4j.ZipFile;
@@ -54,6 +50,7 @@ public abstract class AbstractRulesDefinition
 
     private static ZipFile _pluginJarFile;
     private static String _tempPath;
+    private String localizedRuleFolder = "";
 
     static {
         try {
@@ -73,6 +70,13 @@ public abstract class AbstractRulesDefinition
         SonarServicesProvider.getInstance();
 
         _rulesMap.put(_product.profileName, _product.getLanguageRules());
+
+        String localeLanguage = Locale.getDefault().getLanguage();
+        if (Locale.CHINESE.getLanguage().equals(localeLanguage)) {
+            localizedRuleFolder = ParasoftConstants.CHINESE_FOLDER_NAME;
+        } else if (Locale.JAPANESE.getLanguage().equals(localeLanguage)) {
+            localizedRuleFolder = ParasoftConstants.JAPANESE_FOLDER_NAME;
+        }
     }
 
     public static Set<LanguageRules> findLanguageRules(String productProfileName)
@@ -158,6 +162,7 @@ public abstract class AbstractRulesDefinition
                     Logger.getLogger().error("Failed to extract built-in rule files from " + _pluginJarFile, e); //$NON-NLS-1$
                     return false;
                 }
+                replaceCpptestRuleFilesWithLocalizedIfNeeded();
             } else {
                 // Generally, this code block will never be accessed.
                 Logger.getLogger().error("No plugin JAR file is found, please contact Parasoft support."); //$NON-NLS-1$
@@ -165,6 +170,29 @@ public abstract class AbstractRulesDefinition
             }
         }
         return true;
+    }
+
+    /**
+     * Xtest can not recognize the localized rule files('ja' and 'zh_CN' folders under {cpptest_root_path}/integration/dtpserver/cpptest/model/rules/ path).
+     * We need to override the English rule files with localized files according to the language of the server which SonarQube is installed.
+    * */
+    private void replaceCpptestRuleFilesWithLocalizedIfNeeded()
+    {
+        File rulesDirectory = new File(_tempPath + "/" + ParasoftProduct.CPPTEST.builtinRulesPath, ParasoftProduct.CPPTEST.rulesPath + "/rules");
+        File japaneseRulesDirectory = new File(rulesDirectory, ParasoftConstants.JAPANESE_FOLDER_NAME);
+        File chineseRulesDirectory = new File(rulesDirectory, ParasoftConstants.CHINESE_FOLDER_NAME);
+        try {
+            if (ParasoftConstants.JAPANESE_FOLDER_NAME.equals(localizedRuleFolder) && japaneseRulesDirectory.exists()) {
+                FileUtil.recursiveCopy(japaneseRulesDirectory, rulesDirectory);
+            } else if (ParasoftConstants.CHINESE_FOLDER_NAME.equals(localizedRuleFolder) && chineseRulesDirectory.exists()) {
+                FileUtil.recursiveCopy(chineseRulesDirectory, rulesDirectory);
+            }
+        } catch (IOException e) {
+            Logger.getLogger().error("Error handling localized rule files", e); //$NON-NLS-1$
+        }
+
+        FileUtil.recursiveDelete(japaneseRulesDirectory);
+        FileUtil.recursiveDelete(chineseRulesDirectory);
     }
 
     protected boolean isRulesFile(File file)
@@ -336,7 +364,8 @@ public abstract class AbstractRulesDefinition
     private String getRuleDescription(String root, String ruleId)
     {
         if (UString.isNonEmptyTrimmed(root)) {
-            var docRoot = new File(root, _product.docPath);
+            var localizedRuleDocsPath = "".equals(localizedRuleFolder) ? "" : "/" + localizedRuleFolder;
+            var docRoot = new File(root, _product.docPath + localizedRuleDocsPath);
             var docFile = guessRuleFile(docRoot, ruleId);
             if (docFile != null) {
                 try {

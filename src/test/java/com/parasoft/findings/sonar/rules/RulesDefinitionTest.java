@@ -8,32 +8,11 @@
 
 package com.parasoft.findings.sonar.rules;
 
-import static com.parasoft.findings.sonar.rules.AbstractRulesDefinition.BUILTIN_RULES_DIR_NAME;
-import static com.parasoft.findings.sonar.rules.AbstractRulesDefinition.BUILTIN_RULES_PATH;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Stream;
-
 import com.parasoft.findings.sonar.Messages;
 import com.parasoft.findings.sonar.ParasoftConstants;
 import com.parasoft.findings.sonar.ParasoftProduct;
-import com.parasoft.findings.sonar.SonarServicesProvider;
+import com.parasoft.xtest.common.io.IOUtils;
+import com.parasoft.xtest.configuration.api.rules.IRuleDescription;
 import net.lingala.zip4j.ZipFile;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -50,8 +29,20 @@ import org.sonar.api.server.rule.RulesDefinition.Context;
 import org.sonar.api.server.rule.RulesDefinition.NewRepository;
 import org.sonar.api.server.rule.RulesDefinition.NewRule;
 
-import com.parasoft.xtest.common.io.IOUtils;
-import com.parasoft.xtest.configuration.api.rules.IRuleDescription;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Locale;
+import java.util.Set;
+import java.util.stream.Stream;
+
+import static com.parasoft.findings.sonar.rules.AbstractRulesDefinition.BUILTIN_RULES_DIR_NAME;
+import static com.parasoft.findings.sonar.rules.AbstractRulesDefinition.BUILTIN_RULES_PATH;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
 class RulesDefinitionTest
 {
@@ -133,13 +124,14 @@ class RulesDefinitionTest
                         ruleFile = "jtest_corerules.xml";
                         break;
                     case CPPTEST:
-                        ruleFile = "rules_cpp.xml";
+                        ruleFile = "rules_cpp_zh_CN.xml";
                         break;
                     default:
                     case DOTTEST:
                         ruleFile = "rules_dot_wizard.xml";
                         break;
                 }
+                Locale.setDefault(Locale.CHINESE);
                 copyRuleFile(ruleFile, def._product);
 
                 when(context.createRepository(any(), any())).thenReturn(repo);
@@ -148,13 +140,13 @@ class RulesDefinitionTest
 
                 int zipFileConstructionCalledTimes = mockedZipFileConstruction.constructed().size();
                 switch (def._product) {
-                    case JTEST:
+                    case CPPTEST:
                         assertEquals(1, zipFileConstructionCalledTimes);
                         filesClassMock.verify(() -> Files.createTempDirectory("parasoft_findings_sonar_"), times(1));
                         verify(mockedZipFileConstruction.constructed().get(0), times(1))
                                 .extractFile(BUILTIN_RULES_PATH, targetPath.toFile().getAbsolutePath(), BUILTIN_RULES_DIR_NAME);
                         break;
-                    case CPPTEST:
+                    case JTEST:
                     case DOTTEST:
                     default:
                         assertEquals(0, zipFileConstructionCalledTimes);
@@ -166,6 +158,10 @@ class RulesDefinitionTest
                 when(profileContext.createBuiltInQualityProfile(any(), any())).thenReturn(newProfile);
 
                 def._profile.define(profileContext);
+
+                String cpptestRulesDirectoryPath = "target" + "/" + ParasoftProduct.CPPTEST.builtinRulesPath + "/" + ParasoftProduct.CPPTEST.rulesPath + "/rules";
+                assertFalse(new File(cpptestRulesDirectoryPath + "/zh_CN/rules_cpp_zh_CN.xml").exists());
+                assertTrue(new File(cpptestRulesDirectoryPath + "/rules_cpp_zh_CN.xml").exists());
             }
         }
     }
@@ -174,15 +170,20 @@ class RulesDefinitionTest
         Configuration config = mock(Configuration.class);
 
         return Stream.of(
+            Arguments.of(new CpptestRulesDefinition(config)),
             Arguments.of(new JtestRulesDefinition(config)),
-            Arguments.of(new DottestRulesDefinition(config)),
-            Arguments.of(new CpptestRulesDefinition(config))
+            Arguments.of(new DottestRulesDefinition(config))
         );
     }
 
     void copyRuleFile(String filename, ParasoftProduct product) throws FileNotFoundException, IOException
     {
-        var rulesPath = new File("target", product.builtinRulesPath + "/" +product.rulesPath + "/rules");
+        var targetPath = "target" + "/" + product.builtinRulesPath + "/" + product.rulesPath + "/rules";
+        if (product == ParasoftProduct.CPPTEST) {
+            //
+            targetPath += "/zh_CN";
+        }
+        var rulesPath = new File(targetPath);
         rulesPath.mkdirs();
 
         IOUtils.copy(new FileInputStream(new File("src/test/java", filename)),
