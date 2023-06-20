@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<rules>
+   <builtin>
+      <category description="代码重复性检测" name="CDD">
+         <rule class="com.parasoft.xtest.cpp.dupcode.rules.DUPC" header="避免代码重复" id="DUPC" severity="3">
+            <parameters>
+               <param defaultValue="80" id="CDD-DUPC-minTokens" inputType="integer" label="重复符号的最小数量"/>
+               <param defaultValue="true" id="CDD-DUPC-ignore_str_literals" inputType="checkbox" label="忽略字符串字面量"/>
+               <param defaultValue="true" id="CDD-DUPC-ignore_num_literals" inputType="checkbox" label="忽略数字字面量"/>
+               <param defaultValue="true" id="CDD-DUPC-ignore_bool_literals" inputType="checkbox" label="忽视布尔字面量"/>
+               <param defaultValue="false" id="CDD-DUPC-ignore_identifier" inputType="checkbox" label="忽略标识符"/>
+               <radioGroup id="CDD-DUPC-scope" label="报告找到的代码重复">
+                  <radioItem defaultValue="checked" label="在测试范围的任何地方" value="test"/>
+                  <radioItem label="在相同的项目中" value="project"/>
+                  <radioItem label="在相同的文件中" value="file"/>
+               </radioGroup>
+            </parameters>
+         </rule>
+         <rule class="com.parasoft.xtest.cpp.dupcode.rules.DUPI" header="避免重复的 #include 指令" id="DUPI" severity="3"/>
+         <rule class="com.parasoft.xtest.cpp.dupcode.rules.DUPM" header="避免函数重复" id="DUPM" severity="2">
+            <parameters>
+               <param defaultValue="80" id="CDD-DUPM-minTokens" inputType="integer" label="重复符号的最小数量"/>
+               <param defaultValue="true" id="CDD-DUPM-ignore_str_literals" inputType="checkbox" label="忽略字符串字面量"/>
+               <param defaultValue="true" id="CDD-DUPM-ignore_num_literals" inputType="checkbox" label="忽略数字字面量"/>
+               <param defaultValue="true" id="CDD-DUPM-ignore_bool_literals" inputType="checkbox" label="忽视布尔字面量"/>
+               <param defaultValue="false" id="CDD-DUPM-ignore_identifier" inputType="checkbox" label="忽略标识符"/>
+               <radioGroup id="CDD-DUPM-scope" label="报告找到的函数重复">
+                  <radioItem defaultValue="checked" label="在测试范围的任何地方" value="test"/>
+                  <radioItem label="在相同的项目中" value="project"/>
+                  <radioItem label="在相同的文件中" value="file"/>
+               </radioGroup>
+            </parameters>
+         </rule>
+         <rule class="com.parasoft.xtest.cpp.dupcode.rules.DUPS" header="避免字符串常量重复" id="DUPS" severity="3">
+            <parameters>
+               <param defaultValue="5" id="CDD-DUPS-minOccurrences" inputType="integer" label="重复的最小数量"/>
+               <param defaultValue="3" id="CDD-DUPS-minStringLength" inputType="integer" label="重复字符串的最小长度"/>
+               <param defaultValue="" id="CDD-DUPS-ignore_regexp" inputType="text" label="忽略字符串字面量"/>
+               <radioGroup id="CDD-DUPS-scope" label="报告找到的字符串重复">
+                  <radioItem defaultValue="checked" label="在测试范围的任何地方" value="test"/>
+                  <radioItem label="在相同的项目中" value="project"/>
+                  <radioItem label="在相同的文件中" value="file"/>
+               </radioGroup>
+            </parameters>
+         </rule>
+      </category>
+      <category description="高完整性 C++" name="HICPP">
+         <category description="HIC++ 16.1.5 直接包含编译所需的最小头文件数量" name="16_1_5">
+            <rule class="com.parasoft.xtest.cpp.dupcode.rules.DUPI" header="避免重复的 #include 指令" id="a" originalId="CDD-DUPI" severity="3"/>
+         </category>
+      </category>
+   </builtin>
+</rules>

@@ -7,4 +7,6 @@ public interface ParasoftConstants
     String PARASOFT_REPOSITORY_TAG = "parasoft";
     String RULES_REPOSITORY_NAME = "Parasoft";
     String UNKNOWN_RULE_ID = "UNKNOWN";
+    String CHINESE_FOLDER_NAME = "zh_CN";
+    String JAPANESE_FOLDER_NAME = "ja";
 }

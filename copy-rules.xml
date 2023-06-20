@@ -42,7 +42,7 @@
                             <fileset dir="${jtestRootPath}/integration/dtpserver/jtest/model"/>
                         </copy>
                         <copy todir="${project.build.rulesPath}/jtest/rules/doc">
-                            <fileset dir="${jtestRootPath}/rules/doc" includes="*.html"/>
+                            <fileset dir="${jtestRootPath}/rules/doc" includes="*.html, **/*.html"/>
                         </copy>
                         <echo message="Rules from Jtest installation are loaded." level="info"/>
                     </then>
@@ -55,7 +55,7 @@
                             <fileset dir="${dottestRootPath}/integration/DTPServer/dotTEST/model"/>
                         </copy>
                         <copy todir="${project.build.rulesPath}/dottest/rules/doc">
-                            <fileset dir="${dottestRootPath}/rules/doc" includes="*.html"/>
+                            <fileset dir="${dottestRootPath}/rules/doc" includes="*.html, **/*.html"/>
                         </copy>
                         <echo message="Rules from Dottest installation are loaded." level="info"/>
                     </then>
@@ -68,7 +68,7 @@
                             <fileset dir="${cpptestRootPath}/integration/dtpserver/cpptest/model"/>
                         </copy>
                         <copy todir="${project.build.rulesPath}/cpptest/rules/docs">
-                            <fileset dir="${cpptestRootPath}/rules/docs" includes="*.html"/>
+                            <fileset dir="${cpptestRootPath}/rules/docs" includes="*.html, **/*.html"/>
                         </copy>
                         <echo message="Rules from Cpptest installation are loaded." level="info"/>
                     </then>
