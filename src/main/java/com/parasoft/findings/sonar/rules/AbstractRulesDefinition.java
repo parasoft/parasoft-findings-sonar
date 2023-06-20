@@ -178,14 +178,17 @@ public abstract class AbstractRulesDefinition
     * */
     private void replaceCpptestRuleFilesWithLocalizedIfNeeded()
     {
-        File rulesDirectory = new File(_tempPath + "/" + ParasoftProduct.CPPTEST.builtinRulesPath, ParasoftProduct.CPPTEST.rulesPath + "/rules");
-        File japaneseRulesDirectory = new File(rulesDirectory, ParasoftConstants.JAPANESE_FOLDER_NAME);
-        File chineseRulesDirectory = new File(rulesDirectory, ParasoftConstants.CHINESE_FOLDER_NAME);
+        File cpptestRulesDirectory = new File(_tempPath + "/" + ParasoftProduct.CPPTEST.builtinRulesPath, ParasoftProduct.CPPTEST.rulesPath + "/rules");
+        if(!cpptestRulesDirectory.exists()) {
+            return;
+        }
+        File japaneseRulesDirectory = new File(cpptestRulesDirectory, ParasoftConstants.JAPANESE_FOLDER_NAME);
+        File chineseRulesDirectory = new File(cpptestRulesDirectory, ParasoftConstants.CHINESE_FOLDER_NAME);
         try {
             if (ParasoftConstants.JAPANESE_FOLDER_NAME.equals(localizedRuleFolder) && japaneseRulesDirectory.exists()) {
-                FileUtil.recursiveCopy(japaneseRulesDirectory, rulesDirectory);
+                FileUtil.recursiveCopy(japaneseRulesDirectory, cpptestRulesDirectory);
             } else if (ParasoftConstants.CHINESE_FOLDER_NAME.equals(localizedRuleFolder) && chineseRulesDirectory.exists()) {
-                FileUtil.recursiveCopy(chineseRulesDirectory, rulesDirectory);
+                FileUtil.recursiveCopy(chineseRulesDirectory, cpptestRulesDirectory);
             }
         } catch (IOException e) {
             Logger.getLogger().error("Error handling localized rule files", e); //$NON-NLS-1$
