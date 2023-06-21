@@ -131,7 +131,6 @@ class RulesDefinitionTest
                         ruleFile = "rules_dot_wizard.xml";
                         break;
                 }
-                Locale.setDefault(Locale.CHINESE);
                 copyRuleFile(ruleFile, def._product);
 
                 when(context.createRepository(any(), any())).thenReturn(repo);
@@ -160,8 +159,8 @@ class RulesDefinitionTest
                 def._profile.define(profileContext);
 
                 String cpptestRulesDirectoryPath = "target" + "/" + ParasoftProduct.CPPTEST.builtinRulesPath + "/" + ParasoftProduct.CPPTEST.rulesPath + "/rules";
-                assertFalse(new File(cpptestRulesDirectoryPath + "/zh_CN/rules_cpp_zh_CN.xml").exists());
-                assertTrue(new File(cpptestRulesDirectoryPath + "/rules_cpp_zh_CN.xml").exists());
+                assertFalse(new File(cpptestRulesDirectoryPath, "zh_CN/rules_cpp_zh_CN.xml").exists());
+                assertTrue(new File(cpptestRulesDirectoryPath, "rules_cpp_zh_CN.xml").exists());
             }
         }
     }
@@ -169,6 +168,7 @@ class RulesDefinitionTest
     static Stream<Arguments> testDefine_Params() {
         Configuration config = mock(Configuration.class);
 
+        Locale.setDefault(Locale.CHINESE);
         return Stream.of(
             Arguments.of(new CpptestRulesDefinition(config)),
             Arguments.of(new JtestRulesDefinition(config)),
