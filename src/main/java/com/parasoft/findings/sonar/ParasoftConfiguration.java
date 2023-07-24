@@ -37,7 +37,6 @@ public class ParasoftConfiguration
                 .onQualifiers(Qualifiers.PROJECT)
                 .category(CoreProperties.CATEGORY_CODE_COVERAGE)
                 .subCategory(Messages.CoverageSubCategory)
-                .defaultValue("**/coverage.xml")
                 .multiValues(true)
                 .build()
         );
