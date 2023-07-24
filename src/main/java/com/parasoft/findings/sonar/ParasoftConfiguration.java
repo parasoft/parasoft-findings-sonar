@@ -31,12 +31,12 @@ public class ParasoftConfiguration
                 .build());
         }
         // Support Code Coverage
-        items.add(PropertyDefinition.builder(ParasoftConstants.COVERAGE_REPORT_DIR_KEY)
-                .name("Parasoft coverage report path")
-                .description("Path to parasoft coverage report.")
+        items.add(PropertyDefinition.builder("sonar.parasoft.coverage.reportPaths")
+                .name(Messages.CoverageReportPathName)
+                .description(Messages.CoverageReportPathDesc)
                 .onQualifiers(Qualifiers.PROJECT)
                 .category(CoreProperties.CATEGORY_CODE_COVERAGE)
-                .subCategory("Parasoft Code Coverage")
+                .subCategory(Messages.CoverageSubCategory)
                 .defaultValue("**/coverage.xml")
                 .multiValues(true)
                 .build()

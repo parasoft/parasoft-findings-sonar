@@ -33,6 +33,9 @@ public final class Messages
     public static String RuleNotFound;
     public static String UnknownRuleName;
     public static String UnsupportedFindingLanguage;
+    public static String CoverageReportPathName;
+    public static String CoverageReportPathDesc;
+    public static String CoverageSubCategory;
 
     static {
         // initialize resource bundle
