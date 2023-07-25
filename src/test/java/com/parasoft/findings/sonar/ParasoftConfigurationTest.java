@@ -44,7 +44,7 @@ public class ParasoftConfigurationTest
 
         def = result.get(3);
         assertEquals("codeCoverage / Parasoft Code Coverage\n"
-                + "Parasoft coverage report path\n"
+                + "Parasoft Coverage Report Files\n"
                 + "Path (absolute or relative) to parasoft coverage xml report files.\n"
                 + "sonar.parasoft.coverage.reportPaths\n"
                 + "Default: ", getDefinitionString(def));
