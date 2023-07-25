@@ -31,7 +31,7 @@ public class ParasoftConfiguration
                 .build());
         }
         // Support Code Coverage
-        items.add(PropertyDefinition.builder("sonar.parasoft.coverage.reportPaths")
+        items.add(PropertyDefinition.builder(ParasoftConstants.PARASOFT_COVERAGE_REPORT_PATHS_KEY)
                 .name(Messages.CoverageReportPathName)
                 .description(Messages.CoverageReportPathDesc)
                 .onQualifiers(Qualifiers.PROJECT)
