@@ -3,6 +3,7 @@ package com.parasoft.findings.sonar;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.sonar.api.CoreProperties;
 import org.sonar.api.config.PropertyDefinition;
 import org.sonar.api.resources.Qualifiers;
 
@@ -18,6 +19,7 @@ public class ParasoftConfiguration
     public static List<PropertyDefinition> getProperties()
     {
         List<PropertyDefinition> items = new ArrayList<>();
+        // Support Static Analysis
         for (var product : ParasoftProduct.values()) {
             items.add(PropertyDefinition.builder(product.reportPathKey)
                 .name(product.reportPathName)
@@ -28,6 +30,16 @@ public class ParasoftConfiguration
                 .multiValues(true)
                 .build());
         }
+        // Support Code Coverage
+        items.add(PropertyDefinition.builder("sonar.parasoft.coverage.reportPaths")
+                .name(Messages.CoverageReportPathName)
+                .description(Messages.CoverageReportPathDesc)
+                .onQualifiers(Qualifiers.PROJECT)
+                .category(CoreProperties.CATEGORY_CODE_COVERAGE)
+                .subCategory(Messages.CoverageSubCategory)
+                .multiValues(true)
+                .build()
+        );
         return items;
     }
 }

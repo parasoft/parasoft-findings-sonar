@@ -19,7 +19,7 @@ public class ParasoftConfigurationTest
     {
         var result = ParasoftConfiguration.getProperties();
 
-        assertEquals(3, result.size());
+        assertEquals(4, result.size());
 
         var def = result.get(0);
         assertEquals("External Analyzers / Java\n"
@@ -40,6 +40,13 @@ public class ParasoftConfigurationTest
                 + "Parasoft C/C++Test Report Files\n"
                 + "Path (absolute or relative) to C/C++Test xml report files.\n"
                 + "sonar.parasoft.cpptest.reportPaths\n"
+                + "Default: ", getDefinitionString(def));
+
+        def = result.get(3);
+        assertEquals("codeCoverage / Parasoft Code Coverage\n"
+                + "Parasoft Coverage Report Files\n"
+                + "Path (absolute or relative) to parasoft coverage xml report files.\n"
+                + "sonar.parasoft.coverage.reportPaths\n"
                 + "Default: ", getDefinitionString(def));
     }
 
