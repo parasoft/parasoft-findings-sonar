@@ -9,4 +9,6 @@ public interface ParasoftConstants
     String UNKNOWN_RULE_ID = "UNKNOWN";
     String CHINESE_FOLDER_NAME = "zh_CN";
     String JAPANESE_FOLDER_NAME = "ja";
+    String PARASOFT_COVERAGE_REPORT_PATHS_KEY = "sonar.parasoft.coverage.reportPaths";
+    String PARASOFT_COVERAGE_IMPORTER = "Parasoft Coverage Importer";
 }

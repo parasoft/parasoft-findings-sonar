@@ -1,5 +1,6 @@
 package com.parasoft.findings.sonar;
 
+import com.parasoft.findings.sonar.sensor.CoverageSensor;
 import com.parasoft.findings.sonar.sensor.CpptestFindingsSensor;
 import com.parasoft.findings.sonar.sensor.DottestFindingsSensor;
 import com.parasoft.findings.sonar.sensor.JtestFindingsSensor;
@@ -27,7 +28,8 @@ public class ParasoftFindingsPlugin
         context.addExtensions(
             JtestRulesDefinition.class, DottestRulesDefinition.class, CpptestRulesDefinition.class,
             JtestProfile.class,         DottestProfile.class,         CpptestProfile.class,
-            JtestFindingsSensor.class,  DottestFindingsSensor.class,  CpptestFindingsSensor.class
+            JtestFindingsSensor.class,  DottestFindingsSensor.class,  CpptestFindingsSensor.class,
+            CoverageSensor.class
         );
         // register properties
         context.addExtensions(ParasoftConfiguration.getProperties());
