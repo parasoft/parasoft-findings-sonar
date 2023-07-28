@@ -596,6 +596,11 @@
             <artifactId>com.parasoft.xtest.testcases.api</artifactId>
             <version>${xtest.version}</version>
         </dependency>
+        <dependency>
+            <groupId>net.sf.saxon</groupId>
+            <artifactId>Saxon-HE</artifactId>
+            <version>12.3</version>
+        </dependency>
     </dependencies>
 
 </project>
