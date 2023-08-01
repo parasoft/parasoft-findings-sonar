@@ -92,7 +92,7 @@ public class CoverageSensor implements ProjectSensor {
             transformer.transform(new StreamSource(report), out);
             return result;
         } catch (Exception e) {
-            Logger.getLogger().error(e.getMessage(), e);
+            Logger.getLogger().error(NLS.bind(Messages.FailedToTransformReport, report.getName()), e);
             return null;
         }
     }
