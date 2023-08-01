@@ -36,6 +36,9 @@ public final class Messages
     public static String CoverageReportPathName;
     public static String CoverageReportPathDesc;
     public static String CoverageSubCategory;
+    public static String UploadCodeCoverageData;
+    public static String InvalidReportFile;
+    public static String FailedToTransformReport;
 
     static {
         // initialize resource bundle
