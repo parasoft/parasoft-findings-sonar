@@ -42,8 +42,10 @@ public final class Messages
     public static String FailedToTransformReport;
     public static String FailedToLoadCoberturaReport;
     public static String FileNotFoundInProject;
-    public static String InvalidCoverageReport;
+    public static String NoValidCoverageReportsFound;
+    public static String InvalidCoberturaCoverageReport;
     public static String NotMatchedCoverageReportAndProject;
+    public static String NoValidCoberturaReport;
 
     static {
         // initialize resource bundle

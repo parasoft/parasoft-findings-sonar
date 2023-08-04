@@ -10,7 +10,8 @@ package com.parasoft.findings.sonar.sensor;
 import com.parasoft.findings.sonar.Logger;
 import com.parasoft.findings.sonar.Messages;
 import com.parasoft.findings.sonar.ParasoftConstants;
-import com.parasoft.findings.sonar.exception.NotMatchedCoverageReportAndProjectException;
+import com.parasoft.findings.sonar.exception.InvalidReportException;
+import com.parasoft.findings.sonar.exception.CoverageReportAndProjectNotMatchedException;
 import com.parasoft.xtest.common.nls.NLS;
 import net.sf.saxon.s9api.*;
 import org.dom4j.Document;
@@ -33,7 +34,12 @@ import java.util.Map;
 
 public class CoverageSensor implements ProjectSensor {
 
-    private FileSystem fs;
+    private final FileSystem fs;
+
+    private int coberturaReportNumber = 0;
+    private int invalidCoberturaReportNumber = 0;
+    private int sourceFileToSolveNumber = 0;
+    private int unsolvedSourceFileNumber = 0;
 
     public CoverageSensor(FileSystem fs) {
         this.fs = fs;
@@ -52,6 +58,12 @@ public class CoverageSensor implements ProjectSensor {
             for (File coberturaReport : coberturaReports) {
                 Logger.getLogger().info(NLS.bind(Messages.UploadCodeCoverageData, coberturaReport.getName()));
                 uploadFileCoverageData(coberturaReport, sensorContext);
+            }
+            if (allCoberturaReportsInvalid()) {
+                throw new InvalidReportException(Messages.NoValidCoberturaReport);
+            }
+            if (allSourceFilesNotFound()) {
+                throw new CoverageReportAndProjectNotMatchedException(Messages.NotMatchedCoverageReportAndProject);
             }
         }
     }
@@ -72,6 +84,10 @@ public class CoverageSensor implements ProjectSensor {
                     coberturaReports.add(resultFile);
                 }
             }
+        }
+        coberturaReportNumber = coberturaReports.size();
+        if (coberturaReportNumber == 0) {
+            throw new InvalidReportException(Messages.NoValidCoverageReportsFound);
         }
         return coberturaReports;
     }
@@ -105,18 +121,17 @@ public class CoverageSensor implements ProjectSensor {
     }
 
     public void uploadFileCoverageData(File report, SensorContext context) {
-        int fileToResolveNumber = 0;
-        int unresolvedFileNumber = 0;
+
         try {
             SAXReader reader = new SAXReader();
             Document document = reader.read(report);
 
             Element root = document.getRootElement();
             Element packagesElement = root.element("packages");
-
             List<Element> packageElements;
             if (packagesElement == null || (packageElements = packagesElement.elements("package")) == null || packageElements.isEmpty()) {
-                Logger.getLogger().error(NLS.bind(Messages.InvalidCoverageReport, report.getAbsolutePath()));
+                Logger.getLogger().error(NLS.bind(Messages.InvalidCoberturaCoverageReport, report.getAbsolutePath()));
+                invalidCoberturaReportNumber++;
                 return;
             }
 
@@ -128,11 +143,11 @@ public class CoverageSensor implements ProjectSensor {
                 }
                 for (Element classElement : classElements) {
                     String filename = classElement.attributeValue("filename");
-                    fileToResolveNumber++;
+                    sourceFileToSolveNumber++;
                     InputFile file = fs.inputFile(fs.predicates().hasRelativePath(filename));
                     if (file == null) {
                         Logger.getLogger().warn(NLS.bind(Messages.FileNotFoundInProject, filename));
-                        unresolvedFileNumber++;
+                        unsolvedSourceFileNumber++;
                         continue;
                     }
                     NewCoverage coverage = context.newCoverage().onFile(file);
@@ -155,8 +170,13 @@ public class CoverageSensor implements ProjectSensor {
         } catch (Exception e) {
             Logger.getLogger().error(NLS.bind(Messages.FailedToLoadCoberturaReport, report.getAbsolutePath()), e);
         }
-        if (fileToResolveNumber != 0 && fileToResolveNumber == unresolvedFileNumber) {
-            throw new NotMatchedCoverageReportAndProjectException(Messages.NotMatchedCoverageReportAndProject);
-        }
+    }
+
+    private boolean allSourceFilesNotFound() {
+        return unsolvedSourceFileNumber != 0 && (sourceFileToSolveNumber == unsolvedSourceFileNumber);
+    }
+
+    private boolean allCoberturaReportsInvalid() {
+        return invalidCoberturaReportNumber != 0 && (coberturaReportNumber == invalidCoberturaReportNumber);
     }
 }
