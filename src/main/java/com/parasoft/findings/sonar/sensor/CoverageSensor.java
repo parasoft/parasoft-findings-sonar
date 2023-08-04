@@ -10,7 +10,7 @@ package com.parasoft.findings.sonar.sensor;
 import com.parasoft.findings.sonar.Logger;
 import com.parasoft.findings.sonar.Messages;
 import com.parasoft.findings.sonar.ParasoftConstants;
-import com.parasoft.findings.sonar.exception.NotMatchedCoverageReportAndProjectException;
+import com.parasoft.findings.sonar.exception.InvalidReportException;
 import com.parasoft.xtest.common.nls.NLS;
 import net.sf.saxon.s9api.*;
 import org.dom4j.Document;
@@ -35,6 +35,16 @@ public class CoverageSensor implements ProjectSensor {
 
     private FileSystem fs;
 
+    private int validReportNumber = 0;
+
+    private int coberturaReportNumber = 0;
+
+    private int emptyCoberturaReportNumber = 0;
+
+    private int fileToResolveNumber = 0;
+
+    private int unresolvedFileNumber = 0;
+
     public CoverageSensor(FileSystem fs) {
         this.fs = fs;
     }
@@ -53,6 +63,12 @@ public class CoverageSensor implements ProjectSensor {
                 Logger.getLogger().info(NLS.bind(Messages.UploadCodeCoverageData, coberturaReport.getName()));
                 uploadFileCoverageData(coberturaReport, sensorContext);
             }
+            if (isAllCoberturaReportEmpty()) {
+                throw new InvalidReportException(Messages.AllCoberturaReportsAreEmpty);
+            }
+            if (isAllFileNotFound()) {
+                throw new NegativeArraySizeException(Messages.NotMatchedCoverageReportAndProject);
+            }
         }
     }
 
@@ -70,8 +86,12 @@ public class CoverageSensor implements ProjectSensor {
                 if (resultFile != null) {
                     Logger.getLogger().info(NLS.bind(Messages.TransformReportToCoberturaFormat, reportFile.getAbsolutePath(), resultFile.getAbsolutePath()));
                     coberturaReports.add(resultFile);
+                    validReportNumber++;
                 }
             }
+        }
+        if (validReportNumber == 0) {
+            throw new InvalidReportException(Messages.AllReportsInvalid);
         }
         return coberturaReports;
     }
@@ -105,18 +125,18 @@ public class CoverageSensor implements ProjectSensor {
     }
 
     public void uploadFileCoverageData(File report, SensorContext context) {
-        int fileToResolveNumber = 0;
-        int unresolvedFileNumber = 0;
+
         try {
             SAXReader reader = new SAXReader();
             Document document = reader.read(report);
 
             Element root = document.getRootElement();
             Element packagesElement = root.element("packages");
-
+            coberturaReportNumber++;
             List<Element> packageElements;
             if (packagesElement == null || (packageElements = packagesElement.elements("package")) == null || packageElements.isEmpty()) {
                 Logger.getLogger().error(NLS.bind(Messages.InvalidCoverageReport, report.getAbsolutePath()));
+                emptyCoberturaReportNumber++;
                 return;
             }
 
@@ -155,8 +175,13 @@ public class CoverageSensor implements ProjectSensor {
         } catch (Exception e) {
             Logger.getLogger().error(NLS.bind(Messages.FailedToLoadCoberturaReport, report.getAbsolutePath()), e);
         }
-        if (fileToResolveNumber != 0 && fileToResolveNumber == unresolvedFileNumber) {
-            throw new NotMatchedCoverageReportAndProjectException(Messages.NotMatchedCoverageReportAndProject);
-        }
+    }
+
+    public boolean isAllFileNotFound() {
+        return fileToResolveNumber != 0 && (fileToResolveNumber == unresolvedFileNumber);
+    }
+
+    public boolean isAllCoberturaReportEmpty() {
+        return coberturaReportNumber !=0 && (coberturaReportNumber == emptyCoberturaReportNumber);
     }
 }

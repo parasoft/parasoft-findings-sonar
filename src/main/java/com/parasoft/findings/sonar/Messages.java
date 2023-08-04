@@ -44,6 +44,8 @@ public final class Messages
     public static String FileNotFoundInProject;
     public static String InvalidCoverageReport;
     public static String NotMatchedCoverageReportAndProject;
+    public static String AllReportsInvalid;
+    public static String AllCoberturaReportsAreEmpty;
 
     static {
         // initialize resource bundle
