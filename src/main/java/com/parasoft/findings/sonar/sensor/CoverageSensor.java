@@ -36,10 +36,9 @@ public class CoverageSensor implements ProjectSensor {
 
     private final FileSystem fs;
 
-    private int coberturaReportNumber = 0;
-    private int invalidCoberturaReportNumber = 0;
-    private int sourceFileToSolveNumber = 0;
-    private int unsolvedSourceFileNumber = 0;
+    private int validCoberturaReportsCount = 0;
+
+    private int processedReportsCount = 0;
 
     public CoverageSensor(FileSystem fs) {
         this.fs = fs;
@@ -59,10 +58,10 @@ public class CoverageSensor implements ProjectSensor {
                 Logger.getLogger().info(NLS.bind(Messages.UploadCodeCoverageData, coberturaReport.getName()));
                 uploadFileCoverageData(coberturaReport, sensorContext);
             }
-            if (allCoberturaReportsInvalid()) {
+            if (validCoberturaReportsCount == 0) {
                 throw new InvalidReportException(Messages.NoValidCoberturaReport);
             }
-            if (allSourceFilesNotFound()) {
+            if (processedReportsCount == 0) {
                 throw new CoverageReportAndProjectNotMatchedException(Messages.NotMatchedCoverageReportAndProject);
             }
         }
@@ -75,7 +74,6 @@ public class CoverageSensor implements ProjectSensor {
             File reportFile = new File(fs.baseDir(), reportPath);
             if (!reportFile.isFile() || !reportFile.exists() || !reportFile.canRead()) {
                 Logger.getLogger().warn(NLS.bind(Messages.InvalidReportFile, reportFile.getAbsolutePath()));
-                continue;
             } else {
                 Logger.getLogger().info(NLS.bind(Messages.ParsingReportFile, reportFile.getName()));
                 File resultFile = transformToCoberturaFormat(reportFile);
@@ -85,8 +83,7 @@ public class CoverageSensor implements ProjectSensor {
                 }
             }
         }
-        coberturaReportNumber = coberturaReports.size();
-        if (coberturaReportNumber == 0) {
+        if (coberturaReports.size() == 0) {
             throw new InvalidReportException(Messages.NoValidCoverageReportsFound);
         }
         return coberturaReports;
@@ -131,9 +128,9 @@ public class CoverageSensor implements ProjectSensor {
             List<Element> packageElements;
             if (packagesElement == null || (packageElements = packagesElement.elements("package")) == null || packageElements.isEmpty()) {
                 Logger.getLogger().error(NLS.bind(Messages.InvalidCoberturaCoverageReport, report.getAbsolutePath()));
-                invalidCoberturaReportNumber++;
                 return;
             }
+            validCoberturaReportsCount++;
 
             for (Element packageElement : packageElements) {
                 Element classesElement = packageElement.element("classes");
@@ -143,11 +140,9 @@ public class CoverageSensor implements ProjectSensor {
                 }
                 for (Element classElement : classElements) {
                     String filename = classElement.attributeValue("filename");
-                    sourceFileToSolveNumber++;
                     InputFile file = fs.inputFile(fs.predicates().hasRelativePath(filename));
                     if (file == null) {
                         Logger.getLogger().warn(NLS.bind(Messages.FileNotFoundInProject, filename));
-                        unsolvedSourceFileNumber++;
                         continue;
                     }
                     NewCoverage coverage = context.newCoverage().onFile(file);
@@ -165,6 +160,7 @@ public class CoverageSensor implements ProjectSensor {
                         coverage.lineHits(lineNumber, hits);
                     }
                     coverage.save();
+                    processedReportsCount++;
                 }
             }
         } catch (Exception e) {
@@ -172,11 +168,4 @@ public class CoverageSensor implements ProjectSensor {
         }
     }
 
-    private boolean allSourceFilesNotFound() {
-        return unsolvedSourceFileNumber != 0 && (sourceFileToSolveNumber == unsolvedSourceFileNumber);
-    }
-
-    private boolean allCoberturaReportsInvalid() {
-        return invalidCoberturaReportNumber != 0 && (coberturaReportNumber == invalidCoberturaReportNumber);
-    }
 }
