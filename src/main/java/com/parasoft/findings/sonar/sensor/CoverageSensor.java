@@ -10,12 +10,18 @@ package com.parasoft.findings.sonar.sensor;
 import com.parasoft.findings.sonar.Logger;
 import com.parasoft.findings.sonar.Messages;
 import com.parasoft.findings.sonar.ParasoftConstants;
+import com.parasoft.findings.sonar.exception.InvalidReportException;
+import com.parasoft.findings.sonar.exception.CoverageReportAndProjectNotMatchedException;
 import com.parasoft.xtest.common.nls.NLS;
 import net.sf.saxon.s9api.*;
+import org.dom4j.Document;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
 import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
+import org.sonar.api.batch.sensor.coverage.NewCoverage;
 import org.sonar.api.scanner.sensor.ProjectSensor;
 
 import javax.xml.transform.Source;
@@ -28,7 +34,11 @@ import java.util.Map;
 
 public class CoverageSensor implements ProjectSensor {
 
-    private FileSystem fs;
+    private final FileSystem fs;
+
+    private int validCoberturaReportsCount = 0;
+
+    private int processedReportsCount = 0;
 
     public CoverageSensor(FileSystem fs) {
         this.fs = fs;
@@ -46,6 +56,13 @@ public class CoverageSensor implements ProjectSensor {
             List<File> coberturaReports = transformToCoberturaReports(reportPaths);
             for (File coberturaReport : coberturaReports) {
                 Logger.getLogger().info(NLS.bind(Messages.UploadCodeCoverageData, coberturaReport.getName()));
+                uploadFileCoverageData(coberturaReport, sensorContext);
+            }
+            if (validCoberturaReportsCount == 0) {
+                throw new InvalidReportException(Messages.NoValidCoberturaReport);
+            }
+            if (processedReportsCount == 0) {
+                throw new CoverageReportAndProjectNotMatchedException(Messages.NotMatchedCoverageReportAndProject);
             }
         }
     }
@@ -57,14 +74,17 @@ public class CoverageSensor implements ProjectSensor {
             File reportFile = new File(fs.baseDir(), reportPath);
             if (!reportFile.isFile() || !reportFile.exists() || !reportFile.canRead()) {
                 Logger.getLogger().warn(NLS.bind(Messages.InvalidReportFile, reportFile.getAbsolutePath()));
-                continue;
             } else {
                 Logger.getLogger().info(NLS.bind(Messages.ParsingReportFile, reportFile.getName()));
                 File resultFile = transformToCoberturaFormat(reportFile);
                 if (resultFile != null) {
+                    Logger.getLogger().info(NLS.bind(Messages.TransformReportToCoberturaFormat, reportFile.getAbsolutePath(), resultFile.getAbsolutePath()));
                     coberturaReports.add(resultFile);
                 }
             }
+        }
+        if (coberturaReports.size() == 0) {
+            throw new InvalidReportException(Messages.NoValidCoverageReportsFound);
         }
         return coberturaReports;
     }
@@ -92,8 +112,60 @@ public class CoverageSensor implements ProjectSensor {
             transformer.transform(new StreamSource(report), out);
             return result;
         } catch (Exception e) {
-            Logger.getLogger().error(NLS.bind(Messages.FailedToTransformReport, report.getName()), e);
+            Logger.getLogger().error(NLS.bind(Messages.FailedToTransformReport, report.getAbsolutePath()), e);
             return null;
         }
     }
+
+    public void uploadFileCoverageData(File report, SensorContext context) {
+
+        try {
+            SAXReader reader = new SAXReader();
+            Document document = reader.read(report);
+
+            Element root = document.getRootElement();
+            Element packagesElement = root.element("packages");
+            List<Element> packageElements;
+            if (packagesElement == null || (packageElements = packagesElement.elements("package")) == null || packageElements.isEmpty()) {
+                Logger.getLogger().error(NLS.bind(Messages.InvalidCoberturaCoverageReport, report.getAbsolutePath()));
+                return;
+            }
+            validCoberturaReportsCount++;
+
+            for (Element packageElement : packageElements) {
+                Element classesElement = packageElement.element("classes");
+                List<Element> classElements;
+                if (classesElement == null || (classElements = classesElement.elements("class")) == null || classElements.isEmpty()) {
+                    continue;
+                }
+                for (Element classElement : classElements) {
+                    String filename = classElement.attributeValue("filename");
+                    InputFile file = fs.inputFile(fs.predicates().hasRelativePath(filename));
+                    if (file == null) {
+                        Logger.getLogger().warn(NLS.bind(Messages.FileNotFoundInProject, filename));
+                        continue;
+                    }
+                    NewCoverage coverage = context.newCoverage().onFile(file);
+
+                    Element linesElement = classElement.element("lines");
+                    List<Element> lineElements;
+                    if (linesElement == null || (lineElements = linesElement.elements("line")) == null || lineElements.isEmpty()) {
+                        coverage.save();
+                        continue;
+                    }
+
+                    for (Element line : lineElements) {
+                        int lineNumber = Integer.parseInt(line.attributeValue("number"));
+                        int hits = Integer.parseInt(line.attributeValue("hits"));
+                        coverage.lineHits(lineNumber, hits);
+                    }
+                    coverage.save();
+                    processedReportsCount++;
+                }
+            }
+        } catch (Exception e) {
+            Logger.getLogger().error(NLS.bind(Messages.FailedToLoadCoberturaReport, report.getAbsolutePath()), e);
+        }
+    }
+
 }
