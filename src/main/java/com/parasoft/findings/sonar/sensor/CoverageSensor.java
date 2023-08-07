@@ -71,7 +71,10 @@ public class CoverageSensor implements ProjectSensor {
         List<File> coberturaReports = new ArrayList<>();
 
         for (String reportPath : reportPaths) {
-            File reportFile = new File(fs.baseDir(), reportPath);
+            File reportFile = new File(reportPath);
+            if (!reportFile.isAbsolute()) {
+                reportFile = new File(fs.baseDir(), reportPath);
+            }
             if (!reportFile.isFile() || !reportFile.exists() || !reportFile.canRead()) {
                 Logger.getLogger().warn(NLS.bind(Messages.InvalidReportFile, reportFile.getAbsolutePath()));
             } else {
