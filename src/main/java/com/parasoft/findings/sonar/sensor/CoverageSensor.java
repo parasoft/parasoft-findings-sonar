@@ -52,7 +52,7 @@ public class CoverageSensor implements ProjectSensor {
     @Override
     public void execute(SensorContext sensorContext) {
         String[] reportPaths = sensorContext.config().getStringArray(ParasoftConstants.PARASOFT_COVERAGE_REPORT_PATHS_KEY);
-        if (reportPaths != null) {
+        if (reportPaths != null && reportPaths.length > 0) {
             List<File> coberturaReports = transformToCoberturaReports(reportPaths);
             for (File coberturaReport : coberturaReports) {
                 Logger.getLogger().info(NLS.bind(Messages.UploadCodeCoverageData, coberturaReport.getName()));
