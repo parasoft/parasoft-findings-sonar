@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage line-rate="0.622335271317829457"
+          lines-covered="6"
+          lines-valid="7"
+          version="gcovr 6.0">
+    <packages>
+        <package name="com.parasoft.bookstore2" line-rate="0.441379310344827586">
+            <classes>
+                <class filename="src/main/java/com/parasoft/bookstore2/DB.java"
+                       name="com.parasoft.bookstore2.DB"
+                       line-rate="0.636363636363636364">
+                    <lines/>
+                </class>
+                <class filename="src/main/java/com/parasoft/bookstore2/TempBook.java"
+                       name="com.parasoft.bookstore2.TempBook"
+                       line-rate="0">
+                    <lines/>
+                </class>
+            </classes>
+        </package>
+    </packages>
+</coverage>
