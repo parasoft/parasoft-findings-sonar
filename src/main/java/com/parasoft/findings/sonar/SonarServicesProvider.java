@@ -22,6 +22,7 @@ import com.parasoft.xtest.common.dtp.DtpServiceRegistryFactory;
 import com.parasoft.xtest.common.dtp.IDtpPreferences;
 import com.parasoft.xtest.common.dtp.IDtpServiceRegistry;
 import com.parasoft.xtest.common.io.FileInfoServiceFactory;
+import com.parasoft.xtest.common.locations.ILocationAttributes;
 import com.parasoft.xtest.common.parallel.ParallelExecutor;
 import com.parasoft.xtest.common.preferences.ConfigurationPreferencesFactory;
 import com.parasoft.xtest.common.preferences.IConfigurationPreferences;
@@ -79,6 +80,7 @@ public final class SonarServicesProvider
 
         ParasoftLogger.setCurrentFactory(new SonarLoggerHandlerFactory());
 
+        Properties properties;
         registerService(IViolationImporterService.Factory.class, new ViolationImporterServiceFactory());
         registerService(IApplication.class, new OSGiApplication());
         registerService(IParallelRunner.class, new ParallelExecutor(null));
@@ -89,6 +91,9 @@ public final class SonarServicesProvider
         registerService(IViolationXmlStorage.class, new MetricsViolationStorage());
         registerService(IResultPostProcessorService.class, new SourceControlProcessor());
         registerService(IResultPostProcessorService.class, new ResultLocationProcessor());
+        properties = new Properties();
+        properties.setProperty(IResultPostProcessorService.POST_PROCESSOR_ID_PROPERTY, ILocationAttributes.POST_PROCESSOR_ID);
+        registerService(IResultPostProcessorService.class, new ResultLocationProcessor(), properties);
         registerService(IResultFactory.class, new DefaultSetupProblemsResultFactory());
         registerService(IResultFactory.class, new DefaultScopeResultFactory());
         registerService(IResultPostProcessorService.class, new SuppressionsProcessor());
@@ -98,7 +103,7 @@ public final class SonarServicesProvider
         registerService(IResultsInitManager.class, new ResultsInitManager());
         registerService(IPreferencesService.class, new DtpAutoconfPreferencesService());
         registerService(IFileInfoService.Factory.class, new FileInfoServiceFactory());
-        Properties properties = new Properties();
+        properties = new Properties();
         properties.setProperty(PreferencesServiceUtil.PREFERENCES_ID_PROPERTY, IDtpPreferences.PREFERENCES_ID);
         registerService(IPreferences.Factory.class, new DtpPreferencesFactory(), properties);
         properties = new Properties();
