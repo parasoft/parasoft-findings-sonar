@@ -80,7 +80,7 @@ public class ParasoftFindingsParser
             IImportedData importedData = getImporter().performImport(file);
             while (importedData.hasNext()) {
                 IViolation result = importedData.next();
-                IRuleViolation violation = null;
+                IRuleViolation violation;
                 if (result instanceof IRuleViolation) {
                     violation = (IRuleViolation)result;
                 } else {
