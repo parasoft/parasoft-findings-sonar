@@ -69,7 +69,10 @@ public abstract class AbstractParasoftFindingsSensor
     private void loadFindings(String reportPath, ParasoftFindingsParser findingsParser, SensorContext context)
     {
         var fs = context.fileSystem();
-        var reportFile = new File(fs.baseDir(), reportPath);
+        File reportFile = new File(reportPath);
+        if (!reportFile.isAbsolute()) {
+            reportFile = new File(fs.baseDir(), reportPath);
+        }
 
         if (!reportFile.exists()) {
             Logger.getLogger().warn(NLS.bind(Messages.NoReportFile, reportFile.getAbsolutePath()));
