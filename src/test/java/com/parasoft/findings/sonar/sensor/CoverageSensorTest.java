@@ -47,7 +47,7 @@ public class CoverageSensorTest {
                 File file = new File(path + "-cobertura.xml");
                 if (file.exists()) {
                     if (!file.delete()) {
-                        System.out.printf("Unable to delete remaining file: " + path);
+                        fail("Unable to delete remaining file: " + path);
                     }
                 }
             }
