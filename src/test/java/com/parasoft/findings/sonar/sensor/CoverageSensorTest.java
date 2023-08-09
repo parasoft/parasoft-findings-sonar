@@ -42,12 +42,12 @@ public class CoverageSensorTest {
 
     @AfterEach
     private void cleanUp() {
-        if(paths != null) {
+        if (paths != null) {
             for (String path : paths) {
                 File file = new File(path + "-cobertura.xml");
                 if (file.exists()) {
                     if (!file.delete()) {
-                        System.out.printf("Deleted temp files failed");
+                        System.out.printf("Unable to delete remaining file: " + path);
                     }
                 }
             }
