@@ -174,8 +174,8 @@ public class CoverageSensor implements ProjectSensor {
     public String getCoberturaReportFilePath(File reportFile) {
         String fileName = reportFile.getName();
         String filePath = reportFile.getAbsolutePath();
-        int lastIndex = fileName.lastIndexOf(".");
-
-        return (lastIndex == -1) ? filePath.replace(fileName, fileName + "-cobertura.xml") : filePath.replace(fileName, fileName.substring(0, lastIndex) + "-cobertura.xml");
+        int dotIndex = fileName.lastIndexOf(".");
+        String fileNameWithoutExt = dotIndex > -1 ? fileName.substring(0, dotIndex) : fileName;
+        return filePath.replace(fileName, fileNameWithoutExt + "-cobertura.xml");
     }
 }
