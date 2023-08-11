@@ -44,7 +44,7 @@ public class CoverageSensorTest {
     private void cleanUp() {
         if (paths != null) {
             for (String path : paths) {
-                File file = new File(path + "-cobertura.xml");
+                File file = new File(path.substring(0, path.lastIndexOf(".")) + "-cobertura.xml");
                 if (file.exists()) {
                     if (!file.delete()) {
                         fail("Unable to delete remaining file: " + path);
@@ -109,7 +109,7 @@ public class CoverageSensorTest {
         CoverageSensor underTest = new CoverageSensor(fileSystem);
         underTest.execute(sensorContext);
 
-        assertTrue(new File(paths[0] + "-cobertura.xml").exists());
+        assertTrue(new File("src/test/java/coverageReport/normalCoverageReport-cobertura.xml").exists());
         verify(newCoverage, atLeastOnce()).lineHits(anyInt(), anyInt());
         verify(newCoverage, atLeastOnce()).save();
     }
@@ -130,7 +130,7 @@ public class CoverageSensorTest {
         CoverageSensor underTest = new CoverageSensor(fileSystem);
         underTest.execute(sensorContext);
 
-        assertTrue(new File(paths[0] + "-cobertura.xml").exists());
+        assertTrue(new File("src/test/java/coverageReport/normalCoverageReport-cobertura.xml").exists());
         verify(newCoverage, atLeastOnce()).lineHits(anyInt(), anyInt());
         verify(newCoverage, atLeastOnce()).save();
     }
@@ -147,7 +147,7 @@ public class CoverageSensorTest {
         });
 
         assertEquals(Messages.NotMatchedCoverageReportAndProject, exception.getMessage());
-        assertTrue(new File(paths[0] + "-cobertura.xml").exists());
+        assertTrue(new File("src/test/java/coverageReport/normalCoverageReport-cobertura.xml").exists());
         verify(newCoverage, times(0)).lineHits(anyInt(), anyInt());
         verify(newCoverage, times(0)).save();
     }
@@ -201,5 +201,27 @@ public class CoverageSensorTest {
         verify(sensorContext, atLeastOnce()).newCoverage();
         verify(newCoverage, atLeastOnce()).save();
         verify(newCoverage, times(0)).lineHits(anyInt(), anyInt());
+    }
+
+    @Test
+    public void testGetCoberturaReportFilePath_withExtensionName() {
+        File file = new File("test.xml");
+        setUp();
+
+        CoverageSensor underTest = new CoverageSensor(fileSystem);
+        String result = underTest.getCoberturaReportFilePath(file);
+
+        assertTrue(result.contains("test-cobertura.xml"));
+    }
+
+    @Test
+    public void testGetCoberturaReportFilePath_withoutExtensionName() {
+        File file = new File("test");
+        setUp();
+
+        CoverageSensor underTest = new CoverageSensor(fileSystem);
+        String result = underTest.getCoberturaReportFilePath(file);
+
+        assertTrue(result.contains("test-cobertura.xml"));
     }
 }

@@ -94,7 +94,7 @@ public class CoverageSensor implements ProjectSensor {
 
     public File transformToCoberturaFormat(File report) {
         try {
-            File result = new File(report.getAbsolutePath() + "-cobertura.xml");
+            File result = new File(getCoberturaReportFilePath(report));
 
             Source xsltFile = new StreamSource(getClass().getResourceAsStream("/com/parasoft/findings/sonar/res/xsl/cobertura.xsl"));
             Processor processor = new Processor(false);
@@ -171,4 +171,15 @@ public class CoverageSensor implements ProjectSensor {
         }
     }
 
+    public String getCoberturaReportFilePath(File reportFile) {
+        String fileName = reportFile.getName();
+        String filePath = reportFile.getAbsolutePath();
+
+        if (fileName.contains(".")) {
+            int lastIndex = fileName.lastIndexOf(".");
+            return filePath.replace(fileName, fileName.substring(0, lastIndex) + "-cobertura.xml");
+        } else {
+            return filePath.replace(fileName, fileName + "-cobertura.xml");
+        }
+    }
 }
