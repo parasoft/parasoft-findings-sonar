@@ -24,28 +24,28 @@ public class ParasoftConfigurationTest
         var def = result.get(0);
         assertEquals("External Analyzers / Java\n"
                 + "Parasoft Jtest Report Files\n"
-                + "Path (absolute or relative) to Jtest xml report files.\n"
+                + "Path (absolute or relative) to Jtest XML report files.\n"
                 + "sonar.parasoft.jtest.reportPaths\n"
                 + "Default: ", getDefinitionString(def));
 
         def = result.get(1);
         assertEquals("External Analyzers / C#\n"
                 + "Parasoft dotTest Report Files\n"
-                + "Path (absolute or relative) to dotTest xml report files.\n"
+                + "Path (absolute or relative) to dotTest XML report files.\n"
                 + "sonar.parasoft.dottest.reportPaths\n"
                 + "Default: ", getDefinitionString(def));
 
         def = result.get(2);
         assertEquals("External Analyzers / C++\n"
                 + "Parasoft C/C++Test Report Files\n"
-                + "Path (absolute or relative) to C/C++Test xml report files.\n"
+                + "Path (absolute or relative) to C/C++Test XML report files.\n"
                 + "sonar.parasoft.cpptest.reportPaths\n"
                 + "Default: ", getDefinitionString(def));
 
         def = result.get(3);
         assertEquals("codeCoverage / Parasoft Code Coverage\n"
                 + "Parasoft Coverage Report Files\n"
-                + "Path (absolute or relative) to parasoft coverage xml report files.\n"
+                + "Path (absolute or relative) to Parasoft coverage XML report files.\n"
                 + "sonar.parasoft.coverage.reportPaths\n"
                 + "Default: ", getDefinitionString(def));
     }
