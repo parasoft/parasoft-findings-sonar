@@ -90,7 +90,7 @@ public class ParasoftFindingsParserTest {
 
         // When
         InputFile javaFile = mock(InputFile.class);
-        when(javaFile.filename()).thenReturn("report.xml");
+        when(javaFile.toString()).thenReturn("report.xml");
         ParasoftProduct product = ParasoftProduct.JTEST; // UTA: default value
         SensorContext context = mock(SensorContext.class);
         ActiveRules activeRulesResult = mock(ActiveRules.class);
@@ -150,7 +150,7 @@ public class ParasoftFindingsParserTest {
         InputFile javaFile = mock(InputFile.class);
         TextRange selectLineResult = mock(TextRange.class);
         when(javaFile.selectLine(anyInt())).thenReturn(selectLineResult);
-        when(javaFile.filename()).thenReturn("report.xml");
+        when(javaFile.toString()).thenReturn("report.xml");
         ParasoftProduct product = ParasoftProduct.JTEST; // UTA: default value
         SensorContext context = mock(SensorContext.class);
         NewIssue newIssueResult = mock(NewIssue.class);

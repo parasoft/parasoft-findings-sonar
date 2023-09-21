@@ -35,7 +35,6 @@ import org.sonar.api.batch.sensor.issue.NewIssueLocation;
 import org.sonar.api.rule.RuleKey;
 
 import com.parasoft.xtest.common.ISeverityConsts;
-import com.parasoft.xtest.common.api.ITestableInput;
 import com.parasoft.xtest.common.collections.UCollection;
 import com.parasoft.xtest.common.io.IOUtils;
 import com.parasoft.xtest.common.nls.NLS;
@@ -44,7 +43,6 @@ import com.parasoft.findings.sonar.Messages;
 import com.parasoft.findings.sonar.ParasoftConstants;
 import com.parasoft.findings.sonar.ParasoftProduct;
 import com.parasoft.findings.sonar.SonarServicesProvider;
-import com.parasoft.xtest.results.api.IResultLocation;
 import com.parasoft.xtest.results.api.IRuleViolation;
 import com.parasoft.xtest.results.api.IViolation;
 import com.parasoft.xtest.results.api.importer.IImportedData;
@@ -87,9 +85,7 @@ public class ParasoftFindingsParser
                     Logger.getLogger().error("Result is not instance of IRuleViolation"); //$NON-NLS-1$
                     continue;
                 }
-                IResultLocation location = violation.getResultLocation();
-                ITestableInput testableInput = location != null ? location.getTestableInput() : null;
-                String inputName = testableInput != null ? testableInput.getName() : null;
+                String inputName = violation.getAttribute("resProjPath");
                 if (inputName == null) {
                     continue;
                 }
@@ -119,7 +115,7 @@ public class ParasoftFindingsParser
     public int createNewIssues(InputFile javaFile, ParasoftProduct product, SensorContext context)
     {
         ActiveRules activeRules = context.activeRules();
-        String fileName = javaFile.filename();
+        String fileName = javaFile.toString();
         var findings = getFindings(fileName);
         if (UCollection.isEmpty(findings)) {
             Logger.getLogger().info(NLS.bind(Messages.NoFindingsFor, fileName));
