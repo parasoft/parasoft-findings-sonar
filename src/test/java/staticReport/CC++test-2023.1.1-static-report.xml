@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ResultsSession buildId="${env_var:bamboo_shortPlanBranchName}-${env_var:bamboo_buildResultKey}-2023-09-14" climode="true" endTime="2023-09-14T16:16:49+02:00" execEnv="linux_x86_64" hasViols="true" id="1692990295527" lang="en_US" machine="lnxclnt2653" prjModule="parasoft-96505-repro" project="" tag="${scontrol_branch}-linux_x86_64" time="2023-09-14T16:16:46+02:00" toolDispName="C/C++test" toolId="c++test" toolName="DTP Engine for C/C++" toolVer="2023.1.1" user="henlaa">
+   <TestConfig machine="lnxclnt2653" name="MISRA C 2023 (MISRA C 2012)" pseudoUrl="builtin://MISRA C 2023 (MISRA C 2012)" user="henlaa" />
+   <Authors>
+      <Author id="dev1" name="henlaa" />
+   </Authors>
+   <Analyzers>
+      <Analyzer id="com.parasoft.xtest.scope.analyzer" name="Scope Analyzer" ver="10.6.2.20230530" />
+      <Analyzer id="com.parasoft.xtest.cpp.analyzer.static.code" name="Parasoft C/C++ Code Analyzer" ver="10.6.2.20230620B2072" />
+      <Analyzer id="com.parasoft.xtest.cpp.analyzer.static.pattern" name="Parasoft C/C++ Static Analyzer" ver="10.6.2.20230620B2072" />
+      <Analyzer id="com.parasoft.xtest.cpp.analyzer.static.flow" name="Parasoft C/C++ Flow Analyzer" ver="10.6.2.20230510B4190" />
+      <Analyzer id="com.parasoft.xtest.cpp.analyzer.static.global" name="Parasoft C/C++ Global Static Analyzer" ver="10.6.2.20230620B2072" />
+   </Analyzers>
+   <VersionInfos>
+      <StorageInfo ownerId="" resultId="ISetupResult" ver="1" ver10x="1" />
+      <StorageInfo ownerId="com.parasoft.xtest.checkers.api.standards" resultId="IMetricsViolation" ver="2" ver10x="1" />
+      <StorageInfo ownerId="" resultId="IExecutionViolation" ver="1" ver10x="1" />
+      <StorageInfo ownerId="com.parasoft.xtest.checkers.api.standards" resultId="IDupCodeViolation" ver="2" ver10x="1" />
+      <StorageInfo ownerId="com.parasoft.xtest.checkers.api.standards" resultId="IFlowAnalysisViolation" ver="2" ver10x="1" />
+      <StorageInfo ownerId="" resultId="IFunctionalViolation" ver="1" ver10x="1" />
+      <StorageInfo ownerId="" resultId="IChangeImpactViolation" ver="1" ver10x="1" />
+      <StorageInfo ownerId="com.parasoft.xtest.checkers.api.standards" resultId="ICodingStandardsViolation" ver="2" ver10x="1" />
+      <StorageInfo ownerId="" resultId="IUnitTestViolation" ver="1" ver10x="1" />
+   </VersionInfos>
+   <Goals tsks="6">
+
+   </Goals>
+   <Scope>
+      <Repositories />
+      <Locations>
+         <Loc auth="henlaa" hash="-1471552250" locRef="1" projId="parasoft-96505-repro" projPath="/parasoft-96505-repro" project="parasoft-96505-repro" resProjPath="app/main.c" totLns="4" uri="file://CD-RWANG/D:/henlaa/src/sc3/parasoft-96505-repro/app/main.c" />
+         <Loc auth="henlaa" hash="-1120479048" locRef="2" projId="parasoft-96505-repro" projPath="/parasoft-96505-repro" project="parasoft-96505-repro" resProjPath="bootloader/main.c" totLns="9" uri="file://CD-RWANG/D:/henlaa/src/sc3/parasoft-96505-repro/bootloader/main.c" />
+      </Locations>
+   </Scope>
+
+  <SetupProblems>
+    <Problem msg="Source Control problems:" sev="1" totErrs="1" type="SourceControl">
+      <ErrorList>
+        <Error val="None of supported source controls is enabled in settings. The report will not contain any source control references." />
+      </ErrorList>
+    </Problem>
+  </SetupProblems>
+
+   <CodingStandards ownerId="com.parasoft.xtest.checkers.api.standards" time="0:00:02">
+      <Projects>
+         <Project bdCheckedFiles="0" bdTotalFiles="0" checkedFiles="2" checkedLns="13" id="parasoft-96505-repro" name="parasoft-96505-repro" qfixErrs="0" suppErrs="0" totErrs="6" totFiles="2" totLns="13" />
+      </Projects>
+
+      <Rules>
+         <CategoriesList>
+            <Category authTot="0;" authUrg="0;" desc="MISRA C 2023 (MISRA C 2012)" name="MISRAC2012" rules="382" total="0">
+               <Category authTot="2;" authUrg="2;" desc="Rule 8.6 (Required) An identifier with external linkage shall have exactly one external definition" name="MISRAC2012-RULE_8_6" rules="1" total="2" />
+               <Category authTot="2;" authUrg="2;" desc="Rule 17.4 (Mandatory) All exit paths from a function with non-void return type shall have an explicit return statement with an expression" name="MISRAC2012-RULE_17_4" rules="2" total="2" />
+               <Category authTot="2;" authUrg="2;" desc="Rule 5.8 (Required) Identifiers that define objects or functions with external linkage shall be unique" name="MISRAC2012-RULE_5_8" rules="2" total="2" />
+            </Category>
+         </CategoriesList>
+         <RulesList>
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" authTot="2;" authUrg="2;" cat="MISRAC2012-RULE_17_4" desc="All exit paths from a function with non-void return type shall have an explicit return statement with an expression" id="MISRAC2012-RULE_17_4-a" origId="MISRA2004-16_8" sev="1" total="2" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.global" authTot="2;" authUrg="2;" cat="MISRAC2012-RULE_5_8" desc="Identifiers that define functions with external linkage shall be unique" id="MISRAC2012-RULE_5_8-b" origId="GLOBAL-REUSEDEXTFUN" sev="2" total="2" />
+            <Rule analyzer="com.parasoft.xtest.cpp.analyzer.static.global" authTot="2;" authUrg="2;" cat="MISRAC2012-RULE_8_6" desc="An identifier with external linkage shall have exactly one external definition" id="MISRAC2012-RULE_8_6-a" origId="GLOBAL-ONEEXTERNDEF" sev="2" total="2" />
+         </RulesList>
+         <SeverityList>
+            <Severity authTot="2;" authUrg="2;" id="1" total="2" />
+            <Severity authTot="4;" authUrg="4;" id="2" total="4" />
+         </SeverityList>
+      </Rules>
+
+  <Supps />
+
+
+  <StdViols>
+    <StdViol msg="Function 'main' should have return at the end of each execution path" ln="1" locFile="/parasoft-96505-repro/app/main.c" locStartln="1" sev="1" auth="henlaa" locRef="1" rule="MISRAC2012-RULE_17_4-a" lnHash="197825975" rule.header="All exit paths from a function with non-void return type shall have an explicit return statement with an expression" tool="c++test" lineHash="197825975" unbViolId="9a9fa4f3-31ef-3d4e-ade7-c2e4dfefdde7" locStartPos="4" analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" lang="cpp" violId="3fb0ef4d-d5cb-3fb2-bb5d-edd9e2f545aa" locEndPos="5" locType="sr" urgent="true" hash="-1471552250" locEndLn="1" goals="1," />
+    <StdViol msg="The 'main' function is also defined in other translation units" ln="1" locFile="/parasoft-96505-repro/app/main.c" locStartln="1" sev="2" auth="henlaa" locRef="1" rule="MISRAC2012-RULE_8_6-a" lnHash="197825975" rule.header="An identifier with external linkage shall have exactly one external definition" tool="c++test" lineHash="197825975" unbViolId="d31e0220-810e-3aca-910e-f576c94ec465" locStartPos="4" analyzer="com.parasoft.xtest.cpp.analyzer.static.global" lang="cpp" violId="a4ab4066-fd25-3cda-be63-9251796bb238" locEndPos="5" locType="sr" urgent="true" hash="-1471552250" locEndLn="1" goals="1," />
+    <StdViol msg="The 'main' function with external linkage is not a unique identifier in the testing scope" ln="1" locFile="/parasoft-96505-repro/app/main.c" locStartln="1" sev="2" auth="henlaa" locRef="1" rule="MISRAC2012-RULE_5_8-b" lnHash="197825975" rule.header="Identifiers that define functions with external linkage shall be unique" tool="c++test" lineHash="197825975" unbViolId="ab4ee6ea-faa8-37a6-bd7d-3d01351a0150" locStartPos="4" analyzer="com.parasoft.xtest.cpp.analyzer.static.global" lang="cpp" violId="f9e4ce58-aaba-3911-82e0-281bc4334fdd" locEndPos="5" locType="sr" urgent="true" hash="-1471552250" locEndLn="1" goals="1," />
+    <StdViol msg="Function 'main' should have return at the end of each execution path" ln="6" locFile="/parasoft-96505-repro/bootloader/main.c" locStartln="6" sev="1" auth="henlaa" locRef="2" rule="MISRAC2012-RULE_17_4-a" lnHash="197825975" rule.header="All exit paths from a function with non-void return type shall have an explicit return statement with an expression" tool="c++test" lineHash="197825975" unbViolId="04966a04-91bd-39ee-bb4a-8262d1df0da9" locStartPos="4" analyzer="com.parasoft.xtest.cpp.analyzer.static.pattern" lang="cpp" violId="4cd8098b-491e-306d-9d5b-2ce0b632c1ff" locEndPos="5" locType="sr" urgent="true" hash="-1120479048" locEndLn="6" goals="1," />
+    <StdViol msg="The 'main' function is also defined in other translation units" ln="6" locFile="/parasoft-96505-repro/bootloader/main.c" locStartln="6" sev="2" auth="henlaa" locRef="2" rule="MISRAC2012-RULE_8_6-a" lnHash="197825975" rule.header="An identifier with external linkage shall have exactly one external definition" tool="c++test" lineHash="197825975" unbViolId="c2ef5855-684b-36e2-8766-e7d3e23458df" locStartPos="4" analyzer="com.parasoft.xtest.cpp.analyzer.static.global" lang="cpp" violId="6333d7cf-74ed-3f39-996f-240eac6b86ba" locEndPos="5" locType="sr" urgent="true" hash="-1120479048" locEndLn="6" goals="1," />
+    <StdViol msg="The 'main' function with external linkage is not a unique identifier in the testing scope" ln="6" locFile="/parasoft-96505-repro/bootloader/main.c" locStartln="6" sev="2" auth="henlaa" locRef="2" rule="MISRAC2012-RULE_5_8-b" lnHash="197825975" rule.header="Identifiers that define functions with external linkage shall be unique" tool="c++test" lineHash="197825975" unbViolId="d82af3af-1c8e-33bd-a298-acb75e7aeccf" locStartPos="4" analyzer="com.parasoft.xtest.cpp.analyzer.static.global" lang="cpp" violId="25cf1371-1ac7-3c8a-8024-07f1bdc3df14" locEndPos="5" locType="sr" urgent="true" hash="-1120479048" locEndLn="6" goals="1," />
+  </StdViols>
+
+      <TestedFilesDetails>
+         <Total name="Total (Suppressed)" supp="0" total="6">
+            <Project id="parasoft-96505-repro" name="parasoft-96505-repro" supp="0" total="6">
+               <Res name="app" supp="0" total="3">
+                  <Res loc="/parasoft-96505-repro/app/main.c" locRef="1" locType="sr" name="main.c" supp="0" total="3" />
+               </Res>
+               <Res name="bootloader" supp="0" total="3">
+                  <Res loc="/parasoft-96505-repro/bootloader/main.c" locRef="2" locType="sr" name="main.c" supp="0" total="3" />
+               </Res>
+            </Project>
+         </Total>
+      </TestedFilesDetails>
+   </CodingStandards>
+   <Statistics>
+
+   </Statistics>
+</ResultsSession>

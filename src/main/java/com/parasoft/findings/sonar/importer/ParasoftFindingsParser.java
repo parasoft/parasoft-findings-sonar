@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import com.parasoft.xtest.common.api.IFileTestableInput;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.rule.ActiveRules;
 import org.sonar.api.batch.rule.Severity;
@@ -89,15 +90,22 @@ public class ParasoftFindingsParser
                 }
                 IResultLocation location = violation.getResultLocation();
                 ITestableInput testableInput = location != null ? location.getTestableInput() : null;
-                String inputName = testableInput != null ? testableInput.getName() : null;
-                if (inputName == null) {
+                String inputPath = null;
+                if (testableInput != null) {
+                    if (testableInput instanceof IFileTestableInput) {
+                        inputPath = ((IFileTestableInput) testableInput).getFileLocation().toURI().getPath();
+                    } else {
+                        Logger.getLogger().error("Input is not instance of IFileTestableInput but " + testableInput.getClass().getSimpleName()); //$NON-NLS-1$
+                    }
+                }
+                if (inputPath == null) {
                     continue;
                 }
-                var violations = _violations.get(inputName);
+                var violations = _violations.get(inputPath);
                 if (violations == null) {
                     violations = new HashSet<>();
-                    _violations.put(inputName, violations);
-                    Logger.getLogger().info("Collected location with finding(s): " + inputName); //$NON-NLS-1$
+                    _violations.put(inputPath, violations);
+                    Logger.getLogger().info("Collected location with finding(s): " + inputPath); //$NON-NLS-1$
                 }
                 violations.add(violation);
                 loadedFindings++;
@@ -111,18 +119,18 @@ public class ParasoftFindingsParser
         return loadedFindings;
     }
 
-    public Set<IRuleViolation> getFindings(String name)
+    public Set<IRuleViolation> getFindings(String inputFilePath)
     {
-        return _violations.get(name);
+        return _violations.get(inputFilePath);
     }
 
-    public int createNewIssues(InputFile javaFile, ParasoftProduct product, SensorContext context)
+    public int createNewIssues(InputFile sourceFile, ParasoftProduct product, SensorContext context)
     {
         ActiveRules activeRules = context.activeRules();
-        String fileName = javaFile.filename();
-        var findings = getFindings(fileName);
+        String inputFilePath = sourceFile.uri().getPath();
+        var findings = getFindings(inputFilePath);
         if (UCollection.isEmpty(findings)) {
-            Logger.getLogger().info(NLS.bind(Messages.NoFindingsFor, fileName));
+            Logger.getLogger().info(NLS.bind(Messages.NoFindingsFor, sourceFile.toString()));
             return 0;
         }
         int findingsCount = 0;
@@ -152,8 +160,8 @@ public class ParasoftFindingsParser
             }
             if (ruleKey != null) {
                 NewIssue newIssue = context.newIssue().forRule(ruleKey);
-                NewIssueLocation primaryLocation = newIssue.newLocation().on(javaFile)
-                    .at(javaFile.selectLine(finding.getResultLocation().getSourceRange().getStartLine())).message(finding.getMessage());
+                NewIssueLocation primaryLocation = newIssue.newLocation().on(sourceFile)
+                    .at(sourceFile.selectLine(finding.getResultLocation().getSourceRange().getStartLine())).message(finding.getMessage());
                 newIssue.at(primaryLocation);
                 if (severity != null) {
                     newIssue = newIssue.overrideSeverity(severity);

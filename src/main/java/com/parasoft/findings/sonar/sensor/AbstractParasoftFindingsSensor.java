@@ -91,7 +91,7 @@ public abstract class AbstractParasoftFindingsSensor
         for (var file : files) {
             var count = findingsParser.createNewIssues(file, _product, context);
             if (count > 0) {
-                Logger.getLogger().info(NLS.bind(Messages.CreatedIssues, count, file.filename()));
+                Logger.getLogger().info(NLS.bind(Messages.CreatedIssues, count, file.toString()));
             }
         }
     }
