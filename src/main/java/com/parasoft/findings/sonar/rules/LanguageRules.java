@@ -10,6 +10,7 @@ package com.parasoft.findings.sonar.rules;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import com.parasoft.xtest.configuration.api.rules.IRuleDescription;
@@ -50,5 +51,13 @@ public class LanguageRules {
     public int hashCode()
     {
         return language.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(!(obj instanceof LanguageRules)){
+            return false;
+        }
+        return Objects.equals(((LanguageRules) obj).language, language);
     }
 }

@@ -138,7 +138,7 @@ public abstract class AbstractRulesDefinition
         }
     }
 
-    private boolean extractBuiltinRulesIntoTempDirIfNotExist()
+    private synchronized boolean extractBuiltinRulesIntoTempDirIfNotExist()
     {
         if(_tempPath == null) {
             try {
