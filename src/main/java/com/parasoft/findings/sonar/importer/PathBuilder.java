@@ -26,26 +26,17 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import com.parasoft.findings.sonar.Logger;
+import com.parasoft.findings.utils.common.IStringConstants;
+import com.parasoft.findings.utils.common.util.CollectionUtil;
+import com.parasoft.findings.utils.results.testableinput.IFileTestableInput;
+import com.parasoft.findings.utils.results.violations.*;
+import com.parasoft.findings.utils.results.testableinput.ITestableInput;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.issue.NewIssue;
 import org.sonar.api.batch.sensor.issue.NewIssueLocation;
 
-import com.parasoft.xtest.common.IStringConstants;
-import com.parasoft.xtest.common.api.IFileTestableInput;
-import com.parasoft.xtest.common.api.ISourceRange;
-import com.parasoft.xtest.common.api.ITestableInput;
-import com.parasoft.xtest.common.collections.UCollection;
-import com.parasoft.xtest.common.text.UString;
-import com.parasoft.xtest.results.api.IDupCodeViolation;
-import com.parasoft.xtest.results.api.IFlowAnalysisPathElement;
-import com.parasoft.xtest.results.api.IFlowAnalysisViolation;
-import com.parasoft.xtest.results.api.IPathElement;
-import com.parasoft.xtest.results.api.IPathElementAnnotation;
-import com.parasoft.xtest.results.api.IResultLocation;
-import com.parasoft.xtest.results.api.IRuleViolation;
-
-/** 
+/**
  * Creates complete path information for a violation
  */
 public class PathBuilder
@@ -64,8 +55,8 @@ public class PathBuilder
         IPathElement[] elements = new IPathElement[0];
         if (violation instanceof IFlowAnalysisViolation) {
             elements = ((IFlowAnalysisViolation)violation).getPathElements();
-        } else if (violation instanceof IDupCodeViolation) {
-            elements = ((IDupCodeViolation)violation).getPathElements();
+        } else if (violation instanceof DupCodeViolation) {
+            elements = ((DupCodeViolation)violation).getPathElements();
         }
 
         if ((elements == null) || (elements.length == 0)) {
@@ -80,7 +71,7 @@ public class PathBuilder
 
         if (violation instanceof IFlowAnalysisViolation) {
             _issue.addFlow(paths);
-        } else if (violation instanceof IDupCodeViolation) {
+        } else if (violation instanceof DupCodeViolation) {
             for (var path : paths) {
                 _issue.addLocation(path);
             }
@@ -105,7 +96,7 @@ public class PathBuilder
 
     private NewIssueLocation createElement(IPathElement descriptor, boolean useAnnotations)
     {
-        IResultLocation location = descriptor.getLocation();
+        ResultLocation location = descriptor.getLocation();
         if (location == null) {
             return null;
         }
@@ -117,12 +108,12 @@ public class PathBuilder
         if (message.isEmpty()) {
             return null;
         }
-        ISourceRange sr = location.getSourceRange();
+        SourceRange sr = location.getSourceRange();
         return _issue.newLocation().on(inputFile)
             .at(inputFile.newRange(sr.getStartLine(), sr.getStartLineOffset(), sr.getEndLine(), sr.getEndLineOffset())).message(message);
     }
 
-    private static InputFile findInputFile(IResultLocation location, SensorContext context)
+    private static InputFile findInputFile(ResultLocation location, SensorContext context)
     {
         ITestableInput testableInput = location.getTestableInput();
         if (!(testableInput instanceof IFileTestableInput)) {
@@ -149,7 +140,8 @@ public class PathBuilder
         if (element == null) {
             return IStringConstants.EMPTY;
         } else if (!(element instanceof IFlowAnalysisPathElement)) {
-            return UString.getNotNull(element.getDescription());
+            String description = element.getDescription();
+            return description == null ? "" : description;
         }
 
         IFlowAnalysisPathElement descriptor = (IFlowAnalysisPathElement)element;
@@ -168,7 +160,7 @@ public class PathBuilder
         return sb.toString();
     }
 
-    private String getSourceText(ISourceRange range, InputFile file)
+    private String getSourceText(SourceRange range, InputFile file)
     {
         try {
             String contents = file.contents();
@@ -183,9 +175,9 @@ public class PathBuilder
         return null;
     }
 
-    private static void addNormalMessages(StringBuilder sb, List<IPathElementAnnotation> annotations)
+    private static void addNormalMessages(StringBuilder sb, List<PathElementAnnotation> annotations)
     {
-        for (IPathElementAnnotation annotation : annotations) {
+        for (PathElementAnnotation annotation : annotations) {
             addMessage(sb, annotation.getMessage());
         }
     }
@@ -203,7 +195,7 @@ public class PathBuilder
             return;
         }
 
-        List<IPathElementAnnotation> annotations = new ArrayList<>(descriptor.getAnnotations());
+        List<PathElementAnnotation> annotations = new ArrayList<>(descriptor.getAnnotations());
         if (annotations.isEmpty()) {
             addNodeMessage(sb, descriptor);
             sb.append(" ");
@@ -215,23 +207,23 @@ public class PathBuilder
 
     private void addNodeMessage(StringBuilder sb, IFlowAnalysisPathElement descriptor)
     {
-        IResultLocation location = descriptor.getLocation();
+        ResultLocation location = descriptor.getLocation();
         if (location == null) {
             return;
         }
         InputFile inputFile = findInputFile(location, _context);
-        ISourceRange sr = location.getSourceRange();
+        SourceRange sr = location.getSourceRange();
         String message = inputFile != null && sr != null ? getSourceText(sr, inputFile).trim() : null;
         if (message != null) {
             addMessage(sb, message);
         }
     }
 
-    private static void addImportantMessages(StringBuilder sb, List<IPathElementAnnotation> annotations, boolean bFullDescription,
+    private static void addImportantMessages(StringBuilder sb, List<PathElementAnnotation> annotations, boolean bFullDescription,
         String descriptorIdentifier)
     {
-        for (Iterator<IPathElementAnnotation> it = annotations.iterator(); it.hasNext();) {
-            IPathElementAnnotation annotation = it.next();
+        for (Iterator<PathElementAnnotation> it = annotations.iterator(); it.hasNext();) {
+            PathElementAnnotation annotation = it.next();
             String kind = annotation.getKind();
             if (kind == null) {
                 it.remove();
@@ -254,7 +246,7 @@ public class PathBuilder
     {
         for (var descriptor : descriptors) {
             if (descriptor instanceof IFlowAnalysisPathElement
-                    && UCollection.isNonEmpty(((IFlowAnalysisPathElement)descriptor).getAnnotations())) {
+                    && CollectionUtil.isNonEmpty(((IFlowAnalysisPathElement)descriptor).getAnnotations())) {
                 return true;
             }
         }

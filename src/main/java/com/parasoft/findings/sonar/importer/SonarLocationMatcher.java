@@ -16,14 +16,11 @@
 
 package com.parasoft.findings.sonar.importer;
 
-import com.parasoft.xtest.common.PathUtil;
-import com.parasoft.xtest.common.api.*;
-import com.parasoft.xtest.common.locations.ILocationXmlTags;
-import com.parasoft.xtest.common.locations.LocationUtil;
-import com.parasoft.xtest.common.locations.LocationsException;
-import com.parasoft.xtest.common.path.PathInput;
-import com.parasoft.xtest.common.text.UString;
-import com.parasoft.xtest.results.xapi.xml.DefaultLocationMatcher;
+import com.parasoft.findings.utils.common.util.StringUtil;
+import com.parasoft.findings.utils.results.testableinput.*;
+import com.parasoft.findings.utils.results.violations.LocationsException;
+import com.parasoft.findings.utils.results.xml.IXmlTagsAndAttributes;
+import com.parasoft.findings.utils.common.util.PathUtil;
 
 import java.io.File;
 import java.util.*;
@@ -41,13 +38,13 @@ public class SonarLocationMatcher
             return null;
         }
         // detect legacy mode
-        String sPath = storedLocation.getProperty(ILocationXmlTags.LOC_ATTR);
+        String sPath = storedLocation.getProperty(IXmlTagsAndAttributes.LOC_ATTR);
         if (sPath == null) {
             return super.matchLocation(storedLocation, bAcceptModified);
         }
-        String sFSPath = storedLocation.getProperty(ILocationXmlTags.FS_PATH);
-        String sProjectPath = storedLocation.getProperty(ILocationXmlTags.PROJECT_PATH_ATTR);
-        String sProject = storedLocation.getProperty(ILocationXmlTags.PROJECT_ATTR);
+        String sFSPath = storedLocation.getProperty(IXmlTagsAndAttributes.FS_PATH);
+        String sProjectPath = storedLocation.getProperty(IXmlTagsAndAttributes.PROJECT_PATH_ATTR);
+        String sProject = storedLocation.getProperty(IXmlTagsAndAttributes.PROJECT_ATTR);
         return new PathInput(sPath, sFSPath, sProject, sProjectPath);
     }
 
@@ -82,9 +79,9 @@ public class SonarLocationMatcher
         if (fileLocation.exists()) {
             return fileLocation.getAbsolutePath();
         }
-        if (input instanceof IProjectFileTestableInput) {
-            String sFilePath = ((IProjectFileTestableInput)input).getProjectPath() + IProjectTestableInput.PATH_SEPARATOR
-                    + ((IProjectFileTestableInput)input).getProjectRelativePath();
+        if (input instanceof ProjectFileTestableInput) {
+            String sFilePath = ((ProjectFileTestableInput)input).getProjectPath() + IProjectTestableInput.PATH_SEPARATOR
+                    + ((ProjectFileTestableInput)input).getProjectRelativePath();
             if (sFilePath.startsWith(IProjectTestableInput.PATH_SEPARATOR)) {
                 sFilePath = sFilePath.substring(1);
             }
@@ -123,7 +120,7 @@ public class SonarLocationMatcher
         if (sResPrjRelativePath == null) {
             return new FileTestableInput(inputFile);
         }
-        return new LocationUtil.ProjectFileTestableInput(inputFile, sProjectName, sProjectName, sProjectPath, sResPrjRelativePath);
+        return new ProjectFileTestableInput(inputFile, sProjectName, sProjectName, sProjectPath, sResPrjRelativePath);
     }
 
     private static String concatProjectPathSegments(String[] aSegments, int startIdx)
@@ -140,10 +137,10 @@ public class SonarLocationMatcher
 
     private static File getFile(String sFSPath, String sPath)
     {
-        if (UString.isNonEmptyTrimmed(sFSPath)) {
+        if (StringUtil.isNonEmptyTrimmed(sFSPath)) {
             return new File(sFSPath);
         }
-        if (UString.isNonEmptyTrimmed(sPath)) {
+        if (StringUtil.isNonEmptyTrimmed(sPath)) {
             return new File(sPath);
         }
         return null;
