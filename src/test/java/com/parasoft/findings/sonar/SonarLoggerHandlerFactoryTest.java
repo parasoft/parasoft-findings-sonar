@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ScopedMock;
 import org.sonar.api.utils.log.Loggers;
 
-import com.parasoft.xtest.logging.api.ParasoftLevel;
+import com.parasoft.findings.utils.common.logging.Level;
 
 class SonarLoggerHandlerFactoryTest
 {
@@ -43,51 +43,51 @@ class SonarLoggerHandlerFactoryTest
         var factory = new SonarLoggerHandlerFactory();
         var handler = factory.getHandler();
         
-        handler.log(getClass().getName(), ParasoftLevel.DEBUG, "My Message 1", null);
+        handler.log(getClass().getName(), Level.DEBUG, "My Message 1", null);
         verify(mockLogger).debug("My Message 1");
         clearInvocations(mockLogger);
 
-        handler.log(getClass().getName(), ParasoftLevel.DEBUG, "My Message 2", new Exception());
+        handler.log(getClass().getName(), Level.DEBUG, "My Message 2", new Exception());
         verify(mockLogger).debug(eq("My Message 2"), any(Throwable.class));
         clearInvocations(mockLogger);
 
-        handler.log(getClass().getName(), ParasoftLevel.ERROR, "My Message 3", null);
+        handler.log(getClass().getName(), Level.ERROR, "My Message 3", null);
         verify(mockLogger).error(eq("My Message 3"));
         clearInvocations(mockLogger);
         
-        handler.log(getClass().getName(), ParasoftLevel.ERROR, "My Message 4", new Exception());
+        handler.log(getClass().getName(), Level.ERROR, "My Message 4", new Exception());
         verify(mockLogger).error(eq("My Message 4"), any(Throwable.class));
         clearInvocations(mockLogger);
         
-        handler.log(getClass().getName(), ParasoftLevel.FATAL, "My Message 5", null);
+        handler.log(getClass().getName(), Level.FATAL, "My Message 5", null);
         verify(mockLogger).error(eq("My Message 5"));
         clearInvocations(mockLogger);
         
-        handler.log(getClass().getName(), ParasoftLevel.FATAL, "My Message 6", new Exception());
+        handler.log(getClass().getName(), Level.FATAL, "My Message 6", new Exception());
         verify(mockLogger).error(eq("My Message 6"), any(Throwable.class));
         clearInvocations(mockLogger);
         
-        handler.log(getClass().getName(), ParasoftLevel.INFO, "My Message 7", null);
+        handler.log(getClass().getName(), Level.INFO, "My Message 7", null);
         verify(mockLogger).info(eq("My Message 7"));
         clearInvocations(mockLogger);
         
-        handler.log(getClass().getName(), ParasoftLevel.INFO, "My Message 8", new Exception());
+        handler.log(getClass().getName(), Level.INFO, "My Message 8", new Exception());
         verify(mockLogger).info(eq("My Message 8"));
         clearInvocations(mockLogger);
         
-        handler.log(getClass().getName(), ParasoftLevel.TRACE, "My Message 9", null);
+        handler.log(getClass().getName(), Level.TRACE, "My Message 9", null);
         verify(mockLogger).trace(eq("My Message 9"));
         clearInvocations(mockLogger);
         
-        handler.log(getClass().getName(), ParasoftLevel.TRACE, "My Message 10", new Exception());
+        handler.log(getClass().getName(), Level.TRACE, "My Message 10", new Exception());
         verify(mockLogger).trace(eq("My Message 10"));
         clearInvocations(mockLogger);
         
-        handler.log(getClass().getName(), ParasoftLevel.WARN, () -> "My Message 11", null);
+        handler.log(getClass().getName(), Level.WARN, () -> "My Message 11", null);
         verify(mockLogger).warn(eq("My Message 11"));
         clearInvocations(mockLogger);
         
-        handler.log(getClass().getName(), ParasoftLevel.WARN, () -> "My Message 12", new Exception());
+        handler.log(getClass().getName(), Level.WARN, () -> "My Message 12", new Exception());
         verify(mockLogger).warn(eq("My Message 12"), any(Throwable.class));
         clearInvocations(mockLogger);
     }

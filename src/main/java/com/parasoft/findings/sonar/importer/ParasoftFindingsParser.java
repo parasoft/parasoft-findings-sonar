@@ -185,10 +185,9 @@ public class ParasoftFindingsParser
                 return Severity.CRITICAL;
             case ISeverityConsts.SEVERITY_MEDIUM:
                 return Severity.MAJOR;
-            case ISeverityConsts.SEVERITY_LOW:
-                return Severity.MINOR;
             case ISeverityConsts.SEVERITY_LOWEST:
                 return Severity.INFO;
+            case ISeverityConsts.SEVERITY_LOW:
             default:
                 return Severity.MINOR;
         }

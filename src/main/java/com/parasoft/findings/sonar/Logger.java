@@ -8,17 +8,17 @@
 
 package com.parasoft.findings.sonar;
 
-import com.parasoft.xtest.logging.api.ParasoftLogger;
+import com.parasoft.findings.utils.common.logging.FindingsLogger;
 
 public final class Logger
 {
-    private final static ParasoftLogger _LOGGER = ParasoftLogger.getLogger(Logger.class);
+    private final static FindingsLogger _LOGGER = FindingsLogger.getLogger(Logger.class);
 
     private Logger()
     {
     }
 
-    public static ParasoftLogger getLogger()
+    public static FindingsLogger getLogger()
     {
         return _LOGGER;
     }
