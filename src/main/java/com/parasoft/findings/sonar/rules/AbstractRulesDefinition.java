@@ -12,6 +12,13 @@ import java.security.CodeSource;
 import java.util.*;
 
 import com.parasoft.findings.sonar.SonarServicesProvider;
+import com.parasoft.findings.utils.common.ISeverityConsts;
+import com.parasoft.findings.utils.common.IStringConstants;
+import com.parasoft.findings.utils.common.nls.NLS;
+import com.parasoft.findings.utils.common.util.FileUtil;
+import com.parasoft.findings.utils.common.util.StringUtil;
+import com.parasoft.findings.utils.rules.RuleDescription;
+import com.parasoft.findings.utils.rules.RuleDescriptionImporter;
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import org.sonar.api.config.Configuration;
@@ -20,14 +27,6 @@ import org.sonar.api.rule.Severity;
 import org.sonar.api.rules.RuleType;
 import org.sonar.api.server.rule.RulesDefinition;
 
-import com.parasoft.xtest.common.ISeverityConsts;
-import com.parasoft.xtest.common.IStringConstants;
-import com.parasoft.xtest.common.io.FileUtil;
-import com.parasoft.xtest.common.nls.NLS;
-import com.parasoft.xtest.common.text.UString;
-import com.parasoft.xtest.configuration.api.rules.IRuleDescription;
-import com.parasoft.xtest.configuration.internal.rules.RuleDescriptionProvider;
-import com.parasoft.xtest.configuration.rules.RuleDescriptionParser;
 import com.parasoft.findings.sonar.Logger;
 import com.parasoft.findings.sonar.Messages;
 import com.parasoft.findings.sonar.ParasoftConstants;
@@ -88,7 +87,7 @@ public abstract class AbstractRulesDefinition
         return _rulesMap.get(productProfileName);
     }
 
-    abstract String getLanguageFor(IRuleDescription rule, String fileName);
+    abstract String getLanguageFor(RuleDescription rule, String fileName);
 
     @Override
     public void define(Context context)
@@ -113,11 +112,8 @@ public abstract class AbstractRulesDefinition
                     }
                     try {
                         Logger.getLogger().info("Loading rules from " + rulesFile.getName()); //$NON-NLS-1$
-                        var url = rulesFile.toURI().toURL();
-                        var provider = new RuleDescriptionProvider(_product.ruleProvider, _product.analyzerId, url);
-                        var parser = new RuleDescriptionParser(provider);
-                        parser.parseFile(url);
-                        addRules(rulesFile.getName(), parser.getRules());
+                        var importer = new RuleDescriptionImporter();
+                        addRules(rulesFile.getName(), importer.performImport(rulesFile));
                     } catch (Exception e) {
                         Logger.getLogger().error("Error reading rules file " + rulesFile.getName(), e); //$NON-NLS-1$
                         continue;
@@ -227,9 +223,9 @@ public abstract class AbstractRulesDefinition
         return dirs;
     }
 
-    protected void addRules(String fileName, List<IRuleDescription> rulesList)
+    protected void addRules(String fileName, List<RuleDescription> rulesList)
     {
-        for (IRuleDescription rule : rulesList) {
+        for (RuleDescription rule : rulesList) {
             String lang = getLanguageFor(rule, fileName);
             boolean added = false;
             for (LanguageRules lr : _rulesMap.get(_product.profileName)) {
@@ -250,7 +246,7 @@ public abstract class AbstractRulesDefinition
 
     protected void addRulesToRepository(LanguageRules rules, NewRepository repository)
     {
-        for (IRuleDescription ruleDescription : rules.getRules()) {
+        for (RuleDescription ruleDescription : rules.getRules()) {
             var tag = ruleDescription.getCategoryId().toLowerCase().replace('_', '-');
             var name = getValidRuleName(ruleDescription);
             var ruleKey = RuleKey.of(rules.repositoryId, ruleDescription.getRuleId());
@@ -270,7 +266,7 @@ public abstract class AbstractRulesDefinition
     }
 
     @SuppressWarnings("nls")
-    private void addOwasp(NewRule newRule, IRuleDescription ruleDescription)
+    private void addOwasp(NewRule newRule, RuleDescription ruleDescription)
     {
         String[] ruleIdParts = ruleDescription.getRuleId().split("[\\.\\-]");
         if (ruleIdParts.length < 2 || !ruleIdParts[0].toUpperCase().startsWith("OWASP")) {
@@ -317,7 +313,7 @@ public abstract class AbstractRulesDefinition
     }
 
     @SuppressWarnings("nls")
-    private void addCwe(NewRule newRule, IRuleDescription ruleDescription)
+    private void addCwe(NewRule newRule, RuleDescription ruleDescription)
     {
         String[] ruleIdParts = ruleDescription.getRuleId().split("[\\.\\-]");
         if (ruleIdParts.length < 2 || !ruleIdParts[0].equals("CWE")) {
@@ -342,7 +338,7 @@ public abstract class AbstractRulesDefinition
             .setTags(ParasoftConstants.PARASOFT_REPOSITORY_TAG);
     }
 
-    private String getValidRuleName(IRuleDescription rule)
+    private String getValidRuleName(RuleDescription rule)
     {
         var name = "[" + rule.getCategoryId() + "] " + rule.getHeader();
         if (name.length() > 197) {
@@ -366,7 +362,7 @@ public abstract class AbstractRulesDefinition
 
     private String getRuleDescription(String root, String ruleId)
     {
-        if (UString.isNonEmptyTrimmed(root)) {
+        if (StringUtil.isNonEmptyTrimmed(root)) {
             var localizedRuleDocsPath = "".equals(localizedRuleFolder) ? "" : "/" + localizedRuleFolder;
             var docRoot = new File(root, _product.docPath + localizedRuleDocsPath);
             var docFile = guessRuleFile(docRoot, ruleId);
