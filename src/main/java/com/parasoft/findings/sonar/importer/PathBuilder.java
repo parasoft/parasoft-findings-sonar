@@ -141,7 +141,7 @@ public class PathBuilder
         if (element == null) {
             return IStringConstants.EMPTY;
         } else if (!(element instanceof IFlowAnalysisPathElement)) {
-            return StringUtil.getNotNull(element.getDescription());
+            return StringUtil.getNonEmpty(element.getDescription());
         }
 
         IFlowAnalysisPathElement descriptor = (IFlowAnalysisPathElement)element;
