@@ -27,6 +27,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import com.parasoft.findings.utils.common.nls.NLS;
+import com.parasoft.findings.utils.common.util.CollectionUtil;
 import com.parasoft.findings.utils.common.util.IOUtils;
 import com.parasoft.findings.utils.results.testableinput.IFileTestableInput;
 import com.parasoft.findings.utils.results.testableinput.ITestableInput;
@@ -124,7 +125,7 @@ public class ParasoftFindingsParser
         ActiveRules activeRules = context.activeRules();
         String inputFilePath = sourceFile.uri().getPath();
         var findings = getFindings(inputFilePath);
-        if (findings== null || findings.isEmpty()) {
+        if (CollectionUtil.isEmpty(findings)) {
             Logger.getLogger().info(NLS.getFormatted(Messages.NoFindingsFor, sourceFile.toString()));
             return 0;
         }

@@ -28,6 +28,7 @@ import java.util.stream.StreamSupport;
 import com.parasoft.findings.sonar.Logger;
 import com.parasoft.findings.utils.common.IStringConstants;
 import com.parasoft.findings.utils.common.util.CollectionUtil;
+import com.parasoft.findings.utils.common.util.StringUtil;
 import com.parasoft.findings.utils.results.testableinput.IFileTestableInput;
 import com.parasoft.findings.utils.results.violations.*;
 import com.parasoft.findings.utils.results.testableinput.ITestableInput;
@@ -140,8 +141,7 @@ public class PathBuilder
         if (element == null) {
             return IStringConstants.EMPTY;
         } else if (!(element instanceof IFlowAnalysisPathElement)) {
-            String description = element.getDescription();
-            return description == null ? "" : description;
+            return StringUtil.getNotNull(element.getDescription());
         }
 
         IFlowAnalysisPathElement descriptor = (IFlowAnalysisPathElement)element;
