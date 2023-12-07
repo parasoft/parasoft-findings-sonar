@@ -14,11 +14,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.parasoft.findings.utils.results.testableinput.ITestableInput;
+import com.parasoft.findings.utils.results.violations.IRuleViolation;
+import com.parasoft.findings.utils.results.violations.ResultLocation;
 import org.junit.jupiter.api.Test;
-
-import com.parasoft.xtest.common.api.ITestableInput;
-import com.parasoft.xtest.results.api.IResultLocation;
-import com.parasoft.xtest.results.api.IRuleViolation;
 
 /**
  * Parasoft Jtest UTA: Test class for ParasoftProduct
@@ -44,7 +43,7 @@ public class ParasoftProductTest {
         IRuleViolation finding = mock(IRuleViolation.class);
         String getLanguageIdResult = "java"; // UTA: provided value
         when(finding.getLanguageId()).thenReturn(getLanguageIdResult);
-        IResultLocation getResultLocationResult = mock(IResultLocation.class);
+        ResultLocation getResultLocationResult = mock(ResultLocation.class);
         ITestableInput getTestableInputResult = mock(ITestableInput.class);
         String getNameResult = "getNameResult.java"; // UTA: default value
         when(getTestableInputResult.getName()).thenReturn(getNameResult);
@@ -72,7 +71,7 @@ public class ParasoftProductTest {
         String getLanguageIdResult = "dotnet"; // UTA: provided value
         when(finding.getLanguageId()).thenReturn(getLanguageIdResult);
 
-        IResultLocation getResultLocationResult = mock(IResultLocation.class);
+        ResultLocation getResultLocationResult = mock(ResultLocation.class);
         ITestableInput getTestableInputResult = mock(ITestableInput.class);
         String getNameResult = "foo.vb"; // UTA: provided value
         when(getTestableInputResult.getName()).thenReturn(getNameResult);
@@ -100,7 +99,7 @@ public class ParasoftProductTest {
         String getLanguageIdResult = "dotnet"; // UTA: provided value
         when(finding.getLanguageId()).thenReturn(getLanguageIdResult);
 
-        IResultLocation getResultLocationResult = mock(IResultLocation.class);
+        ResultLocation getResultLocationResult = mock(ResultLocation.class);
         ITestableInput getTestableInputResult = mock(ITestableInput.class);
         String getNameResult = "foo.cs"; // UTA: provided value
         when(getTestableInputResult.getName()).thenReturn(getNameResult);
@@ -126,7 +125,7 @@ public class ParasoftProductTest {
         // When
         IRuleViolation finding = mock(IRuleViolation.class);
 
-        IResultLocation getResultLocationResult = mock(IResultLocation.class);
+        ResultLocation getResultLocationResult = mock(ResultLocation.class);
         ITestableInput getTestableInputResult = mock(ITestableInput.class);
         String getNameResult = "foo"; // UTA: provided value
         when(getTestableInputResult.getName()).thenReturn(getNameResult);
