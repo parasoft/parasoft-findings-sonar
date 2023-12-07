@@ -28,10 +28,12 @@ import com.parasoft.xtest.common.text.UString;
 import com.parasoft.xtest.configuration.api.rules.IRuleDescription;
 import com.parasoft.xtest.configuration.internal.rules.RuleDescriptionProvider;
 import com.parasoft.xtest.configuration.rules.RuleDescriptionParser;
+import com.parasoft.findings.utils.common.logging.FindingsLogger;
 import com.parasoft.findings.sonar.Logger;
 import com.parasoft.findings.sonar.Messages;
 import com.parasoft.findings.sonar.ParasoftConstants;
 import com.parasoft.findings.sonar.ParasoftProduct;
+import com.parasoft.findings.sonar.SonarLoggerHandlerFactory;
 import com.parasoft.findings.sonar.importer.ParasoftFindingsParser;
 
 public abstract class AbstractRulesDefinition
@@ -68,6 +70,7 @@ public abstract class AbstractRulesDefinition
         _profile = profile;
         _product = profile._product;
         SonarServicesProvider.getInstance();
+        FindingsLogger.setCurrentFactory(new SonarLoggerHandlerFactory());
 
         _rulesMap.put(_product.profileName, _product.getLanguageRules());
 

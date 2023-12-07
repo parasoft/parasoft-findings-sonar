@@ -78,7 +78,7 @@ public final class SonarServicesProvider
     {
         System.setProperty(ServiceDiagnosticCollector.DIAGNOSTICS_OFF_PROPERTY, Boolean.TRUE.toString());
 
-        FindingsLogger.setCurrentFactory(new SonarLoggerHandlerFactory());
+//        FindingsLogger.setCurrentFactory(new SonarLoggerHandlerFactory());
 
         Properties properties;
         registerService(IViolationImporterService.Factory.class, new ViolationImporterServiceFactory());

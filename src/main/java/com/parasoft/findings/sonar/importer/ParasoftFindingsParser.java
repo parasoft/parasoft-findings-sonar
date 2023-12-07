@@ -40,10 +40,12 @@ import com.parasoft.xtest.common.api.ITestableInput;
 import com.parasoft.xtest.common.collections.UCollection;
 import com.parasoft.xtest.common.io.IOUtils;
 import com.parasoft.xtest.common.nls.NLS;
+import com.parasoft.findings.utils.common.logging.FindingsLogger;
 import com.parasoft.findings.sonar.Logger;
 import com.parasoft.findings.sonar.Messages;
 import com.parasoft.findings.sonar.ParasoftConstants;
 import com.parasoft.findings.sonar.ParasoftProduct;
+import com.parasoft.findings.sonar.SonarLoggerHandlerFactory;
 import com.parasoft.findings.sonar.SonarServicesProvider;
 import com.parasoft.xtest.results.api.IResultLocation;
 import com.parasoft.xtest.results.api.IRuleViolation;
@@ -68,6 +70,7 @@ public class ParasoftFindingsParser
     {
         _properties = properties;
         SonarServicesProvider.getInstance();
+        FindingsLogger.setCurrentFactory(new SonarLoggerHandlerFactory());
         Logger.getLogger().info("Service initialization"); //$NON-NLS-1$
     }
 
