@@ -9,7 +9,7 @@
 package com.parasoft.findings.sonar;
 
 import com.parasoft.findings.sonar.rules.LanguageRules;
-import com.parasoft.xtest.results.api.IRuleViolation;
+import com.parasoft.findings.utils.results.violations.IRuleViolation;
 
 import java.util.Arrays;
 import java.util.HashSet;

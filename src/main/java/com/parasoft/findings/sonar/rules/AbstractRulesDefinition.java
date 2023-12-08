@@ -27,6 +27,7 @@ import org.sonar.api.rule.Severity;
 import org.sonar.api.rules.RuleType;
 import org.sonar.api.server.rule.RulesDefinition;
 
+import com.parasoft.findings.utils.common.logging.FindingsLogger;
 import com.parasoft.findings.sonar.Logger;
 import com.parasoft.findings.sonar.Messages;
 import com.parasoft.findings.sonar.ParasoftConstants;
@@ -87,7 +88,7 @@ public abstract class AbstractRulesDefinition
         return _rulesMap.get(productProfileName);
     }
 
-    abstract String getLanguageFor(RuleDescription rule, String fileName);
+    abstract String getLanguageFor(IRuleDescription rule, String fileName);
 
     @Override
     public void define(Context context)
@@ -112,8 +113,11 @@ public abstract class AbstractRulesDefinition
                     }
                     try {
                         Logger.getLogger().info("Loading rules from " + rulesFile.getName()); //$NON-NLS-1$
-                        var importer = new RuleDescriptionImporter();
-                        addRules(rulesFile.getName(), importer.performImport(rulesFile));
+                        var url = rulesFile.toURI().toURL();
+                        var provider = new RuleDescriptionProvider(_product.ruleProvider, _product.analyzerId, url);
+                        var parser = new RuleDescriptionParser(provider);
+                        parser.parseFile(url);
+                        addRules(rulesFile.getName(), parser.getRules());
                     } catch (Exception e) {
                         Logger.getLogger().error("Error reading rules file " + rulesFile.getName(), e); //$NON-NLS-1$
                         continue;
@@ -223,9 +227,9 @@ public abstract class AbstractRulesDefinition
         return dirs;
     }
 
-    protected void addRules(String fileName, List<RuleDescription> rulesList)
+    protected void addRules(String fileName, List<IRuleDescription> rulesList)
     {
-        for (RuleDescription rule : rulesList) {
+        for (IRuleDescription rule : rulesList) {
             String lang = getLanguageFor(rule, fileName);
             boolean added = false;
             for (LanguageRules lr : _rulesMap.get(_product.profileName)) {
@@ -246,7 +250,7 @@ public abstract class AbstractRulesDefinition
 
     protected void addRulesToRepository(LanguageRules rules, NewRepository repository)
     {
-        for (RuleDescription ruleDescription : rules.getRules()) {
+        for (IRuleDescription ruleDescription : rules.getRules()) {
             var tag = ruleDescription.getCategoryId().toLowerCase().replace('_', '-');
             var name = getValidRuleName(ruleDescription);
             var ruleKey = RuleKey.of(rules.repositoryId, ruleDescription.getRuleId());
@@ -266,7 +270,7 @@ public abstract class AbstractRulesDefinition
     }
 
     @SuppressWarnings("nls")
-    private void addOwasp(NewRule newRule, RuleDescription ruleDescription)
+    private void addOwasp(NewRule newRule, IRuleDescription ruleDescription)
     {
         String[] ruleIdParts = ruleDescription.getRuleId().split("[\\.\\-]");
         if (ruleIdParts.length < 2 || !ruleIdParts[0].toUpperCase().startsWith("OWASP")) {
@@ -313,7 +317,7 @@ public abstract class AbstractRulesDefinition
     }
 
     @SuppressWarnings("nls")
-    private void addCwe(NewRule newRule, RuleDescription ruleDescription)
+    private void addCwe(NewRule newRule, IRuleDescription ruleDescription)
     {
         String[] ruleIdParts = ruleDescription.getRuleId().split("[\\.\\-]");
         if (ruleIdParts.length < 2 || !ruleIdParts[0].equals("CWE")) {
@@ -338,7 +342,7 @@ public abstract class AbstractRulesDefinition
             .setTags(ParasoftConstants.PARASOFT_REPOSITORY_TAG);
     }
 
-    private String getValidRuleName(RuleDescription rule)
+    private String getValidRuleName(IRuleDescription rule)
     {
         var name = "[" + rule.getCategoryId() + "] " + rule.getHeader();
         if (name.length() > 197) {
@@ -362,7 +366,7 @@ public abstract class AbstractRulesDefinition
 
     private String getRuleDescription(String root, String ruleId)
     {
-        if (StringUtil.isNonEmptyTrimmed(root)) {
+        if (UString.isNonEmptyTrimmed(root)) {
             var localizedRuleDocsPath = "".equals(localizedRuleFolder) ? "" : "/" + localizedRuleFolder;
             var docRoot = new File(root, _product.docPath + localizedRuleDocsPath);
             var docFile = guessRuleFile(docRoot, ruleId);

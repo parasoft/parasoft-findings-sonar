@@ -34,7 +34,7 @@ import com.parasoft.xtest.configuration.api.rules.IRuleDescriptionUpdateService;
 import com.parasoft.xtest.configuration.api.rules.IRulesService;
 import com.parasoft.xtest.configuration.rules.RuleDescriptionUpdateService;
 import com.parasoft.xtest.configuration.rules.RulesServiceFactory;
-import com.parasoft.xtest.logging.api.ParasoftLogger;
+import com.parasoft.findings.utils.common.logging.FindingsLogger;
 import com.parasoft.xtest.reports.internal.importers.ViolationImporterServiceFactory;
 import com.parasoft.xtest.results.api.IResultPostProcessorService;
 import com.parasoft.xtest.results.api.importer.IViolationImporterService;
@@ -78,7 +78,7 @@ public final class SonarServicesProvider
     {
         System.setProperty(ServiceDiagnosticCollector.DIAGNOSTICS_OFF_PROPERTY, Boolean.TRUE.toString());
 
-        ParasoftLogger.setCurrentFactory(new SonarLoggerHandlerFactory());
+//        FindingsLogger.setCurrentFactory(new SonarLoggerHandlerFactory());
 
         Properties properties;
         registerService(IViolationImporterService.Factory.class, new ViolationImporterServiceFactory());
@@ -110,6 +110,5 @@ public final class SonarServicesProvider
         properties.setProperty(PreferencesServiceUtil.PREFERENCES_ID_PROPERTY, IConfigurationPreferences.PREFERENCES_ID);
         registerService(IPreferences.Factory.class, new ConfigurationPreferencesFactory(), properties);
         registerService(IRulesService.Factory.class, new RulesServiceFactory());
-        registerService(IVariablesResolver.class, new SonarVariablesResolver());
     }
 }
