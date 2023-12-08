@@ -29,9 +29,11 @@ import java.util.Set;
 import com.parasoft.findings.utils.common.nls.NLS;
 import com.parasoft.findings.utils.common.util.CollectionUtil;
 import com.parasoft.findings.utils.common.util.IOUtils;
+import com.parasoft.findings.utils.common.logging.FindingsLogger;
 import com.parasoft.findings.utils.results.testableinput.IFileTestableInput;
 import com.parasoft.findings.utils.results.testableinput.ITestableInput;
 import com.parasoft.findings.utils.results.violations.*;
+
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.rule.ActiveRules;
 import org.sonar.api.batch.rule.Severity;
@@ -44,6 +46,7 @@ import com.parasoft.findings.sonar.Logger;
 import com.parasoft.findings.sonar.Messages;
 import com.parasoft.findings.sonar.ParasoftConstants;
 import com.parasoft.findings.sonar.ParasoftProduct;
+import com.parasoft.findings.sonar.SonarLoggerHandlerFactory;
 import com.parasoft.findings.sonar.SonarServicesProvider;
 
 /**
@@ -64,6 +67,7 @@ public class ParasoftFindingsParser
     {
         _properties = properties;
         SonarServicesProvider.getInstance();
+        FindingsLogger.setCurrentFactory(new SonarLoggerHandlerFactory());
         Logger.getLogger().info("Service initialization"); //$NON-NLS-1$
     }
 
@@ -181,10 +185,9 @@ public class ParasoftFindingsParser
                 return Severity.CRITICAL;
             case ViolationRuleUtil.SEVERITY_MEDIUM:
                 return Severity.MAJOR;
-            case ViolationRuleUtil.SEVERITY_LOW:
-                return Severity.MINOR;
             case ViolationRuleUtil.SEVERITY_LOWEST:
                 return Severity.INFO;
+            case ViolationRuleUtil.SEVERITY_LOW:
             default:
                 return Severity.MINOR;
         }
