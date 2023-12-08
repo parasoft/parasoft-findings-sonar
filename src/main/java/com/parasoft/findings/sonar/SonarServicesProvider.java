@@ -110,6 +110,5 @@ public final class SonarServicesProvider
         properties.setProperty(PreferencesServiceUtil.PREFERENCES_ID_PROPERTY, IConfigurationPreferences.PREFERENCES_ID);
         registerService(IPreferences.Factory.class, new ConfigurationPreferencesFactory(), properties);
         registerService(IRulesService.Factory.class, new RulesServiceFactory());
-        registerService(IVariablesResolver.class, new SonarVariablesResolver());
     }
 }
