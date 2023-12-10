@@ -1,6 +1,6 @@
 package com.parasoft.findings.sonar.rules;
 
-import com.parasoft.xtest.configuration.api.rules.IRuleDescription;
+import com.parasoft.findings.utils.rules.RuleDescription;
 import org.sonar.api.config.Configuration;
 
 import java.io.File;
@@ -22,7 +22,7 @@ public class CpptestRulesDefinition
     }
 
     @Override
-    String getLanguageFor(IRuleDescription rule, String fileName) {
+    String getLanguageFor(RuleDescription rule, String fileName) {
         String category = rule.getCategoryId().toLowerCase().replace('_', '-');
         for (String prefix : CPP_CATEGORIES) {
             if (category.startsWith(prefix)) {
