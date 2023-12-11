@@ -19,12 +19,12 @@ package com.parasoft.findings.sonar.sensor;
 import java.io.File;
 import java.util.Properties;
 
+import com.parasoft.findings.utils.common.nls.NLS;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.scanner.ScannerSide;
 import org.sonar.api.scanner.sensor.ProjectSensor;
 
-import com.parasoft.xtest.common.nls.NLS;
 import com.parasoft.findings.sonar.Logger;
 import com.parasoft.findings.sonar.Messages;
 import com.parasoft.findings.sonar.ParasoftProduct;
@@ -48,7 +48,7 @@ public abstract class AbstractParasoftFindingsSensor
     @Override
     public void describe(final SensorDescriptor descriptor)
     {
-        descriptor.name(NLS.bind(Messages.PluginName, _product.profileName));
+        descriptor.name(NLS.getFormatted(Messages.PluginName, _product.profileName));
         descriptor.onlyOnLanguages(_product.languages.toArray(new String[0]));
     }
 
@@ -75,13 +75,13 @@ public abstract class AbstractParasoftFindingsSensor
         }
 
         if (!reportFile.exists()) {
-            Logger.getLogger().warn(NLS.bind(Messages.NoReportFile, reportFile.getAbsolutePath()));
+            Logger.getLogger().warn(NLS.getFormatted(Messages.NoReportFile, reportFile.getAbsolutePath()));
             return;
         }
 
-        Logger.getLogger().info(NLS.bind(Messages.ParsingReportFile, reportFile));
+        Logger.getLogger().info(NLS.getFormatted(Messages.ParsingReportFile, reportFile));
         var findingsCount = findingsParser.loadFindings(reportFile);
-        Logger.getLogger().info(NLS.bind(Messages.FindingsImported, findingsCount));
+        Logger.getLogger().info(NLS.getFormatted(Messages.FindingsImported, findingsCount));
 
         var files = fs.inputFiles(fs.predicates().hasLanguages(_product.languages));
         if (!files.iterator().hasNext()) {
@@ -91,7 +91,7 @@ public abstract class AbstractParasoftFindingsSensor
         for (var file : files) {
             var count = findingsParser.createNewIssues(file, _product, context);
             if (count > 0) {
-                Logger.getLogger().info(NLS.bind(Messages.CreatedIssues, count, file.toString()));
+                Logger.getLogger().info(NLS.getFormatted(Messages.CreatedIssues, count, file.toString()));
             }
         }
     }
