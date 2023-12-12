@@ -47,7 +47,6 @@ import com.parasoft.findings.sonar.Messages;
 import com.parasoft.findings.sonar.ParasoftConstants;
 import com.parasoft.findings.sonar.ParasoftProduct;
 import com.parasoft.findings.sonar.SonarLoggerHandlerFactory;
-import com.parasoft.findings.sonar.SonarServicesProvider;
 
 /**
  * A parser for Parasoft files containing xml report.
@@ -66,7 +65,6 @@ public class ParasoftFindingsParser
     public ParasoftFindingsParser(Properties properties)
     {
         _properties = properties;
-        SonarServicesProvider.getInstance();
         FindingsLogger.setCurrentFactory(new SonarLoggerHandlerFactory());
         Logger.getLogger().info("Service initialization"); //$NON-NLS-1$
     }

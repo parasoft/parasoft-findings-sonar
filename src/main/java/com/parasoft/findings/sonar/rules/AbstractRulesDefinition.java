@@ -11,7 +11,6 @@ import java.nio.file.Files;
 import java.security.CodeSource;
 import java.util.*;
 
-import com.parasoft.findings.sonar.SonarServicesProvider;
 import com.parasoft.findings.utils.common.IStringConstants;
 import com.parasoft.findings.utils.common.nls.NLS;
 import com.parasoft.findings.utils.common.util.FileUtil;
@@ -66,7 +65,6 @@ public abstract class AbstractRulesDefinition
         _config = config;
         _profile = profile;
         _product = profile._product;
-        SonarServicesProvider.getInstance();
 
         _rulesMap.put(_product.profileName, _product.getLanguageRules());
 
@@ -169,7 +167,7 @@ public abstract class AbstractRulesDefinition
     }
 
     /**
-     * Xtest can not recognize the localized rule files('ja' and 'zh_CN' folders under {cpptest_root_path}/integration/dtpserver/cpptest/model/rules/ path).
+     * Utils can not recognize the localized rule files('ja' and 'zh_CN' folders under {cpptest_root_path}/integration/dtpserver/cpptest/model/rules/ path).
      * We need to override the English rule files with localized files according to the language of the server which SonarQube is installed.
     * */
     private void replaceCpptestRuleFilesWithLocalizedIfNeeded()

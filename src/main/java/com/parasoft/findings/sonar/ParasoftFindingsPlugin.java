@@ -22,7 +22,6 @@ public class ParasoftFindingsPlugin
     @Override
     public void define(Context context)
     {
-        System.setProperty("com.parasoft.xtest.stats.disable", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 
         // register example rules and sensor
         context.addExtensions(

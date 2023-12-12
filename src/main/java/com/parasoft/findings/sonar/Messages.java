@@ -6,7 +6,7 @@
 
 package com.parasoft.findings.sonar;
 
-import com.parasoft.xtest.common.nls.NLS;
+import com.parasoft.findings.utils.common.nls.NLS;
 
 public final class Messages
     extends NLS

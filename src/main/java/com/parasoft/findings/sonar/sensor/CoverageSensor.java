@@ -12,7 +12,7 @@ import com.parasoft.findings.sonar.Messages;
 import com.parasoft.findings.sonar.ParasoftConstants;
 import com.parasoft.findings.sonar.exception.InvalidReportException;
 import com.parasoft.findings.sonar.exception.CoverageReportAndProjectNotMatchedException;
-import com.parasoft.xtest.common.nls.NLS;
+import com.parasoft.findings.utils.common.nls.NLS;
 import net.sf.saxon.s9api.*;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -55,7 +55,7 @@ public class CoverageSensor implements ProjectSensor {
         if (reportPaths != null && reportPaths.length > 0) {
             List<File> coberturaReports = transformToCoberturaReports(reportPaths);
             for (File coberturaReport : coberturaReports) {
-                Logger.getLogger().info(NLS.bind(Messages.UploadCodeCoverageData, coberturaReport.getName()));
+                Logger.getLogger().info(NLS.getFormatted(Messages.UploadCodeCoverageData, coberturaReport.getName()));
                 uploadFileCoverageData(coberturaReport, sensorContext);
             }
             if (validCoberturaReportsCount == 0) {
@@ -76,12 +76,12 @@ public class CoverageSensor implements ProjectSensor {
                 reportFile = new File(fs.baseDir(), reportPath);
             }
             if (!reportFile.isFile() || !reportFile.exists() || !reportFile.canRead()) {
-                Logger.getLogger().warn(NLS.bind(Messages.InvalidReportFile, reportFile.getAbsolutePath()));
+                Logger.getLogger().warn(NLS.getFormatted(Messages.InvalidReportFile, reportFile.getAbsolutePath()));
             } else {
-                Logger.getLogger().info(NLS.bind(Messages.ParsingReportFile, reportFile.getName()));
+                Logger.getLogger().info(NLS.getFormatted(Messages.ParsingReportFile, reportFile.getName()));
                 File resultFile = transformToCoberturaFormat(reportFile);
                 if (resultFile != null) {
-                    Logger.getLogger().info(NLS.bind(Messages.TransformReportToCoberturaFormat, reportFile.getAbsolutePath(), resultFile.getAbsolutePath()));
+                    Logger.getLogger().info(NLS.getFormatted(Messages.TransformReportToCoberturaFormat, reportFile.getAbsolutePath(), resultFile.getAbsolutePath()));
                     coberturaReports.add(resultFile);
                 }
             }
@@ -115,7 +115,7 @@ public class CoverageSensor implements ProjectSensor {
             transformer.transform(new StreamSource(report), out);
             return result;
         } catch (Exception e) {
-            Logger.getLogger().error(NLS.bind(Messages.FailedToTransformReport, report.getAbsolutePath()), e);
+            Logger.getLogger().error(NLS.getFormatted(Messages.FailedToTransformReport, report.getAbsolutePath()), e);
             return null;
         }
     }
@@ -130,7 +130,7 @@ public class CoverageSensor implements ProjectSensor {
             Element packagesElement = root.element("packages");
             List<Element> packageElements;
             if (packagesElement == null || (packageElements = packagesElement.elements("package")) == null || packageElements.isEmpty()) {
-                Logger.getLogger().error(NLS.bind(Messages.InvalidCoberturaCoverageReport, report.getAbsolutePath()));
+                Logger.getLogger().error(NLS.getFormatted(Messages.InvalidCoberturaCoverageReport, report.getAbsolutePath()));
                 return;
             }
             validCoberturaReportsCount++;
@@ -145,7 +145,7 @@ public class CoverageSensor implements ProjectSensor {
                     String filename = classElement.attributeValue("filename");
                     InputFile file = fs.inputFile(fs.predicates().hasRelativePath(filename));
                     if (file == null) {
-                        Logger.getLogger().warn(NLS.bind(Messages.FileNotFoundInProject, filename));
+                        Logger.getLogger().warn(NLS.getFormatted(Messages.FileNotFoundInProject, filename));
                         continue;
                     }
                     NewCoverage coverage = context.newCoverage().onFile(file);
@@ -167,7 +167,7 @@ public class CoverageSensor implements ProjectSensor {
                 }
             }
         } catch (Exception e) {
-            Logger.getLogger().error(NLS.bind(Messages.FailedToLoadCoberturaReport, report.getAbsolutePath()), e);
+            Logger.getLogger().error(NLS.getFormatted(Messages.FailedToLoadCoberturaReport, report.getAbsolutePath()), e);
         }
     }
 
