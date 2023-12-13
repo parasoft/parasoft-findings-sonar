@@ -22,12 +22,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import com.parasoft.findings.utils.results.testableinput.IFileTestableInput;
+import com.parasoft.findings.utils.results.testableinput.ITestableInput;
+import com.parasoft.findings.utils.results.testableinput.PathInput;
+import com.parasoft.findings.utils.results.testableinput.ProjectFileTestableInput;
 import org.junit.jupiter.api.Test;
 
-import com.parasoft.xtest.common.api.IFileTestableInput;
-import com.parasoft.xtest.common.api.IProjectFileTestableInput;
-import com.parasoft.xtest.common.api.ITestableInput;
-import com.parasoft.xtest.common.path.PathInput;
 
 /**
  * Parasoft Jtest UTA: Test class for SonarLocationMatcher
@@ -103,7 +103,7 @@ public class SonarLocationMatcherTest {
     public void testGetFilePath4()
         throws Throwable {
         // When
-        IProjectFileTestableInput input = mock(IProjectFileTestableInput.class);
+        ProjectFileTestableInput input = mock(ProjectFileTestableInput.class);
         File getFileLocationResult = File.createTempFile("getFileLocationResult", null); // UTA: default value
         getFileLocationResult.delete();
         when(input.getFileLocation()).thenReturn(getFileLocationResult);
@@ -120,7 +120,7 @@ public class SonarLocationMatcherTest {
      * @author bmcglau
      */
     @Test
-    public void testMatchLocation2()
+    public void testMatchLocation()
         throws Throwable {
         // Given
         SonarLocationMatcher underTest = new SonarLocationMatcher();
@@ -147,7 +147,7 @@ public class SonarLocationMatcherTest {
      * @author bmcglau
      */
     @Test
-    public void testMatchLocation3()
+    public void testMatchLocation2()
         throws Throwable {
         // Given
         SonarLocationMatcher underTest = new SonarLocationMatcher();
@@ -173,7 +173,7 @@ public class SonarLocationMatcherTest {
      * @author bmcglau
      */
     @Test
-    public void testMatchLocation4()
+    public void testMatchLocation3()
         throws Throwable {
         // Given
         SonarLocationMatcher underTest = new SonarLocationMatcher();
@@ -193,95 +193,6 @@ public class SonarLocationMatcherTest {
     }
 
     /**
-     * Parasoft Jtest UTA: Test for matchLocation(Properties, boolean, boolean)
-     *
-     * @see com.parasoft.xtest.results.xapi.xml.DefaultLocationMatcher#matchLocation(Properties, boolean, boolean)
-     * @author bmcglau
-     */
-    @Test
-    public void testMatchLocation5()
-        throws Throwable {
-        // Given
-        SonarLocationMatcher underTest = new SonarLocationMatcher();
-
-        // When
-        Properties storedLocation = null; // UTA: provided value
-        boolean bAcceptModified = false; // UTA: default value
-        boolean bAffectStatistics = false; // UTA: default value
-        ITestableInput result = underTest.matchLocation(storedLocation, bAcceptModified, bAffectStatistics);
-        // Then - assertions for result of method matchLocation(Properties, boolean, boolean)
-        assertNull(result);
-
-    }
-
-    /**
-     * Parasoft Jtest UTA: Test for matchLocation(ITestableInput, List, String, String, boolean, boolean)
-     *
-     * @see com.parasoft.xtest.results.xapi.xml.DefaultLocationMatcher#matchLocation(ITestableInput, List, String, String, boolean, boolean)
-     * @author bmcglau
-     */
-    @Test
-    public void testMatchLocation6()
-        throws Throwable {
-        // Given
-        SonarLocationMatcher underTest = new SonarLocationMatcher();
-
-        // When
-        ITestableInput originalInput = null; // UTA: provided value
-        List<Long> hashes = new ArrayList<>(); // UTA: default value
-        Long item = 0L; // UTA: default value
-        hashes.add(item);
-        String sRepositoryPath = "sRepositoryPath"; // UTA: default value
-        String sBranch = "sBranch"; // UTA: default value
-        boolean bAcceptModified = false; // UTA: default value
-        boolean bAffectStatistics = false; // UTA: default value
-        ITestableInput result = underTest.matchLocation(originalInput, hashes, sRepositoryPath, sBranch, bAcceptModified, bAffectStatistics);
-        // Then - assertions for result of method matchLocation(ITestableInput, List, String, String, boolean, boolean)
-        assertNull(result);
-
-    }
-
-    /**
-     * Parasoft Jtest UTA: Test for removeFromStatistics(ITestableInput, String)
-     *
-     * @see com.parasoft.xtest.results.xapi.xml.DefaultLocationMatcher#removeFromStatistics(ITestableInput, String)
-     * @author bmcglau
-     */
-    @Test
-    public void testRemoveFromStatistics()
-        throws Throwable {
-        // Given
-        SonarLocationMatcher underTest = new SonarLocationMatcher();
-
-        // When
-        ITestableInput originalInput = mock(ITestableInput.class);
-        String sBranch = "sBranch"; // UTA: default value
-        underTest.removeFromStatistics(originalInput, sBranch);
-
-    }
-
-    @Test
-    public void testMatchLocation7()
-        throws Throwable {
-        // Given
-        SonarLocationMatcher underTest = new SonarLocationMatcher();
-
-        // When
-        ITestableInput originalInput = null; // UTA: provided value
-        List<Long> hashes = new ArrayList<>(); // UTA: default value
-        Long item = 0L; // UTA: default value
-        hashes.add(item);
-        String sRepositoryPath = "sRepositoryPath"; // UTA: default value
-        String sBranch = "sBranch"; // UTA: default value
-        boolean bAcceptModified = false; // UTA: default value
-        boolean bAffectStatistics = false; // UTA: default value
-        ITestableInput result = underTest.matchLocation(originalInput, hashes, sRepositoryPath, sBranch, bAcceptModified, bAffectStatistics);
-        // Then - assertions for result of method matchLocation(ITestableInput, List, String, String, boolean, boolean)
-        assertNull(result);
-
-    }
-
-    /**
      * Parasoft Jtest UTA: Test cloned from
      * com.parasoft.findings.reports.sonar.importer.SonarLocationMatcherTest#testMatchLocation4()
      *
@@ -289,7 +200,7 @@ public class SonarLocationMatcherTest {
      * @author bmcglau
      */
     @Test
-    public void testMatchLocation8()
+    public void testMatchLocation4()
         throws Throwable {
         // Given
         SonarLocationMatcher underTest = new SonarLocationMatcher();

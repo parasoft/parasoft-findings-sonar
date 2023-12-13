@@ -12,9 +12,9 @@ import java.util.function.Supplier;
 
 import org.sonar.api.utils.log.Loggers;
 
-import com.parasoft.xtest.logging.api.ILoggerHandler;
-import com.parasoft.xtest.logging.api.ILoggerHandlerFactory;
-import com.parasoft.xtest.logging.api.ParasoftLevel;
+import com.parasoft.findings.utils.common.logging.ILoggerHandler;
+import com.parasoft.findings.utils.common.logging.ILoggerHandlerFactory;
+import com.parasoft.findings.utils.common.logging.Level;
 
 public class SonarLoggerHandlerFactory
     implements ILoggerHandlerFactory
@@ -69,31 +69,31 @@ public class SonarLoggerHandlerFactory
         }
 
         @Override
-        public void log(String sWrapperClassName, ParasoftLevel level, Object object, Throwable throwable)
+        public void log(String sWrapperClassName, Level level, Object object, Throwable throwable)
         {
             switch (level.getLevel()) {
-            case ParasoftLevel.TRACE_INT:
+            case Level.TRACE_INT:
                 LOGGER.trace(object.toString());
                 break;
-            case ParasoftLevel.INFO_INT:
+            case Level.INFO_INT:
                 LOGGER.info(object.toString());
                 break;
-            case ParasoftLevel.WARN_INT:
+            case Level.WARN_INT:
                 if (throwable != null) {
                     LOGGER.warn(object.toString(), throwable);
                 } else {
                     LOGGER.warn(object.toString());
                 }
                 break;
-            case ParasoftLevel.ERROR_INT:
-            case ParasoftLevel.FATAL_INT:
+            case Level.ERROR_INT:
+            case Level.FATAL_INT:
                 if (throwable != null) {
                     LOGGER.error(object.toString(), throwable);
                 } else {
                     LOGGER.error(object.toString());
                 }
                 break;
-            case ParasoftLevel.DEBUG_INT:
+            case Level.DEBUG_INT:
             default:
                 if (throwable != null) {
                     LOGGER.debug(object.toString(), throwable);
@@ -105,7 +105,7 @@ public class SonarLoggerHandlerFactory
         }
 
         @Override
-        public void log(String sWrapperClassName, ParasoftLevel level, Supplier<Object> objectSupplier, Throwable throwable)
+        public void log(String sWrapperClassName, Level level, Supplier<Object> objectSupplier, Throwable throwable)
         {
             log(sWrapperClassName, level, objectSupplier.get(), throwable);
         }

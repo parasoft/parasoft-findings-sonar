@@ -7,13 +7,13 @@
 
 package com.parasoft.findings.sonar.rules;
 
+import com.parasoft.findings.utils.rules.RuleDescription;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-
-import com.parasoft.xtest.configuration.api.rules.IRuleDescription;
 
 /**
  * Represents and contains the list of rules for a given language.
@@ -21,7 +21,7 @@ import com.parasoft.xtest.configuration.api.rules.IRuleDescription;
 public class LanguageRules {
     public final String language;
     public final String repositoryId;
-    private final List<IRuleDescription> _rules = new ArrayList<>();
+    private final List<RuleDescription> _rules = new ArrayList<>();
 
     public LanguageRules(String language, String repositoryId)
     {
@@ -29,7 +29,7 @@ public class LanguageRules {
         this.repositoryId = repositoryId;
     }
 
-    public List<IRuleDescription> getRules()
+    public List<RuleDescription> getRules()
     {
         return _rules;
     }
@@ -37,13 +37,13 @@ public class LanguageRules {
     public Set<String> getRuleIds()
     {
         Set<String> result = new HashSet<>();
-        for (IRuleDescription rule : _rules) {
+        for (RuleDescription rule : _rules) {
             result.add(rule.getRuleId());
         }
         return result;
     }
 
-    public void addRule(IRuleDescription rule) {
+    public void addRule(RuleDescription rule) {
         _rules.add(rule);
     }
 

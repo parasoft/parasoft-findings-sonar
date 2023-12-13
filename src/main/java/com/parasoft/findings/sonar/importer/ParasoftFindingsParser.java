@@ -26,7 +26,14 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import com.parasoft.xtest.common.api.IFileTestableInput;
+import com.parasoft.findings.utils.common.nls.NLS;
+import com.parasoft.findings.utils.common.util.CollectionUtil;
+import com.parasoft.findings.utils.common.util.IOUtils;
+import com.parasoft.findings.utils.common.logging.FindingsLogger;
+import com.parasoft.findings.utils.results.testableinput.IFileTestableInput;
+import com.parasoft.findings.utils.results.testableinput.ITestableInput;
+import com.parasoft.findings.utils.results.violations.*;
+
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.rule.ActiveRules;
 import org.sonar.api.batch.rule.Severity;
@@ -35,20 +42,11 @@ import org.sonar.api.batch.sensor.issue.NewIssue;
 import org.sonar.api.batch.sensor.issue.NewIssueLocation;
 import org.sonar.api.rule.RuleKey;
 
-import com.parasoft.xtest.common.ISeverityConsts;
-import com.parasoft.xtest.common.api.ITestableInput;
-import com.parasoft.xtest.common.collections.UCollection;
-import com.parasoft.xtest.common.io.IOUtils;
-import com.parasoft.xtest.common.nls.NLS;
 import com.parasoft.findings.sonar.Logger;
 import com.parasoft.findings.sonar.Messages;
 import com.parasoft.findings.sonar.ParasoftConstants;
 import com.parasoft.findings.sonar.ParasoftProduct;
-import com.parasoft.findings.sonar.SonarServicesProvider;
-import com.parasoft.xtest.results.api.IResultLocation;
-import com.parasoft.xtest.results.api.IRuleViolation;
-import com.parasoft.xtest.results.api.IViolation;
-import com.parasoft.xtest.results.api.importer.IImportedData;
+import com.parasoft.findings.sonar.SonarLoggerHandlerFactory;
 
 /**
  * A parser for Parasoft files containing xml report.
@@ -57,7 +55,7 @@ public class ParasoftFindingsParser
 {
     private final Properties _properties;
 
-    private SonarResultsImporter _importer = null;
+    private XmlReportViolationsImporter _importer = null;
 
     private final Map<String, Set<IRuleViolation>> _violations = Collections.synchronizedMap(new HashMap<String, Set<IRuleViolation>>());
 
@@ -67,7 +65,7 @@ public class ParasoftFindingsParser
     public ParasoftFindingsParser(Properties properties)
     {
         _properties = properties;
-        SonarServicesProvider.getInstance();
+        FindingsLogger.setCurrentFactory(new SonarLoggerHandlerFactory());
         Logger.getLogger().info("Service initialization"); //$NON-NLS-1$
     }
 
@@ -78,7 +76,7 @@ public class ParasoftFindingsParser
         try {
             input = new FileInputStream(file);
 
-            IImportedData importedData = getImporter().performImport(file);
+            XmlReportViolations importedData = getImporter().performImport(file);
             while (importedData.hasNext()) {
                 IViolation result = importedData.next();
                 IRuleViolation violation;
@@ -88,7 +86,7 @@ public class ParasoftFindingsParser
                     Logger.getLogger().error("Result is not instance of IRuleViolation"); //$NON-NLS-1$
                     continue;
                 }
-                IResultLocation location = violation.getResultLocation();
+                ResultLocation location = violation.getResultLocation();
                 ITestableInput testableInput = location != null ? location.getTestableInput() : null;
                 String inputPath = null;
                 if (testableInput != null) {
@@ -129,15 +127,15 @@ public class ParasoftFindingsParser
         ActiveRules activeRules = context.activeRules();
         String inputFilePath = sourceFile.uri().getPath();
         var findings = getFindings(inputFilePath);
-        if (UCollection.isEmpty(findings)) {
-            Logger.getLogger().info(NLS.bind(Messages.NoFindingsFor, sourceFile.toString()));
+        if (CollectionUtil.isEmpty(findings)) {
+            Logger.getLogger().info(NLS.getFormatted(Messages.NoFindingsFor, sourceFile.toString()));
             return 0;
         }
         int findingsCount = 0;
         for (IRuleViolation finding : findings) {
             var languageIdx = product.getLanguageIndex(finding);
             if (languageIdx < 0) {
-                Logger.getLogger().warn(NLS.bind(Messages.UnsupportedFindingLanguage, finding.getRuleId(), finding.getLanguageId()));
+                Logger.getLogger().warn(NLS.getFormatted(Messages.UnsupportedFindingLanguage, finding.getRuleId(), finding.getLanguageId()));
                 continue;
             }
             var ruleRepoId = product.ruleRepoIds.get(languageIdx);
@@ -170,7 +168,7 @@ public class ParasoftFindingsParser
                 newIssue.save();
                 findingsCount++;
             } else {
-                Logger.getLogger().warn(NLS.bind(Messages.RuleNotFound, ruleId, ruleRepoId));
+                Logger.getLogger().warn(NLS.getFormatted(Messages.RuleNotFound, ruleId, ruleRepoId));
             }
         }
         return findingsCount;
@@ -179,25 +177,24 @@ public class ParasoftFindingsParser
     public static Severity mapToSonarSeverity(int severity)
     {
         switch (severity) {
-            case ISeverityConsts.SEVERITY_HIGHEST:
+            case ViolationRuleUtil.SEVERITY_HIGHEST:
                 return Severity.BLOCKER;
-            case ISeverityConsts.SEVERITY_HIGH:
+            case ViolationRuleUtil.SEVERITY_HIGH:
                 return Severity.CRITICAL;
-            case ISeverityConsts.SEVERITY_MEDIUM:
+            case ViolationRuleUtil.SEVERITY_MEDIUM:
                 return Severity.MAJOR;
-            case ISeverityConsts.SEVERITY_LOW:
-                return Severity.MINOR;
-            case ISeverityConsts.SEVERITY_LOWEST:
+            case ViolationRuleUtil.SEVERITY_LOWEST:
                 return Severity.INFO;
+            case ViolationRuleUtil.SEVERITY_LOW:
             default:
                 return Severity.MINOR;
         }
     }
 
-    private synchronized SonarResultsImporter getImporter()
+    private synchronized XmlReportViolationsImporter getImporter()
     {
         if (_importer == null) {
-            _importer = new SonarResultsImporter(_properties);
+            _importer = new XmlReportViolationsImporter(_properties);
         }
         return _importer;
     }

@@ -11,8 +11,8 @@ package com.parasoft.findings.sonar.rules;
 import com.parasoft.findings.sonar.Messages;
 import com.parasoft.findings.sonar.ParasoftConstants;
 import com.parasoft.findings.sonar.ParasoftProduct;
-import com.parasoft.xtest.common.io.IOUtils;
-import com.parasoft.xtest.configuration.api.rules.IRuleDescription;
+import com.parasoft.findings.utils.common.util.IOUtils;
+import com.parasoft.findings.utils.rules.RuleDescription;
 import net.lingala.zip4j.ZipFile;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -91,18 +91,18 @@ class RulesDefinitionTest
         assertEquals("java", def.getLanguageFor(null, "anything else"));
 
         def = new DottestRulesDefinition(config);
-        IRuleDescription rule = mock(IRuleDescription.class);
+        RuleDescription rule = mock(RuleDescription.class);
         when(rule.getRuleId()).thenReturn("VB.");
         assertEquals("vbnet", def.getLanguageFor(rule, null));
-        rule = mock(IRuleDescription.class);
+        rule = mock(RuleDescription.class);
         when(rule.getRuleId()).thenReturn("Something Else");
         assertEquals("cs", def.getLanguageFor(rule, null));
 
         def = new CpptestRulesDefinition(config);
-        rule = mock(IRuleDescription.class);
+        rule = mock(RuleDescription.class);
         when(rule.getCategoryId()).thenReturn("cdd");
         assertEquals("*", def.getLanguageFor(rule, null));
-        rule = mock(IRuleDescription.class);
+        rule = mock(RuleDescription.class);
         when(rule.getCategoryId()).thenReturn("OOP");
         assertEquals("cpp", def.getLanguageFor(rule, null));
     }
