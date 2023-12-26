@@ -14,7 +14,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <sonar.apiVersion>8.9.0.43852</sonar.apiVersion>
+        <sonar.apiVersion>10.3.0.1951</sonar.apiVersion>
+        <sonar.apiMinVersion>8.9.0.43852</sonar.apiMinVersion>
         <jdk.min.version>11</jdk.min.version>
         <project.build.rulesPath>${project.basedir}/target/classes/com/parasoft/findings/sonar/res/builtinRules</project.build.rulesPath>
         <toolsVersion>${project.version}</toolsVersion>
@@ -70,7 +71,7 @@
             <plugin>
                 <groupId>org.sonarsource.sonar-packaging-maven-plugin</groupId>
                 <artifactId>sonar-packaging-maven-plugin</artifactId>
-                <version>1.21.0.505</version>
+                <version>1.23.0.740</version>
                 <extensions>true</extensions>
                 <configuration>
                     <pluginKey>parasoft</pluginKey>
@@ -80,6 +81,7 @@
                     <pluginUrl>https://www.parasoft.com/</pluginUrl>
                     <pluginIssueTrackerUrl>https://www.parasoft.com/support/</pluginIssueTrackerUrl>
                     <pluginSourcesUrl>https://www.parasoft.com/</pluginSourcesUrl>
+                    <pluginApiMinVersion>${sonar.apiMinVersion}</pluginApiMinVersion>
                     <jreMinVersion>11</jreMinVersion>
                 </configuration>
             </plugin>
@@ -179,18 +181,11 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.sonarsource.sonarqube</groupId>
+            <groupId>org.sonarsource.api.plugin</groupId>
             <artifactId>sonar-plugin-api</artifactId>
             <version>${sonar.apiVersion}</version>
             <scope>provided</scope>
         </dependency>
-        <!-- for versions 9.5+
-        <dependency>
-            <groupId>org.sonarsource.api.plugin</groupId>
-            <artifactId>sonar-plugin-api</artifactId>
-            <version>9.8.0.203</version>
-            <scope>provided</scope>
-        </dependency> -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
