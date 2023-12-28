@@ -10,6 +10,7 @@ package com.parasoft.findings.sonar.rules;
 
 import com.parasoft.findings.sonar.Messages;
 import com.parasoft.findings.sonar.ParasoftConstants;
+import com.parasoft.findings.sonar.ParasoftFindingsPlugin;
 import com.parasoft.findings.sonar.ParasoftProduct;
 import com.parasoft.findings.utils.common.util.IOUtils;
 import com.parasoft.findings.utils.rules.RuleDescription;
@@ -22,12 +23,15 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import org.sonar.api.Plugin;
+import org.sonar.api.SonarRuntime;
 import org.sonar.api.config.Configuration;
 import org.sonar.api.rule.Severity;
 import org.sonar.api.server.profile.BuiltInQualityProfilesDefinition.NewBuiltInQualityProfile;
 import org.sonar.api.server.rule.RulesDefinition.Context;
 import org.sonar.api.server.rule.RulesDefinition.NewRepository;
 import org.sonar.api.server.rule.RulesDefinition.NewRule;
+import org.sonar.api.utils.Version;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -117,6 +121,13 @@ class RulesDefinitionTest
                 Context context = mock(Context.class);
                 NewRule rule = mock(NewRule.class);
                 NewRepository repo = mockRepository(rule);
+                Plugin.Context pluginContext = mock(Plugin.Context.class);
+                SonarRuntime sonarRuntime = mock(SonarRuntime.class);
+                Version version = mock(Version.class);
+                when(sonarRuntime.getApiVersion()).thenReturn(version);
+                when(pluginContext.getRuntime()).thenReturn(sonarRuntime);
+                when(version.isGreaterThanOrEqual(any())).thenReturn(true);
+                ParasoftFindingsPlugin plugin = new ParasoftFindingsPlugin();
 
                 String ruleFile = null;
                 switch (def._product) {
@@ -135,6 +146,8 @@ class RulesDefinitionTest
 
                 when(context.createRepository(any(), any())).thenReturn(repo);
 
+                when(version.isGreaterThanOrEqual(any())).thenReturn(true);
+                plugin.define(pluginContext);
                 def.define(context);
 
                 int zipFileConstructionCalledTimes = mockedZipFileConstruction.constructed().size();
@@ -156,6 +169,8 @@ class RulesDefinitionTest
                 NewBuiltInQualityProfile newProfile = mock(NewBuiltInQualityProfile.class);
                 when(profileContext.createBuiltInQualityProfile(any(), any())).thenReturn(newProfile);
 
+                when(version.isGreaterThanOrEqual(any())).thenReturn(false);
+                plugin.define(pluginContext);
                 def._profile.define(profileContext);
 
                 String cpptestRulesDirectoryPath = "target" + "/" + ParasoftProduct.CPPTEST.builtinRulesPath + "/" + ParasoftProduct.CPPTEST.rulesPath + "/rules";
@@ -200,6 +215,8 @@ class RulesDefinitionTest
         when(rule.setType(any())).thenReturn(rule);
         when(rule.setSeverity(any())).thenReturn(rule);
         when(rule.setTags(any())).thenReturn(rule);
+        when(rule.setCleanCodeAttribute(any())).thenReturn(rule);
+        when(rule.addDefaultImpact(any(), any())).thenReturn(rule);
 
         return repo;
     }

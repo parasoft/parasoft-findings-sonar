@@ -1,5 +1,6 @@
 package com.parasoft.findings.sonar.rules;
 
+import com.parasoft.findings.sonar.MapperUtil;
 import com.parasoft.findings.utils.rules.RuleDescription;
 import org.sonar.api.config.Configuration;
 
@@ -23,7 +24,7 @@ public class CpptestRulesDefinition
 
     @Override
     String getLanguageFor(RuleDescription rule, String fileName) {
-        String category = rule.getCategoryId().toLowerCase().replace('_', '-');
+        String category = MapperUtil.categoryToTag(rule.getCategoryId());
         for (String prefix : CPP_CATEGORIES) {
             if (category.startsWith(prefix)) {
                 return "cpp"; //$NON-NLS-1$
