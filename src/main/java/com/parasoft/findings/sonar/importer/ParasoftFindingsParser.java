@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import com.parasoft.findings.sonar.*;
 import com.parasoft.findings.utils.common.nls.NLS;
 import com.parasoft.findings.utils.common.util.CollectionUtil;
 import com.parasoft.findings.utils.common.util.IOUtils;
@@ -36,17 +37,10 @@ import com.parasoft.findings.utils.results.violations.*;
 
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.rule.ActiveRules;
-import org.sonar.api.batch.rule.Severity;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.issue.NewIssue;
 import org.sonar.api.batch.sensor.issue.NewIssueLocation;
 import org.sonar.api.rule.RuleKey;
-
-import com.parasoft.findings.sonar.Logger;
-import com.parasoft.findings.sonar.Messages;
-import com.parasoft.findings.sonar.ParasoftConstants;
-import com.parasoft.findings.sonar.ParasoftProduct;
-import com.parasoft.findings.sonar.SonarLoggerHandlerFactory;
 
 /**
  * A parser for Parasoft files containing xml report.
@@ -57,7 +51,7 @@ public class ParasoftFindingsParser
 
     private XmlReportViolationsImporter _importer = null;
 
-    private final Map<String, Set<IRuleViolation>> _violations = Collections.synchronizedMap(new HashMap<String, Set<IRuleViolation>>());
+    private final Map<String, Set<IRuleViolation>> _violations = Collections.synchronizedMap(new HashMap<>());
 
     /**
      * Creates a new instance of {@link ParasoftFindingsParser}.
@@ -143,7 +137,7 @@ public class ParasoftFindingsParser
             if (attributes.isSuppressed()) {
                 continue;
             }
-            Severity severity = mapToSonarSeverity(attributes.getSeverity());
+
             String ruleId = finding.getRuleId();
             RuleKey ruleKey = RuleKey.of(ruleRepoId, ruleId);
             if (activeRules.find(ruleKey) == null) {
@@ -161,8 +155,18 @@ public class ParasoftFindingsParser
                 NewIssueLocation primaryLocation = newIssue.newLocation().on(sourceFile)
                     .at(sourceFile.selectLine(finding.getResultLocation().getSourceRange().getStartLine())).message(finding.getMessage());
                 newIssue.at(primaryLocation);
-                if (severity != null) {
-                    newIssue = newIssue.overrideSeverity(severity);
+
+                var severity = attributes.getSeverity();
+                var ruleCategory = attributes.getRuleCategory();
+                var isSev1 = severity == ViolationRuleUtil.SEVERITY_HIGHEST;
+                var isSecurityHotspot = MapperUtil.isSecurityHotspot(ruleCategory, isSev1);
+                // When the runtime SONAR API version is lower than 10.1 or the rule is a security hotspot, use deprecated overrideSeverity(Severity)
+                if (!SonarAPIVersionUtil.isAPIVersionAtLeast10_1(context.runtime()) || isSecurityHotspot) {
+                    newIssue = newIssue.overrideSeverity(MapperUtil.mapToSonarSeverity(severity));
+                } else {
+                    var impactSoftwareQuality = MapperUtil.mapToSonarImpactSoftwareQuality(ruleCategory, isSev1);
+                    var impactSeverity = MapperUtil.mapToSonarImpactSeverity(severity);
+                    newIssue = newIssue.overrideImpact(impactSoftwareQuality, impactSeverity);
                 }
                 new PathBuilder(context, newIssue).setPath(finding);
                 newIssue.save();
@@ -172,23 +176,6 @@ public class ParasoftFindingsParser
             }
         }
         return findingsCount;
-    }
-
-    public static Severity mapToSonarSeverity(int severity)
-    {
-        switch (severity) {
-            case ViolationRuleUtil.SEVERITY_HIGHEST:
-                return Severity.BLOCKER;
-            case ViolationRuleUtil.SEVERITY_HIGH:
-                return Severity.CRITICAL;
-            case ViolationRuleUtil.SEVERITY_MEDIUM:
-                return Severity.MAJOR;
-            case ViolationRuleUtil.SEVERITY_LOWEST:
-                return Severity.INFO;
-            case ViolationRuleUtil.SEVERITY_LOW:
-            default:
-                return Severity.MINOR;
-        }
     }
 
     private synchronized XmlReportViolationsImporter getImporter()

@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.security.CodeSource;
 import java.util.*;
 
+import com.parasoft.findings.sonar.*;
 import com.parasoft.findings.utils.common.IStringConstants;
 import com.parasoft.findings.utils.common.nls.NLS;
 import com.parasoft.findings.utils.common.util.FileUtil;
@@ -21,16 +22,11 @@ import com.parasoft.findings.utils.rules.RuleDescriptionImporter;
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import org.sonar.api.config.Configuration;
+import org.sonar.api.issue.impact.SoftwareQuality;
+import org.sonar.api.issue.impact.Severity;
 import org.sonar.api.rule.RuleKey;
-import org.sonar.api.rule.Severity;
 import org.sonar.api.rules.RuleType;
 import org.sonar.api.server.rule.RulesDefinition;
-
-import com.parasoft.findings.sonar.Logger;
-import com.parasoft.findings.sonar.Messages;
-import com.parasoft.findings.sonar.ParasoftConstants;
-import com.parasoft.findings.sonar.ParasoftProduct;
-import com.parasoft.findings.sonar.importer.ParasoftFindingsParser;
 
 public abstract class AbstractRulesDefinition
     implements RulesDefinition
@@ -104,7 +100,7 @@ public abstract class AbstractRulesDefinition
                 return;
             }
             for (File rulesDir : rulesDirs) {
-                for (var rulesFile : rulesDir.listFiles()) {
+                for (var rulesFile : Objects.requireNonNull(rulesDir.listFiles())) {
                     if (!isRulesFile(rulesFile)) {
                         continue;
                     }
@@ -114,7 +110,6 @@ public abstract class AbstractRulesDefinition
                         addRules(rulesFile.getName(), importer.performImport(rulesFile));
                     } catch (Exception e) {
                         Logger.getLogger().error("Error reading rules file " + rulesFile.getName(), e); //$NON-NLS-1$
-                        continue;
                     }
                 }
             }
@@ -245,18 +240,32 @@ public abstract class AbstractRulesDefinition
     protected void addRulesToRepository(LanguageRules rules, NewRepository repository)
     {
         for (RuleDescription ruleDescription : rules.getRules()) {
-            var tag = ruleDescription.getCategoryId().toLowerCase().replace('_', '-');
+            var category = ruleDescription.getCategoryId();
+            var tag = MapperUtil.categoryToTag(category);
             var name = getValidRuleName(ruleDescription);
             var ruleKey = RuleKey.of(rules.repositoryId, ruleDescription.getRuleId());
             var desc = getRuleDescription(_tempPath + "/" + _product.builtinRulesPath, ruleDescription.getRuleId()); //$NON-NLS-1$
-            var type = getType(tag, ruleDescription.getSeverity() == ViolationRuleUtil.SEVERITY_HIGHEST);
-            var sev = ParasoftFindingsParser.mapToSonarSeverity(ruleDescription.getSeverity()).name();
+            var severity = ruleDescription.getSeverity();
+            var sev = MapperUtil.mapToSonarSeverity(severity).name();
+            var isSev1 = severity == ViolationRuleUtil.SEVERITY_HIGHEST;
 
             NewRule newRule = repository.createRule(ruleKey.rule()).setName(name)
                 .setHtmlDescription(desc)
-                .setType(type)
-                .setSeverity(sev)
                 .setTags(ParasoftConstants.PARASOFT_REPOSITORY_TAG, tag);
+
+            // When the runtime SONAR API version is lower than 10.1 or the rule is a security hotspot, use deprecated setType(RuleType) and setSeverity(String)
+            if (!ParasoftFindingsPlugin.isAPIVersionAtLeast10_1 || MapperUtil.isSecurityHotspot(category, isSev1)) {
+                RuleType type = MapperUtil.mapToSonarRuleType(category, isSev1);
+                newRule.setType(type)
+                        .setSeverity(sev);
+            } else {
+                var cleanCodeAttribute = MapperUtil.mapToSonarCleanCodeAttribute(category);
+                var sonarImpactSoftwareQuality = MapperUtil.mapToSonarImpactSoftwareQuality(category, isSev1);
+                var sonarImpactSeverity = MapperUtil.mapToSonarImpactSeverity(severity);
+                newRule.setCleanCodeAttribute(cleanCodeAttribute)
+                        .addDefaultImpact(sonarImpactSoftwareQuality, sonarImpactSeverity);
+            }
+
             addOwasp(newRule, ruleDescription);
             addCwe(newRule, ruleDescription);
         }
@@ -330,10 +339,15 @@ public abstract class AbstractRulesDefinition
 
     protected void addUnknownRule(NewRepository repository)
     {
-        repository.createRule(ParasoftConstants.UNKNOWN_RULE_ID).setName(Messages.UnknownRuleName)
-            .setHtmlDescription(Messages.NoDescription)
-            .setSeverity(Severity.INFO)
-            .setTags(ParasoftConstants.PARASOFT_REPOSITORY_TAG);
+        NewRule newRule = repository.createRule(ParasoftConstants.UNKNOWN_RULE_ID)
+                .setName(Messages.UnknownRuleName)
+                .setHtmlDescription(Messages.NoDescription)
+                .setTags(ParasoftConstants.PARASOFT_REPOSITORY_TAG);
+        if (ParasoftFindingsPlugin.isAPIVersionAtLeast10_1) {
+            newRule.addDefaultImpact(SoftwareQuality.MAINTAINABILITY, Severity.LOW);
+        } else {
+            newRule.setSeverity(org.sonar.api.rule.Severity.INFO);
+        }
     }
 
     private String getValidRuleName(RuleDescription rule)
@@ -345,18 +359,6 @@ public abstract class AbstractRulesDefinition
         return name;
     }
 
-    @SuppressWarnings("nls")
-    private RuleType getType(String tag, boolean isSev1)
-    {
-        if (tag.contains("security") || tag.startsWith("owasp") || tag.startsWith("cwe")
-                || tag.startsWith("pcidss") || tag.startsWith("apsc") || tag.startsWith("cert")) {
-            return isSev1 ? RuleType.VULNERABILITY : RuleType.SECURITY_HOTSPOT;
-        } else if (isSev1 || tag.startsWith("bd") || tag.startsWith("pb") || tag.startsWith("cs.pb") || tag.startsWith("vb.pb")) {
-            return RuleType.BUG;
-        }
-
-        return RuleType.CODE_SMELL;
-    }
 
     private String getRuleDescription(String root, String ruleId)
     {
