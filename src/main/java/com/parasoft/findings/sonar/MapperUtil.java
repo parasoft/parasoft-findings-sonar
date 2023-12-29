@@ -6,6 +6,8 @@ import org.sonar.api.issue.impact.SoftwareQuality;
 import org.sonar.api.rules.CleanCodeAttribute;
 import org.sonar.api.rules.RuleType;
 
+import java.util.Map;
+
 public class MapperUtil {
 
     public static Severity mapToSonarImpactSeverity(int severity) {
@@ -57,9 +59,13 @@ public class MapperUtil {
 
     public static CleanCodeAttribute mapToSonarCleanCodeAttribute(String category) {
         String tag = categoryToTag(category);
-        // TODO will be implemented in CICD-666
-        // The following return value is just for testing, because the default value is CleanCodeAttribute.CONVENTIONAL if not set.
-        return CleanCodeAttribute.CLEAR;
+        String[] splitTag = tag.split("\\.");
+        if (TagPrefixMap.TAG_PREFIX_MAP.containsKey(splitTag[0])) {
+            return TagPrefixMap.TAG_PREFIX_MAP.get(splitTag[0]);
+        } else {
+            Logger.getLogger().debug("The category '" + category + "' has been mapped to 'CONVENTIONAL' because it does not match any existing categories in the plugin."); //$NON-NLS-1$  //$NON-NLS-2$
+            return CleanCodeAttribute.CONVENTIONAL;
+        }
     }
 
     /**
