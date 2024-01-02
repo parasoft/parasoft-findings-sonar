@@ -40,6 +40,16 @@ public class ParasoftConfiguration
                 .multiValues(true)
                 .build()
         );
+        // Support SOAtest Test Execution
+        items.add(PropertyDefinition.builder(ParasoftConstants.PARASOFT_SOATEST_TEST_EXECUTION_REPORT_PATHS_KEY)
+                .name(Messages.SOAtestTestExecutionReportPathName)
+                .description(Messages.SOAtestTestExecutionReportPathDesc)
+                .onQualifiers(Qualifiers.PROJECT)
+                .category(ParasoftConstants.EXTERNAL_ANALYZERS_CATEGORY)
+                .subCategory(ParasoftConstants.PARASOFT_SOATEST_SUBCATEGORY)
+                .multiValues(true)
+                .build()
+        );
         return items;
     }
 }

@@ -36,16 +36,25 @@ public final class Messages
     public static String CoverageReportPathName;
     public static String CoverageReportPathDesc;
     public static String CoverageSubCategory;
+    public static String SOAtestTestExecutionReportPathName;
+    public static String SOAtestTestExecutionReportPathDesc;
     public static String UploadCodeCoverageData;
     public static String InvalidReportFile;
     public static String TransformReportToCoberturaFormat;
+    public static String TransformReportToXUnitFormat;
     public static String FailedToTransformReport;
     public static String FailedToLoadCoberturaReport;
     public static String FileNotFoundInProject;
     public static String NoValidCoverageReportsFound;
+    public static String NoValidSOAtestTestExecutionReportsFound;
     public static String InvalidCoberturaCoverageReport;
     public static String NotMatchedCoverageReportAndProject;
     public static String NoValidCoberturaReport;
+    public static String ConvertingSOAtestTestExecutionReportsToXUnitReports;
+    public static String ParsingXUnitReports;
+    public static String FailToParseXUnitReport;
+    public static String TotalDurationNotAccurateWithNegativeTimeTests;
+    public static String ResourceNotFound;
 
     static {
         // initialize resource bundle
