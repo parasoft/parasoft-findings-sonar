@@ -19,10 +19,11 @@ import com.parasoft.findings.sonar.rules.JtestRulesDefinition;
 public class ParasoftFindingsPlugin
     implements Plugin
 {
+    public static boolean isAPIVersionAtLeast10_1 = false;
     @Override
     public void define(Context context)
     {
-
+        isAPIVersionAtLeast10_1 = SonarAPIVersionUtil.isAPIVersionAtLeast10_1(context.getRuntime());
         // register example rules and sensor
         context.addExtensions(
             JtestRulesDefinition.class, DottestRulesDefinition.class, CpptestRulesDefinition.class,

@@ -11,9 +11,12 @@
 package com.parasoft.findings.sonar;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Test;
 import org.sonar.api.Plugin.Context;
+import org.sonar.api.SonarRuntime;
+import org.sonar.api.utils.Version;
 
 /**
  * Parasoft Jtest UTA: Test class for ParasoftFindingsPlugin
@@ -37,6 +40,10 @@ public class ParasoftFindingsPluginTest {
 
         // When
         Context context = mock(Context.class);
+        SonarRuntime sonarRuntime = mock(SonarRuntime.class);
+        Version version = mock(Version.class);
+        when(sonarRuntime.getApiVersion()).thenReturn(version);
+        when(context.getRuntime()).thenReturn(sonarRuntime);
         underTest.define(context);
 
     }

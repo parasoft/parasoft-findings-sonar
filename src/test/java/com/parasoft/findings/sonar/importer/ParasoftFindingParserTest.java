@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.stream.Stream;
 
+import com.parasoft.findings.sonar.MapperUtil;
 import com.parasoft.findings.utils.results.violations.ViolationRuleUtil;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -24,7 +25,7 @@ class ParasoftFindingParserTest
     @MethodSource("testMapToSonarSeverityParams")
     void testMapToSonarSeverity(int parasoftSeverity, String sonarSeverity)
     {
-        assertEquals(sonarSeverity, ParasoftFindingsParser.mapToSonarSeverity(parasoftSeverity).toString());
+        assertEquals(sonarSeverity, MapperUtil.mapToSonarSeverity(parasoftSeverity).toString());
     }
 
     private static Stream<Arguments> testMapToSonarSeverityParams()
