@@ -36,8 +36,6 @@ public final class Messages
     public static String CoverageReportPathName;
     public static String CoverageReportPathDesc;
     public static String CoverageSubCategory;
-    public static String SOAtestTestExecutionReportPathName;
-    public static String SOAtestTestExecutionReportPathDesc;
     public static String UploadCodeCoverageData;
     public static String InvalidReportFile;
     public static String TransformReportToCoberturaFormat;
@@ -55,6 +53,7 @@ public final class Messages
     public static String FailToParseXUnitReport;
     public static String TotalDurationNotAccurateWithNegativeTimeTests;
     public static String ResourceNotFound;
+    public static String DeleteIntermediateXUnitFiles;
 
     static {
         // initialize resource bundle

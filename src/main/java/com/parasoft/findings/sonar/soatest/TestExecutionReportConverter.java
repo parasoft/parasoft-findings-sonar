@@ -28,7 +28,6 @@ import net.sf.saxon.s9api.XsltCompiler;
 import net.sf.saxon.s9api.XsltExecutable;
 import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.sensor.SensorContext;
-import org.sonar.api.scanner.ScannerSide;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
@@ -37,10 +36,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@ScannerSide
 public class TestExecutionReportConverter {
 
     private final FileSystem fs;
+
 
     public TestExecutionReportConverter(FileSystem fs) {
         this.fs = fs;

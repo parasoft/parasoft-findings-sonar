@@ -29,9 +29,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.sensor.SensorContext;
-import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.measures.Metric;
-import org.sonar.api.scanner.ScannerSide;
 
 import javax.annotation.CheckForNull;
 import javax.xml.stream.XMLStreamException;
@@ -42,7 +40,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-@ScannerSide
 public class XUnitSOAtestParser {
 
     private final FileSystem fs;
@@ -115,11 +112,19 @@ public class XUnitSOAtestParser {
 
     private static void save(XUnitTestClassReport report, InputFile inputFile, SensorContext context) {
         int testsCount = report.getTests() - report.getSkipped();
-        saveMeasure(context, inputFile, CoreMetrics.SKIPPED_TESTS, report.getSkipped());
-        saveMeasure(context, inputFile, CoreMetrics.TESTS, testsCount);
-        saveMeasure(context, inputFile, CoreMetrics.TEST_ERRORS, report.getErrors());
-        saveMeasure(context, inputFile, CoreMetrics.TEST_FAILURES, report.getFailures());
-        saveMeasure(context, inputFile, CoreMetrics.TEST_EXECUTION_TIME, report.getDurationMilliseconds());
+        saveMeasure(context, inputFile, ParasoftMetrics.SKIPPED_FUNCTIONAL_TESTS, report.getSkipped());
+        saveMeasure(context, inputFile, ParasoftMetrics.FUNCTIONAL_TESTS, testsCount);
+        saveMeasure(context, inputFile, ParasoftMetrics.FUNCTIONAL_TEST_ERRORS, report.getErrors());
+        saveMeasure(context, inputFile, ParasoftMetrics.FUNCTIONAL_TEST_FAILURES, report.getFailures());
+
+        double successDensity = 0;
+        if (testsCount > 0 && report.getErrors() >= 0 && report.getFailures() >= 0) {
+            double density = (report.getErrors() + report.getFailures()) * 100D / testsCount;
+            successDensity = 100D - density;
+        }
+        saveMeasure(context, inputFile, ParasoftMetrics.FUNCTIONAL_TEST_SUCCESS_DENSITY, successDensity);
+
+        saveMeasure(context, inputFile, ParasoftMetrics.FUNCTIONAL_TEST_EXECUTION_TIME, report.getDurationMilliseconds());
     }
 
     @CheckForNull

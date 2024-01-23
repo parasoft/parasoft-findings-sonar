@@ -42,8 +42,8 @@ public class ParasoftConfiguration
         );
         // Support SOAtest Test Execution
         items.add(PropertyDefinition.builder(ParasoftConstants.PARASOFT_SOATEST_TEST_EXECUTION_REPORT_PATHS_KEY)
-                .name(Messages.SOAtestTestExecutionReportPathName)
-                .description(Messages.SOAtestTestExecutionReportPathDesc)
+                .name("Parasoft SOAtest Test Execution Report Files")
+                .description("Path (absolute or relative) to Parasoft SOAtest test execution XML report files.")
                 .onQualifiers(Qualifiers.PROJECT)
                 .category(ParasoftConstants.EXTERNAL_ANALYZERS_CATEGORY)
                 .subCategory(ParasoftConstants.PARASOFT_SOATEST_SUBCATEGORY)
