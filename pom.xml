@@ -245,6 +245,12 @@
             <version>4.6.1</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>3.23.1</version>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>net.sf.saxon</groupId>
@@ -260,6 +266,31 @@
             <groupId>com.parasoft</groupId>
             <artifactId>parasoft-findings-utils</artifactId>
             <version>1.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.12.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.staxmate</groupId>
+            <artifactId>staxmate</artifactId>
+            <version>2.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.sonarsource.analyzer-commons</groupId>
+            <artifactId>sonar-xml-parsing</artifactId>
+            <version>2.7.0.1482</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>xerces</groupId>
+                    <artifactId>xercesImpl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 

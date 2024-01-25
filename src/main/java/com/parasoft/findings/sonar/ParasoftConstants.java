@@ -11,4 +11,7 @@ public interface ParasoftConstants
     String JAPANESE_FOLDER_NAME = "ja";
     String PARASOFT_COVERAGE_REPORT_PATHS_KEY = "sonar.parasoft.coverage.reportPaths";
     String PARASOFT_COVERAGE_IMPORTER = "Parasoft Coverage Importer";
+    String PARASOFT_SOATEST_SUBCATEGORY = "Parasoft SOAtest";
+    String PARASOFT_SOATEST_REPORT_PATHS_KEY = "sonar.parasoft.soatest.reportPaths";
+    String PARASOFT_SOATEST_IMPORTER = "Parasoft SOAtest Importer";
 }

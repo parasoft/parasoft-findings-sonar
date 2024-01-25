@@ -19,7 +19,7 @@ public class ParasoftConfigurationTest
     {
         var result = ParasoftConfiguration.getProperties();
 
-        assertEquals(4, result.size());
+        assertEquals(5, result.size());
 
         var def = result.get(0);
         assertEquals("External Analyzers / Java\n"
@@ -47,6 +47,13 @@ public class ParasoftConfigurationTest
                 + "Parasoft Coverage Report Files\n"
                 + "Path (absolute or relative) to Parasoft coverage XML report files.\n"
                 + "sonar.parasoft.coverage.reportPaths\n"
+                + "Default: ", getDefinitionString(def));
+
+        def = result.get(4);
+        assertEquals("External Analyzers / Parasoft SOAtest\n"
+                + "Parasoft SOAtest Report Files\n"
+                + "Path (absolute or relative) to Parasoft SOAtest XML report files.\n"
+                + "sonar.parasoft.soatest.reportPaths\n"
                 + "Default: ", getDefinitionString(def));
     }
 
