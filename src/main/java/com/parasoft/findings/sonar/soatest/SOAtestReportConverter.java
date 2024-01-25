@@ -36,18 +36,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class TestExecutionReportConverter {
+public class SOAtestReportConverter {
 
     private final FileSystem fs;
 
 
-    public TestExecutionReportConverter(FileSystem fs) {
+    public SOAtestReportConverter(FileSystem fs) {
         this.fs = fs;
     }
 
     public List<File> convert(SensorContext context) {
         String[] reportPaths = context.config().getStringArray(
-                ParasoftConstants.PARASOFT_SOATEST_TEST_EXECUTION_REPORT_PATHS_KEY);
+                ParasoftConstants.PARASOFT_SOATEST_REPORT_PATHS_KEY);
         if (reportPaths != null && reportPaths.length > 0) {
             return transformToXunitReports(reportPaths);
         }
@@ -74,7 +74,7 @@ public class TestExecutionReportConverter {
             }
         }
         if (xunitReports.isEmpty()) {
-            throw new InvalidReportException(Messages.NoValidSOAtestTestExecutionReportsFound);
+            throw new InvalidReportException(Messages.NoValidSOAtestReportsFound);
         }
         return xunitReports;
     }

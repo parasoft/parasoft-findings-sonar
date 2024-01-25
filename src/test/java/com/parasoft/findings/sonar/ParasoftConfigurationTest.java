@@ -51,9 +51,9 @@ public class ParasoftConfigurationTest
 
         def = result.get(4);
         assertEquals("External Analyzers / Parasoft SOAtest\n"
-                + "Parasoft SOAtest Test Execution Report Files\n"
-                + "Path (absolute or relative) to Parasoft SOAtest test execution XML report files.\n"
-                + "sonar.parasoft.soatest.testExecution.reportPaths\n"
+                + "Parasoft SOAtest Report Files\n"
+                + "Path (absolute or relative) to Parasoft SOAtest XML report files.\n"
+                + "sonar.parasoft.soatest.reportPaths\n"
                 + "Default: ", getDefinitionString(def));
     }
 

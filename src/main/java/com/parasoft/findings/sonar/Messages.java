@@ -44,13 +44,15 @@ public final class Messages
     public static String FailedToLoadCoberturaReport;
     public static String FileNotFoundInProject;
     public static String NoValidCoverageReportsFound;
-    public static String NoValidSOAtestTestExecutionReportsFound;
+    public static String NoValidSOAtestReportsFound;
     public static String InvalidCoberturaCoverageReport;
     public static String NotMatchedCoverageReportAndProject;
     public static String NoValidCoberturaReport;
-    public static String ConvertingSOAtestTestExecutionReportsToXUnitReports;
+    public static String SOAtestReportPathName;
+    public static String SOAtestReportPathDesc;
+    public static String ConvertingSOAtestReportsToXUnitReports;
     public static String ParsingXUnitReports;
-    public static String FailToParseXUnitReport;
+    public static String FailedToParseXUnitReport;
     public static String TotalDurationNotAccurateWithNegativeTimeTests;
     public static String ResourceNotFound;
     public static String DeleteIntermediateXUnitFiles;

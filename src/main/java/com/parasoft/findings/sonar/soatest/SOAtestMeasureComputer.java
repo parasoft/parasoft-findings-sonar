@@ -22,14 +22,14 @@ import org.sonar.api.ce.measure.MeasureComputer;
 
 import static com.parasoft.findings.sonar.soatest.ParasoftMetrics.*;
 
-public class ComputeFunctionalTestMeasures implements MeasureComputer {
+public class SOAtestMeasureComputer implements MeasureComputer {
 
     private static final String[] INPUT_METRICS =
-            { FUNCTIONAL_TESTS_KEY, FUNCTIONAL_TEST_ERRORS_KEY, FUNCTIONAL_TEST_FAILURES_KEY,
-            SKIPPED_FUNCTIONAL_TESTS_KEY, FUNCTIONAL_TEST_EXECUTION_TIME_KEY };
+            { SOATEST_TESTS_KEY, SOATEST_TEST_ERRORS_KEY, SOATEST_TEST_FAILURES_KEY,
+            SKIPPED_SOATEST_TESTS_KEY, SOATEST_TEST_EXECUTION_TIME_KEY };
     private static final String[] OUTPUT_METRICS =
-            { FUNCTIONAL_TESTS_KEY, FUNCTIONAL_TEST_ERRORS_KEY, FUNCTIONAL_TEST_FAILURES_KEY,
-            SKIPPED_FUNCTIONAL_TESTS_KEY, FUNCTIONAL_TEST_SUCCESS_DENSITY_KEY, FUNCTIONAL_TEST_EXECUTION_TIME_KEY };
+            { SOATEST_TESTS_KEY, SOATEST_TEST_ERRORS_KEY, SOATEST_TEST_FAILURES_KEY,
+            SKIPPED_SOATEST_TESTS_KEY, SOATEST_TEST_SUCCESS_DENSITY_KEY, SOATEST_TEST_EXECUTION_TIME_KEY };
 
     @Override
     public MeasureComputerDefinition define(MeasureComputerDefinitionContext defContext) {
@@ -42,17 +42,17 @@ public class ComputeFunctionalTestMeasures implements MeasureComputer {
     public void compute(MeasureComputerContext context) {
          // measure is already defined on files by XUnitSOAtestParser in scanner stack
         if (context.getComponent().getType() != Component.Type.FILE) {
-            int sumTests = createAggregatedIntMeasure(context, FUNCTIONAL_TESTS_KEY);
-            int sumTestErrors = createAggregatedIntMeasure(context, FUNCTIONAL_TEST_ERRORS_KEY);
-            int sumTestFailures = createAggregatedIntMeasure(context, FUNCTIONAL_TEST_FAILURES_KEY);
-            createAggregatedIntMeasure(context, SKIPPED_FUNCTIONAL_TESTS_KEY);
+            int sumTests = createAggregatedIntMeasure(context, SOATEST_TESTS_KEY);
+            int sumTestErrors = createAggregatedIntMeasure(context, SOATEST_TEST_ERRORS_KEY);
+            int sumTestFailures = createAggregatedIntMeasure(context, SOATEST_TEST_FAILURES_KEY);
+            createAggregatedIntMeasure(context, SKIPPED_SOATEST_TESTS_KEY);
 
             if (sumTests > 0 && sumTestErrors >= 0 && sumTestFailures >= 0) {
                 double density = (sumTestErrors + sumTestFailures) * 100D / sumTests;
-                context.addMeasure(FUNCTIONAL_TEST_SUCCESS_DENSITY_KEY, 100D - density);
+                context.addMeasure(SOATEST_TEST_SUCCESS_DENSITY_KEY, 100D - density);
             }
 
-            createAggregatedLongMeasure(context, FUNCTIONAL_TEST_EXECUTION_TIME_KEY);
+            createAggregatedLongMeasure(context, SOATEST_TEST_EXECUTION_TIME_KEY);
         }
     }
 

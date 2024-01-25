@@ -19,7 +19,7 @@ package com.parasoft.findings.sonar.sensor;
 import com.parasoft.findings.sonar.Logger;
 import com.parasoft.findings.sonar.Messages;
 import com.parasoft.findings.sonar.soatest.XUnitSOAtestParser;
-import com.parasoft.findings.sonar.soatest.TestExecutionReportConverter;
+import com.parasoft.findings.sonar.soatest.SOAtestReportConverter;
 import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
@@ -28,21 +28,21 @@ import org.sonar.api.batch.sensor.SensorDescriptor;
 import java.io.File;
 import java.util.List;
 
-import static com.parasoft.findings.sonar.ParasoftConstants.PARASOFT_SOATEST_TEST_EXECUTION_IMPORTER;
-import static com.parasoft.findings.sonar.ParasoftConstants.PARASOFT_SOATEST_TEST_EXECUTION_REPORT_PATHS_KEY;
+import static com.parasoft.findings.sonar.ParasoftConstants.PARASOFT_SOATEST_IMPORTER;
+import static com.parasoft.findings.sonar.ParasoftConstants.PARASOFT_SOATEST_REPORT_PATHS_KEY;
 
-public class SOAtestTestExecutionSensor implements Sensor {
+public class SOAtestSensor implements Sensor {
 
     private final FileSystem fs;
 
-    public SOAtestTestExecutionSensor(FileSystem fs) {
+    public SOAtestSensor(FileSystem fs) {
         this.fs = fs;
     }
 
     @Override
     public void describe(SensorDescriptor descriptor) {
-        descriptor.name(PARASOFT_SOATEST_TEST_EXECUTION_IMPORTER)
-                .onlyWhenConfiguration((config) -> config.hasKey(PARASOFT_SOATEST_TEST_EXECUTION_REPORT_PATHS_KEY));
+        descriptor.name(PARASOFT_SOATEST_IMPORTER)
+                .onlyWhenConfiguration((config) -> config.hasKey(PARASOFT_SOATEST_REPORT_PATHS_KEY));
     }
 
     @Override
@@ -53,8 +53,8 @@ public class SOAtestTestExecutionSensor implements Sensor {
     }
 
     private List<File> convert(SensorContext context) {
-        Logger.getLogger().info(Messages.ConvertingSOAtestTestExecutionReportsToXUnitReports);
-        return new TestExecutionReportConverter(fs).convert(context);
+        Logger.getLogger().info(Messages.ConvertingSOAtestReportsToXUnitReports);
+        return new SOAtestReportConverter(fs).convert(context);
     }
 
     private void collect(SensorContext context, List<File> xUnitFiles) {

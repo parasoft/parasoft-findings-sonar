@@ -26,20 +26,20 @@ public class ParasoftMetrics implements Metrics {
 
     public static String DOMAIN_PARASOFT = "Parasoft";
 
-    public static final String FUNCTIONAL_TESTS_KEY = "parasoft_functional_tests";
+    public static final String SOATEST_TESTS_KEY = "parasoft_soatest_tests";
 
-    public static final Metric<Integer> FUNCTIONAL_TESTS =
-            new Metric.Builder(FUNCTIONAL_TESTS_KEY, "Functional Tests", Metric.ValueType.INT)
-                    .setDescription("Number of functional tests")
+    public static final Metric<Integer> SOATEST_TESTS =
+            new Metric.Builder(SOATEST_TESTS_KEY, "SOAtest Tests", Metric.ValueType.INT)
+                    .setDescription("Number of SOAtest tests")
                     .setDirection(Metric.DIRECTION_BETTER)
                     .setQualitative(false)
                     .setDomain(DOMAIN_PARASOFT)
                     .create();
 
-    public static final String FUNCTIONAL_TEST_ERRORS_KEY = "parasoft_functional_test_errors";
-    public static final Metric<Integer> FUNCTIONAL_TEST_ERRORS =
-            new Metric.Builder(FUNCTIONAL_TEST_ERRORS_KEY, "Functional Test Errors", Metric.ValueType.INT)
-                    .setDescription("Number of functional test errors")
+    public static final String SOATEST_TEST_ERRORS_KEY = "parasoft_soatest_test_errors";
+    public static final Metric<Integer> SOATEST_TEST_ERRORS =
+            new Metric.Builder(SOATEST_TEST_ERRORS_KEY, "SOAtest Test Errors", Metric.ValueType.INT)
+                    .setDescription("Number of SOAtest test errors")
                     .setDirection(Metric.DIRECTION_WORST)
                     .setQualitative(true)
                     .setDomain(DOMAIN_PARASOFT)
@@ -47,10 +47,10 @@ public class ParasoftMetrics implements Metrics {
                     .setOptimizedBestValue(true)
                     .create();
 
-    public static final String FUNCTIONAL_TEST_FAILURES_KEY = "parasoft_functional_test_failures";
-    public static final Metric<Integer> FUNCTIONAL_TEST_FAILURES =
-            new Metric.Builder(FUNCTIONAL_TEST_FAILURES_KEY, "Functional Test Failures", Metric.ValueType.INT)
-                    .setDescription("Number of functional test failures")
+    public static final String SOATEST_TEST_FAILURES_KEY = "parasoft_soatest_test_failures";
+    public static final Metric<Integer> SOATEST_TEST_FAILURES =
+            new Metric.Builder(SOATEST_TEST_FAILURES_KEY, "SOAtest Test Failures", Metric.ValueType.INT)
+                    .setDescription("Number of SOAtest test failures")
                     .setDirection(Metric.DIRECTION_WORST)
                     .setQualitative(true)
                     .setDomain(DOMAIN_PARASOFT)
@@ -58,10 +58,10 @@ public class ParasoftMetrics implements Metrics {
                     .setOptimizedBestValue(true)
                     .create();
 
-    public static final String SKIPPED_FUNCTIONAL_TESTS_KEY = "parasoft_skipped_functional_tests";
-    public static final Metric<Integer> SKIPPED_FUNCTIONAL_TESTS =
-            new Metric.Builder(SKIPPED_FUNCTIONAL_TESTS_KEY, "Skipped Functional Tests", Metric.ValueType.INT)
-                    .setDescription("Number of skipped functional tests")
+    public static final String SKIPPED_SOATEST_TESTS_KEY = "parasoft_skipped_soatest_tests";
+    public static final Metric<Integer> SKIPPED_SOATEST_TESTS =
+            new Metric.Builder(SKIPPED_SOATEST_TESTS_KEY, "Skipped SOAtest Tests", Metric.ValueType.INT)
+                    .setDescription("Number of skipped SOAtest tests")
                     .setDirection(Metric.DIRECTION_WORST)
                     .setQualitative(true)
                     .setDomain(DOMAIN_PARASOFT)
@@ -69,10 +69,10 @@ public class ParasoftMetrics implements Metrics {
                     .setOptimizedBestValue(true)
                     .create();
 
-    public static final String FUNCTIONAL_TEST_SUCCESS_DENSITY_KEY = "parasoft_functional_test_success_density";
-    public static final Metric<Double> FUNCTIONAL_TEST_SUCCESS_DENSITY =
-            new Metric.Builder(FUNCTIONAL_TEST_SUCCESS_DENSITY_KEY, "Functional Test Success (%)", Metric.ValueType.PERCENT)
-                    .setDescription("Density of successful functional tests")
+    public static final String SOATEST_TEST_SUCCESS_DENSITY_KEY = "parasoft_soatest_test_success_density";
+    public static final Metric<Double> SOATEST_TEST_SUCCESS_DENSITY =
+            new Metric.Builder(SOATEST_TEST_SUCCESS_DENSITY_KEY, "SOAtest Test Success (%)", Metric.ValueType.PERCENT)
+                    .setDescription("Density of successful SOAtest tests")
                     .setDirection(Metric.DIRECTION_BETTER)
                     .setQualitative(true)
                     .setDomain(DOMAIN_PARASOFT)
@@ -81,10 +81,10 @@ public class ParasoftMetrics implements Metrics {
                     .setOptimizedBestValue(true)
                     .create();
 
-    public static final String FUNCTIONAL_TEST_EXECUTION_TIME_KEY = "parasoft_functional_test_execution_time";
-    public static final Metric<Long> FUNCTIONAL_TEST_EXECUTION_TIME =
-            new Metric.Builder(FUNCTIONAL_TEST_EXECUTION_TIME_KEY, "Functional Test Duration", Metric.ValueType.MILLISEC)
-                    .setDescription("Execution duration of functional tests")
+    public static final String SOATEST_TEST_EXECUTION_TIME_KEY = "parasoft_soatest_test_execution_time";
+    public static final Metric<Long> SOATEST_TEST_EXECUTION_TIME =
+            new Metric.Builder(SOATEST_TEST_EXECUTION_TIME_KEY, "SOAtest Test Duration", Metric.ValueType.MILLISEC)
+                    .setDescription("Execution duration of SOAtest tests")
                     .setDirection(Metric.DIRECTION_WORST)
                     .setQualitative(false)
                     .setDomain(DOMAIN_PARASOFT)
@@ -92,7 +92,7 @@ public class ParasoftMetrics implements Metrics {
     
     @Override
     public List<Metric> getMetrics() {
-        return Arrays.asList(FUNCTIONAL_TESTS, FUNCTIONAL_TEST_ERRORS, FUNCTIONAL_TEST_FAILURES,
-                SKIPPED_FUNCTIONAL_TESTS, FUNCTIONAL_TEST_SUCCESS_DENSITY, FUNCTIONAL_TEST_EXECUTION_TIME);
+        return Arrays.asList(SOATEST_TESTS, SOATEST_TEST_ERRORS, SOATEST_TEST_FAILURES,
+                SKIPPED_SOATEST_TESTS, SOATEST_TEST_SUCCESS_DENSITY, SOATEST_TEST_EXECUTION_TIME);
     }
 }

@@ -65,7 +65,7 @@ public class XUnitSOAtestParser {
             try {
                 parser.parse(report);
             } catch (XMLStreamException e) {
-                throw new InvalidReportException(NLS.getFormatted(Messages.FailToParseXUnitReport, report), e);
+                throw new InvalidReportException(NLS.getFormatted(Messages.FailedToParseXUnitReport, report), e);
             }
         }
     }
@@ -112,19 +112,19 @@ public class XUnitSOAtestParser {
 
     private static void save(XUnitTestClassReport report, InputFile inputFile, SensorContext context) {
         int testsCount = report.getTests() - report.getSkipped();
-        saveMeasure(context, inputFile, ParasoftMetrics.SKIPPED_FUNCTIONAL_TESTS, report.getSkipped());
-        saveMeasure(context, inputFile, ParasoftMetrics.FUNCTIONAL_TESTS, testsCount);
-        saveMeasure(context, inputFile, ParasoftMetrics.FUNCTIONAL_TEST_ERRORS, report.getErrors());
-        saveMeasure(context, inputFile, ParasoftMetrics.FUNCTIONAL_TEST_FAILURES, report.getFailures());
+        saveMeasure(context, inputFile, ParasoftMetrics.SKIPPED_SOATEST_TESTS, report.getSkipped());
+        saveMeasure(context, inputFile, ParasoftMetrics.SOATEST_TESTS, testsCount);
+        saveMeasure(context, inputFile, ParasoftMetrics.SOATEST_TEST_ERRORS, report.getErrors());
+        saveMeasure(context, inputFile, ParasoftMetrics.SOATEST_TEST_FAILURES, report.getFailures());
 
         double successDensity = 0;
         if (testsCount > 0 && report.getErrors() >= 0 && report.getFailures() >= 0) {
             double density = (report.getErrors() + report.getFailures()) * 100D / testsCount;
             successDensity = 100D - density;
         }
-        saveMeasure(context, inputFile, ParasoftMetrics.FUNCTIONAL_TEST_SUCCESS_DENSITY, successDensity);
+        saveMeasure(context, inputFile, ParasoftMetrics.SOATEST_TEST_SUCCESS_DENSITY, successDensity);
 
-        saveMeasure(context, inputFile, ParasoftMetrics.FUNCTIONAL_TEST_EXECUTION_TIME, report.getDurationMilliseconds());
+        saveMeasure(context, inputFile, ParasoftMetrics.SOATEST_TEST_EXECUTION_TIME, report.getDurationMilliseconds());
     }
 
     @CheckForNull
