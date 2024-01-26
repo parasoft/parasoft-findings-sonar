@@ -22,7 +22,10 @@ import com.parasoft.findings.sonar.ParasoftConstants;
 import com.parasoft.findings.sonar.exception.InvalidReportException;
 import com.parasoft.findings.utils.common.nls.NLS;
 import net.sf.saxon.s9api.Processor;
+import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.Serializer;
+import net.sf.saxon.s9api.XdmAtomicValue;
+import net.sf.saxon.s9api.XdmValue;
 import net.sf.saxon.s9api.Xslt30Transformer;
 import net.sf.saxon.s9api.XsltCompiler;
 import net.sf.saxon.s9api.XsltExecutable;
@@ -34,7 +37,9 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SOAtestReportConverter {
 
@@ -92,6 +97,12 @@ public class SOAtestReportConverter {
             Serializer out = processor.newSerializer(result);
             out.setOutputProperty(Serializer.Property.METHOD, "xml");
             out.setOutputProperty(Serializer.Property.INDENT, "yes");
+
+            Map<QName, XdmValue> paramsMap = new LinkedHashMap<>();
+            QName paramName = new QName("pipelineBuildWorkingDirectory");
+            XdmValue paramValue = new XdmAtomicValue(fs.baseDir().getAbsolutePath());
+            paramsMap.put(paramName, paramValue);
+            transformer.setStylesheetParameters(paramsMap);
 
             transformer.transform(new StreamSource(report), out);
             return result;
