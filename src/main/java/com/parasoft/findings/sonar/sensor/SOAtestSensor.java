@@ -49,7 +49,6 @@ public class SOAtestSensor implements Sensor {
     public void execute(SensorContext context) {
         List<File> xUnitFiles = convert(context);
         collect(context, xUnitFiles);
-        clean(xUnitFiles);
     }
 
     private List<File> convert(SensorContext context) {
@@ -62,12 +61,4 @@ public class SOAtestSensor implements Sensor {
         new XUnitSOAtestParser(fs).collect(context, xUnitFiles);
     }
 
-    private void clean(List<File> xUnitFiles) {
-        Logger.getLogger().info(Messages.DeleteIntermediateXUnitFiles);
-        xUnitFiles.forEach(file -> {
-            if (file.exists() && file.isFile()) {
-                file.delete();
-            }
-        });
-    }
 }

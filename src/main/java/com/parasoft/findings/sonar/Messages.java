@@ -55,7 +55,6 @@ public final class Messages
     public static String FailedToParseXUnitReport;
     public static String TotalDurationNotAccurateWithNegativeTimeTests;
     public static String ResourceNotFound;
-    public static String DeleteIntermediateXUnitFiles;
 
     static {
         // initialize resource bundle
