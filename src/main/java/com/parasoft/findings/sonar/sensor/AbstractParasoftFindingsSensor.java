@@ -19,7 +19,12 @@ package com.parasoft.findings.sonar.sensor;
 import java.io.File;
 import java.util.Properties;
 
+import com.parasoft.findings.sonar.ReportType;
 import com.parasoft.findings.utils.common.nls.NLS;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.scanner.ScannerSide;
@@ -39,6 +44,7 @@ public abstract class AbstractParasoftFindingsSensor
     implements ProjectSensor
 {
     private final ParasoftProduct _product;
+    private ReportType reportType;
 
     protected AbstractParasoftFindingsSensor(ParasoftProduct product)
     {
@@ -62,12 +68,29 @@ public abstract class AbstractParasoftFindingsSensor
 
         var findingsParser = new ParasoftFindingsParser(new Properties());
         for (var path : reportLocationPath) {
-            loadFindings(path, findingsParser, context);
+            File reportFile = getFile(path, context);
+            if (reportFile != null) {
+                determineReportType(reportFile);
+                switch (reportType) {
+                    case XML_STATIC_AND_TESTS:
+                        loadFindings(reportFile, findingsParser, context);
+                        loadTestResults(reportFile, findingsParser);
+                        break;
+                    case XML_STATIC:
+                        loadFindings(reportFile, findingsParser, context);
+                        break;
+                    case XML_TESTS:
+                        loadTestResults(reportFile, findingsParser);
+                        break;
+                    default:
+                        Logger.getLogger().warn(NLS.getFormatted(Messages.InvalidStaticAnalysisOrUnitTestsReport, reportFile.getAbsolutePath()));
+                }
+            }
         }
+        findingsParser.saveMeasure(context);
     }
 
-    private void loadFindings(String reportPath, ParasoftFindingsParser findingsParser, SensorContext context)
-    {
+    private File getFile(String reportPath, SensorContext context) {
         var fs = context.fileSystem();
         File reportFile = new File(reportPath);
         if (!reportFile.isAbsolute()) {
@@ -76,9 +99,36 @@ public abstract class AbstractParasoftFindingsSensor
 
         if (!reportFile.exists()) {
             Logger.getLogger().warn(NLS.getFormatted(Messages.NoReportFile, reportFile.getAbsolutePath()));
-            return;
+            return null;
         }
+        return reportFile;
+    }
 
+    private void determineReportType(File reportFile) {
+        try {
+            SAXReader reader = new SAXReader();
+            Document document = reader.read(reportFile.getAbsolutePath());
+            Element rootElement = document.getRootElement();
+            Element codingStandardsElement = rootElement.element("CodingStandards");
+            Element execElement = rootElement.element("Exec");
+
+            if (codingStandardsElement != null && execElement != null ) {
+                reportType = ReportType.XML_STATIC_AND_TESTS;
+            } else if (codingStandardsElement != null) { // The CodingStandards node exists
+                reportType = ReportType.XML_STATIC;
+            } else if (execElement != null) { // The Exec node exists
+                reportType = ReportType.XML_TESTS;
+            } else {
+                reportType = ReportType.UNKNOWN;
+            }
+        } catch (DocumentException e) {
+            Logger.getLogger().error(NLS.getFormatted(Messages.FailedToLoadStaticAnalysisOrUnitTestsReport, reportFile.getAbsolutePath()), e);
+        }
+    }
+
+    private void loadFindings(File reportFile, ParasoftFindingsParser findingsParser, SensorContext context)
+    {
+        var fs = context.fileSystem();
         Logger.getLogger().info(NLS.getFormatted(Messages.ParsingReportFile, reportFile));
         var findingsCount = findingsParser.loadFindings(reportFile);
         Logger.getLogger().info(NLS.getFormatted(Messages.FindingsImported, findingsCount));
@@ -94,5 +144,10 @@ public abstract class AbstractParasoftFindingsSensor
                 Logger.getLogger().info(NLS.getFormatted(Messages.CreatedIssues, count, file.toString()));
             }
         }
+    }
+
+    private void loadTestResults(File reportFile, ParasoftFindingsParser findingsParser) {
+        Logger.getLogger().info(NLS.getFormatted(Messages.ParsingReportFile, reportFile.getAbsolutePath()));
+        findingsParser.loadTestResults(reportFile);
     }
 }

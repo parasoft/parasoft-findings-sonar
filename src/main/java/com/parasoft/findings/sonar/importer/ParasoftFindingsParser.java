@@ -19,6 +19,10 @@ package com.parasoft.findings.sonar.importer;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.text.ParseException;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,12 +39,21 @@ import com.parasoft.findings.utils.results.testableinput.IFileTestableInput;
 import com.parasoft.findings.utils.results.testableinput.ITestableInput;
 import com.parasoft.findings.utils.results.violations.*;
 
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
 import org.sonar.api.batch.fs.InputFile;
+import org.sonar.api.batch.measure.Metric;
 import org.sonar.api.batch.rule.ActiveRules;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.issue.NewIssue;
 import org.sonar.api.batch.sensor.issue.NewIssueLocation;
+import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.rule.RuleKey;
+import org.sonar.api.utils.ParsingUtils;
+
+import java.io.Serializable;
 
 /**
  * A parser for Parasoft files containing xml report.
@@ -50,6 +63,10 @@ public class ParasoftFindingsParser
     private final Properties _properties;
 
     private XmlReportViolationsImporter _importer = null;
+    private int totalTests;
+    private int failures;
+    private int errors;
+    private long duration;
 
     private final Map<String, Set<IRuleViolation>> _violations = Collections.synchronizedMap(new HashMap<>());
 
@@ -184,5 +201,70 @@ public class ParasoftFindingsParser
             _importer = new XmlReportViolationsImporter(_properties);
         }
         return _importer;
+    }
+
+    public void loadTestResults(File reportFile) {
+        String reportFilePath = reportFile.getAbsolutePath();
+        try {
+            SAXReader reader = new SAXReader();
+            Document document = reader.read(reportFilePath);
+            Element rootElement = document.getRootElement();
+
+            boolean isCPPProReport = isCppProReport(rootElement);
+            Element executedTestsDetailsElement = findExecutedTestsDetailsElement(rootElement, isCPPProReport);
+            Element totalElement = (executedTestsDetailsElement != null) ? executedTestsDetailsElement.element("Total") : null;
+
+            if (totalElement != null) {
+                this.totalTests += parseIntOrDefault(totalElement.attributeValue("total"), 0);
+                this.errors += parseIntOrDefault(totalElement.attributeValue("err"), 0);
+                this.failures += parseIntOrDefault(totalElement.attributeValue("fail"), 0);
+                this.duration += getTimeAttributeInMS(totalElement.attributeValue("time"), 0L);
+            }
+        } catch (DocumentException e) {
+            Logger.getLogger().error(NLS.getFormatted(Messages.FailedToLoadStaticAnalysisOrUnitTestsReport, reportFilePath), e);
+        }
+    }
+
+    public void saveMeasure(SensorContext context) {
+        if (this.totalTests > 0) {
+            saveMeasure(context, CoreMetrics.TESTS, this.totalTests);
+            saveMeasure(context, CoreMetrics.TEST_ERRORS, this.errors);
+            saveMeasure(context, CoreMetrics.TEST_FAILURES, this.failures);
+            if (this.duration > 0) {
+                saveMeasure(context, CoreMetrics.TEST_EXECUTION_TIME, this.duration);
+            }
+        }
+    }
+
+    // For cppTest professional report, "prjModule" attribute is not present.
+    private boolean isCppProReport(Element rootElement) {
+        return rootElement.attributeValue("prjModule") == null && "C++test".equals(rootElement.attributeValue("toolName"));
+    }
+
+    // For cppTest professional report, "ExecutedTestsDetails" node is under root element.
+    private Element findExecutedTestsDetailsElement(Element rootElement, boolean isCPPProReport) {
+        return (isCPPProReport) ? rootElement.element("ExecutedTestsDetails") : rootElement.element("Exec").element("ExecutedTestsDetails");
+    }
+
+    private int parseIntOrDefault(String value, int defaultValue) {
+        if (value == null) {
+            return defaultValue;
+        }
+        return Integer.parseInt(value);
+    }
+
+    //  Get a time attribute in milliseconds
+    private long getTimeAttributeInMS(String value, long defaultValue) {
+        if (value == null) {
+            return defaultValue;
+        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("H:mm:ss.SSS");
+        LocalTime localTime = LocalTime.parse(value, formatter);
+        return localTime.toNanoOfDay() / 1_000_000;
+    }
+
+    // Create a new measure for your specified metric through using SonarQube's Measure API
+    private <T extends Serializable> void saveMeasure(SensorContext context, Metric<T> metric, T value) {
+        context.<T>newMeasure().forMetric(metric).on(context.project()).withValue(value).save();
     }
 }
