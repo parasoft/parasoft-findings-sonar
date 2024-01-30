@@ -19,7 +19,6 @@ package com.parasoft.findings.sonar.importer;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.text.ParseException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
@@ -39,10 +38,7 @@ import com.parasoft.findings.utils.results.testableinput.IFileTestableInput;
 import com.parasoft.findings.utils.results.testableinput.ITestableInput;
 import com.parasoft.findings.utils.results.violations.*;
 
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
 import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.measure.Metric;
 import org.sonar.api.batch.rule.ActiveRules;
@@ -51,7 +47,6 @@ import org.sonar.api.batch.sensor.issue.NewIssue;
 import org.sonar.api.batch.sensor.issue.NewIssueLocation;
 import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.rule.RuleKey;
-import org.sonar.api.utils.ParsingUtils;
 
 import java.io.Serializable;
 
@@ -63,10 +58,6 @@ public class ParasoftFindingsParser
     private final Properties _properties;
 
     private XmlReportViolationsImporter _importer = null;
-    private int totalTests;
-    private int failures;
-    private int errors;
-    private long duration;
 
     private final Map<String, Set<IRuleViolation>> _violations = Collections.synchronizedMap(new HashMap<>());
 
@@ -203,60 +194,44 @@ public class ParasoftFindingsParser
         return _importer;
     }
 
-    public void loadTestResults(File reportFile) {
-        String reportFilePath = reportFile.getAbsolutePath();
-        try {
-            SAXReader reader = new SAXReader();
-            Document document = reader.read(reportFilePath);
-            Element rootElement = document.getRootElement();
-
-            boolean isCPPProReport = isCppProReport(rootElement);
-            Element executedTestsDetailsElement = findExecutedTestsDetailsElement(rootElement, isCPPProReport);
-            Element totalElement = (executedTestsDetailsElement != null) ? executedTestsDetailsElement.element("Total") : null;
-
-            if (totalElement != null) {
-                this.totalTests += parseIntOrDefault(totalElement.attributeValue("total"), 0);
-                this.errors += parseIntOrDefault(totalElement.attributeValue("err"), 0);
-                this.failures += parseIntOrDefault(totalElement.attributeValue("fail"), 0);
-                this.duration += getTimeAttributeInMS(totalElement.attributeValue("time"), 0L);
-            }
-        } catch (DocumentException e) {
-            Logger.getLogger().error(NLS.getFormatted(Messages.FailedToLoadStaticAnalysisOrUnitTestsReport, reportFilePath), e);
+    public void loadTestResults(Element rootElement, UnitTestResult unitTestResult) {
+        Element executedTestsDetailsElement = findExecutedTestsDetailsElement(rootElement);
+        Element totalElement = (executedTestsDetailsElement != null) ? executedTestsDetailsElement.element("Total") : null;
+        if (totalElement != null) {
+            unitTestResult.setTotalTests(parseIntOrDefault(totalElement.attributeValue("total")));
+            unitTestResult.setErrors(parseIntOrDefault(totalElement.attributeValue("err")));
+            unitTestResult.setFailures(parseIntOrDefault(totalElement.attributeValue("fail")));
+            unitTestResult.setDuration(getTimeAttributeInMS(totalElement.attributeValue("time")));
         }
     }
 
-    public void saveMeasure(SensorContext context) {
-        if (this.totalTests > 0) {
-            saveMeasure(context, CoreMetrics.TESTS, this.totalTests);
-            saveMeasure(context, CoreMetrics.TEST_ERRORS, this.errors);
-            saveMeasure(context, CoreMetrics.TEST_FAILURES, this.failures);
-            if (this.duration > 0) {
-                saveMeasure(context, CoreMetrics.TEST_EXECUTION_TIME, this.duration);
+    public void saveMeasures(SensorContext context, UnitTestResult unitTestResult) {
+        if (unitTestResult.getTotalTests() > 0) {
+            saveMeasure(context, CoreMetrics.TESTS, unitTestResult.getTotalTests());
+            saveMeasure(context, CoreMetrics.TEST_ERRORS, unitTestResult.getErrors());
+            saveMeasure(context, CoreMetrics.TEST_FAILURES, unitTestResult.getFailures());
+            if (unitTestResult.getDuration() > 0) {
+                saveMeasure(context, CoreMetrics.TEST_EXECUTION_TIME, unitTestResult.getDuration());
             }
         }
-    }
-
-    // For cppTest professional report, "prjModule" attribute is not present.
-    private boolean isCppProReport(Element rootElement) {
-        return rootElement.attributeValue("prjModule") == null && "C++test".equals(rootElement.attributeValue("toolName"));
     }
 
     // For cppTest professional report, "ExecutedTestsDetails" node is under root element.
-    private Element findExecutedTestsDetailsElement(Element rootElement, boolean isCPPProReport) {
-        return (isCPPProReport) ? rootElement.element("ExecutedTestsDetails") : rootElement.element("Exec").element("ExecutedTestsDetails");
+    private Element findExecutedTestsDetailsElement(Element rootElement) {
+        return (rootElement.element("ExecutedTestsDetails") != null) ? rootElement.element("ExecutedTestsDetails") : rootElement.element("Exec").element("ExecutedTestsDetails");
     }
 
-    private int parseIntOrDefault(String value, int defaultValue) {
-        if (value == null) {
-            return defaultValue;
+    private int parseIntOrDefault(String value) {
+        if (value == null || value.isEmpty()) {
+            return 0;
         }
         return Integer.parseInt(value);
     }
 
     //  Get a time attribute in milliseconds
-    private long getTimeAttributeInMS(String value, long defaultValue) {
-        if (value == null) {
-            return defaultValue;
+    private long getTimeAttributeInMS(String value) {
+        if (value == null || value.isEmpty()) {
+            return 0L;
         }
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("H:mm:ss.SSS");
         LocalTime localTime = LocalTime.parse(value, formatter);

@@ -42,12 +42,12 @@ public final class Messages
     public static String TransformReportToXUnitFormat;
     public static String FailedToTransformReport;
     public static String FailedToLoadCoberturaReport;
-    public static String FailedToLoadStaticAnalysisOrUnitTestsReport;
+    public static String FailedToLoadReport;
     public static String FileNotFoundInProject;
     public static String NoValidCoverageReportsFound;
     public static String NoValidSOAtestReportsFound;
     public static String InvalidCoberturaCoverageReport;
-    public static String InvalidStaticAnalysisOrUnitTestsReport;
+    public static String InvalidReport;
     public static String NotMatchedCoverageReportAndProject;
     public static String NoValidCoberturaReport;
     public static String SOAtestReportPathName;
