@@ -36,17 +36,6 @@ public class ParasoftMetrics implements Metrics {
                     .setDomain(DOMAIN_PARASOFT)
                     .create();
 
-    public static final String SOATEST_TEST_ERRORS_KEY = "parasoft_soatest_test_errors";
-    public static final Metric<Integer> SOATEST_TEST_ERRORS =
-            new Metric.Builder(SOATEST_TEST_ERRORS_KEY, "SOAtest Test Errors", Metric.ValueType.INT)
-                    .setDescription("Number of SOAtest test errors")
-                    .setDirection(Metric.DIRECTION_WORST)
-                    .setQualitative(true)
-                    .setDomain(DOMAIN_PARASOFT)
-                    .setBestValue(0.0)
-                    .setOptimizedBestValue(true)
-                    .create();
-
     public static final String SOATEST_TEST_FAILURES_KEY = "parasoft_soatest_test_failures";
     public static final Metric<Integer> SOATEST_TEST_FAILURES =
             new Metric.Builder(SOATEST_TEST_FAILURES_KEY, "SOAtest Test Failures", Metric.ValueType.INT)
@@ -58,20 +47,9 @@ public class ParasoftMetrics implements Metrics {
                     .setOptimizedBestValue(true)
                     .create();
 
-    public static final String SKIPPED_SOATEST_TESTS_KEY = "parasoft_skipped_soatest_tests";
-    public static final Metric<Integer> SKIPPED_SOATEST_TESTS =
-            new Metric.Builder(SKIPPED_SOATEST_TESTS_KEY, "Skipped SOAtest Tests", Metric.ValueType.INT)
-                    .setDescription("Number of skipped SOAtest tests")
-                    .setDirection(Metric.DIRECTION_WORST)
-                    .setQualitative(true)
-                    .setDomain(DOMAIN_PARASOFT)
-                    .setBestValue(0.0)
-                    .setOptimizedBestValue(true)
-                    .create();
-
     public static final String SOATEST_TEST_SUCCESS_DENSITY_KEY = "parasoft_soatest_test_success_density";
     public static final Metric<Double> SOATEST_TEST_SUCCESS_DENSITY =
-            new Metric.Builder(SOATEST_TEST_SUCCESS_DENSITY_KEY, "SOAtest Test Success (%)", Metric.ValueType.PERCENT)
+            new Metric.Builder(SOATEST_TEST_SUCCESS_DENSITY_KEY, "SOAtest Test Success", Metric.ValueType.PERCENT)
                     .setDescription("Density of successful SOAtest tests")
                     .setDirection(Metric.DIRECTION_BETTER)
                     .setQualitative(true)
@@ -92,7 +70,6 @@ public class ParasoftMetrics implements Metrics {
     
     @Override
     public List<Metric> getMetrics() {
-        return Arrays.asList(SOATEST_TESTS, SOATEST_TEST_ERRORS, SOATEST_TEST_FAILURES,
-                SKIPPED_SOATEST_TESTS, SOATEST_TEST_SUCCESS_DENSITY, SOATEST_TEST_EXECUTION_TIME);
+        return Arrays.asList(SOATEST_TESTS, SOATEST_TEST_FAILURES, SOATEST_TEST_SUCCESS_DENSITY, SOATEST_TEST_EXECUTION_TIME);
     }
 }
