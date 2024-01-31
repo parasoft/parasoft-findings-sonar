@@ -194,15 +194,17 @@ public class ParasoftFindingsParser
         return _importer;
     }
 
-    public void loadTestResults(Element rootElement, UnitTestResult unitTestResult) {
+    public UnitTestResult loadTestResults(Element rootElement) {
         Element executedTestsDetailsElement = findExecutedTestsDetailsElement(rootElement);
         Element totalElement = (executedTestsDetailsElement != null) ? executedTestsDetailsElement.element("Total") : null;
+
         if (totalElement != null) {
-            unitTestResult.setTotalTests(parseIntOrDefault(totalElement.attributeValue("total")));
-            unitTestResult.setErrors(parseIntOrDefault(totalElement.attributeValue("err")));
-            unitTestResult.setFailures(parseIntOrDefault(totalElement.attributeValue("fail")));
-            unitTestResult.setDuration(getTimeAttributeInMS(totalElement.attributeValue("time")));
+            return new UnitTestResult(parseInt(totalElement.attributeValue("total"), 0),
+                                      parseInt(totalElement.attributeValue("err"), 0),
+                                      parseInt(totalElement.attributeValue("fail"), 0),
+                                      getTimeAttributeInMS(totalElement.attributeValue("time"), 0L));
         }
+        return new UnitTestResult(0, 0, 0, 0L);
     }
 
     public void saveMeasures(SensorContext context, UnitTestResult unitTestResult) {
@@ -218,24 +220,34 @@ public class ParasoftFindingsParser
 
     // For cppTest professional report, "ExecutedTestsDetails" node is under root element.
     private Element findExecutedTestsDetailsElement(Element rootElement) {
-        return (rootElement.element("ExecutedTestsDetails") != null) ? rootElement.element("ExecutedTestsDetails") : rootElement.element("Exec").element("ExecutedTestsDetails");
+        return (rootElement.element("ExecutedTestsDetails") != null) ?
+                rootElement.element("ExecutedTestsDetails") :
+                rootElement.element("Exec").element("ExecutedTestsDetails");
     }
 
-    private int parseIntOrDefault(String value) {
+    private int parseInt(String value, int defaultValue) {
         if (value == null || value.isEmpty()) {
-            return 0;
+            return defaultValue;
         }
-        return Integer.parseInt(value);
+        try {
+            return Integer.parseInt(value);
+        } catch (Exception e) {
+            return defaultValue;
+        }
     }
 
     //  Get a time attribute in milliseconds
-    private long getTimeAttributeInMS(String value) {
+    private long getTimeAttributeInMS(String value, long defaultValue) {
         if (value == null || value.isEmpty()) {
-            return 0L;
+            return defaultValue;
         }
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("H:mm:ss.SSS");
-        LocalTime localTime = LocalTime.parse(value, formatter);
-        return localTime.toNanoOfDay() / 1_000_000;
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("H:mm:ss.SSS");
+            LocalTime localTime = LocalTime.parse(value, formatter);
+            return localTime.toNanoOfDay() / 1_000_000;
+        } catch (Exception e) {
+            return defaultValue;
+        }
     }
 
     // Create a new measure for your specified metric through using SonarQube's Measure API

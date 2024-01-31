@@ -17,6 +17,8 @@
 package com.parasoft.findings.sonar.sensor;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import com.parasoft.findings.sonar.*;
@@ -62,7 +64,8 @@ public abstract class AbstractParasoftFindingsSensor
         }
 
         var findingsParser = new ParasoftFindingsParser(new Properties());
-        UnitTestResult unitTestResult = new UnitTestResult();
+        List<Element> unitTestReportRootElements = new ArrayList<>();
+        List<File> staticAnalysisReports = new ArrayList<>();
         for (var path : reportLocationPath) {
             File reportFile = getFile(path, context);
             if (reportFile != null) {
@@ -73,24 +76,48 @@ public abstract class AbstractParasoftFindingsSensor
                     ReportType reportType = determineReportType(rootElement);
                     switch (reportType) {
                         case XML_STATIC_AND_TESTS:
-                            loadFindings(reportFile, findingsParser, context);
-                            findingsParser.loadTestResults(rootElement, unitTestResult);
+                            staticAnalysisReports.add(reportFile);
+                            unitTestReportRootElements.add(rootElement);
                             break;
                         case XML_STATIC:
-                            loadFindings(reportFile, findingsParser, context);
+                            staticAnalysisReports.add(reportFile);
                             break;
                         case XML_TESTS:
-                            findingsParser.loadTestResults(rootElement, unitTestResult);
+                            unitTestReportRootElements.add(rootElement);
                             break;
                         default:
                             Logger.getLogger().warn(NLS.getFormatted(Messages.InvalidReport, reportFile.getAbsolutePath()));
                     }
                 } catch (DocumentException e) {
-                    Logger.getLogger().error(NLS.getFormatted(Messages.FailedToLoadReport, reportFile.getAbsolutePath()), e);
+                    Logger.getLogger().error(NLS.getFormatted(Messages.InvalidReport, reportFile.getAbsolutePath()), e);
                 }
             }
         }
+
+        processUnitTestReports(unitTestReportRootElements, findingsParser, context);
+        processStaticAnalysisReports(staticAnalysisReports, findingsParser, context);
+    }
+
+    private void processUnitTestReports(List<Element> rootElements, ParasoftFindingsParser findingsParser, SensorContext context ) {
+        if (rootElements.isEmpty()) {
+            // TODO: Logger
+            return;
+        }
+        UnitTestResult unitTestResult = new UnitTestResult(0, 0, 0, 0L);
+        for (var root : rootElements) {
+            unitTestResult.mergeFrom(findingsParser.loadTestResults(root));
+        }
         findingsParser.saveMeasures(context, unitTestResult);
+    }
+
+    private void processStaticAnalysisReports(List<File> reportFiles, ParasoftFindingsParser findingsParser, SensorContext context) {
+        if (reportFiles.isEmpty()) {
+            // TODO: Logger
+            return;
+        }
+        for (var file : reportFiles) {
+            loadFindings(file, findingsParser, context);
+        }
     }
 
     private File getFile(String reportPath, SensorContext context) {

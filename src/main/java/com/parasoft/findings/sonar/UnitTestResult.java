@@ -6,35 +6,36 @@ public class UnitTestResult {
     private int errors;
     private long duration;
 
-    public int getTotalTests() {
-        return totalTests;
+    public UnitTestResult(int totalTests, int failures, int errors, long duration) {
+        this.totalTests = totalTests;
+        this.failures = failures;
+        this.errors = errors;
+        this.duration = duration;
     }
 
-    public void setTotalTests(int totalTests) {
-        this.totalTests += totalTests;
+    public int getTotalTests() {
+        return totalTests;
     }
 
     public int getFailures() {
         return failures;
     }
 
-    public void setFailures(int failures) {
-        this.failures += failures;
-    }
-
     public int getErrors() {
         return errors;
-    }
-
-    public void setErrors(int errors) {
-        this.errors += errors;
     }
 
     public long getDuration() {
         return duration;
     }
 
-    public void setDuration(long duration) {
-        this.duration += duration;
+    public void mergeFrom(UnitTestResult unitTestResultToMerge) {
+        if (unitTestResultToMerge == null) {
+            return;
+        }
+        this.totalTests += unitTestResultToMerge.totalTests;
+        this.failures += unitTestResultToMerge.failures;
+        this.errors += unitTestResultToMerge.errors;
+        this.duration += unitTestResultToMerge.duration;
     }
 }
