@@ -200,8 +200,8 @@ public class ParasoftFindingsParser
 
         if (totalElement != null) {
             return new UnitTestResult(parseInt(totalElement.attributeValue("total"), 0),
-                                      parseInt(totalElement.attributeValue("err"), 0),
                                       parseInt(totalElement.attributeValue("fail"), 0),
+                                      parseInt(totalElement.attributeValue("err"), 0),
                                       getTimeAttributeInMS(totalElement.attributeValue("time"), 0L));
         }
         return new UnitTestResult(0, 0, 0, 0L);

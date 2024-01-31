@@ -42,7 +42,6 @@ public final class Messages
     public static String TransformReportToXUnitFormat;
     public static String FailedToTransformReport;
     public static String FailedToLoadCoberturaReport;
-    public static String FailedToLoadReport;
     public static String FileNotFoundInProject;
     public static String NoValidCoverageReportsFound;
     public static String NoValidSOAtestReportsFound;
@@ -57,6 +56,11 @@ public final class Messages
     public static String FailedToParseXUnitReport;
     public static String TotalDurationNotAccurateWithNegativeTimeTests;
     public static String ResourceNotFound;
+    public static String NoUnitTestReports;
+    public static String NoStaticAnalysisReports;
+    public static String UnitTestResults;
+    public static String ParsingUnitTestReportFile;
+    public static String ParsingStaticAnalysisReportFile;
 
     static {
         // initialize resource bundle
