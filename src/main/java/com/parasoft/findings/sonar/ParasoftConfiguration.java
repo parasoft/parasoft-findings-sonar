@@ -40,7 +40,7 @@ public class ParasoftConfiguration
                 .multiValues(true)
                 .build()
         );
-        // Support SOAtest test execution
+        // Support SOAtest test results
         items.add(PropertyDefinition.builder(ParasoftConstants.PARASOFT_SOATEST_REPORT_PATHS_KEY)
                 .name(Messages.SOAtestReportPathName)
                 .description(Messages.SOAtestReportPathDesc)

@@ -12,6 +12,7 @@ import java.security.CodeSource;
 import java.util.*;
 
 import com.parasoft.findings.sonar.*;
+import com.parasoft.findings.sonar.utils.MapperUtil;
 import com.parasoft.findings.utils.common.IStringConstants;
 import com.parasoft.findings.utils.common.nls.NLS;
 import com.parasoft.findings.utils.common.util.FileUtil;

@@ -17,21 +17,21 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.parasoft.findings.sonar.soatest;
+package com.parasoft.findings.sonar.importer;
 
 import com.parasoft.findings.sonar.Logger;
 import com.parasoft.findings.sonar.Messages;
-import com.parasoft.findings.sonar.exception.InvalidReportException;
-import com.parasoft.findings.sonar.soatest.data.XUnitTestClassReport;
-import com.parasoft.findings.sonar.soatest.data.XUnitTestIndex;
+import com.parasoft.findings.sonar.soatest.SOAtestMetrics;
+import com.parasoft.findings.sonar.soatest.SOAtestReport;
+import com.parasoft.findings.sonar.soatest.SOAtestReportMapper;
 import com.parasoft.findings.utils.common.nls.NLS;
 import org.apache.commons.lang3.StringUtils;
+import org.dom4j.DocumentException;
 import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.measures.Metric;
 
-import javax.annotation.CheckForNull;
 import javax.xml.stream.XMLStreamException;
 import java.io.File;
 import java.io.Serializable;
@@ -40,51 +40,37 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class XUnitSOAtestParser {
+public class SOAtestXUnitParser {
 
     private final FileSystem fs;
 
-    public XUnitSOAtestParser(FileSystem fs) {
+    public SOAtestXUnitParser(FileSystem fs) {
         this.fs = fs;
     }
 
-    public void collect(SensorContext context, List<File> xunitFiles) {
-        parseFiles(context, xunitFiles);
+    public void parse(SensorContext context, List<File> xunitFiles) {
+        SOAtestReportMapper reportMapper = new SOAtestReportMapper();
+        parseFiles(xunitFiles, reportMapper);
+        reportMapper.normalizeReports();
+        save(reportMapper, context);
     }
 
-    private void parseFiles(SensorContext context, List<File> reports) {
-        XUnitTestIndex index = new XUnitTestIndex();
-        parseFiles(reports, index);
-        sanitize(index);
-        save(index, context);
-    }
-
-    private static void parseFiles(List<File> reports, XUnitTestIndex index) {
-        StaxParser parser = new StaxParser(index);
+    private static void parseFiles(List<File> reports, SOAtestReportMapper reportMapper) {
+        SOAtestSAXParser parser = new SOAtestSAXParser(reportMapper);
         for (File report : reports) {
             try {
                 parser.parse(report);
-            } catch (XMLStreamException e) {
-                throw new InvalidReportException(NLS.getFormatted(Messages.FailedToParseXUnitReport, report), e);
+            } catch (DocumentException | XMLStreamException e) {
+                throw new RuntimeException(e);
             }
         }
     }
 
-    private static void sanitize(XUnitTestIndex index) {
-        for (String classname : index.getClassnames()) {
-            if (StringUtils.contains(classname, "$")) {
-                // XUnit reports classes whereas sonar supports files
-                String parentClassName = StringUtils.substringBefore(classname, "$");
-                index.merge(classname, parentClassName);
-            }
-        }
-    }
-
-    private void save(XUnitTestIndex index, SensorContext context) {
+    private void save(SOAtestReportMapper index, SensorContext context) {
         long negativeTimeTestNumber = 0;
-        Map<InputFile, XUnitTestClassReport> indexByInputFile = mapToInputFile(index.getIndexByClassname());
-        for (Map.Entry<InputFile, XUnitTestClassReport> entry : indexByInputFile.entrySet()) {
-            XUnitTestClassReport report = entry.getValue();
+        Map<InputFile, SOAtestReport> indexByInputFile = mapToInputFile(index.getReportMapper());
+        for (Map.Entry<InputFile, SOAtestReport> entry : indexByInputFile.entrySet()) {
+            SOAtestReport report = entry.getValue();
             if (report.getTests() > 0) {
                 negativeTimeTestNumber += report.getNegativeTimeTestNumber();
                 save(report, entry.getKey(), context);
@@ -95,14 +81,14 @@ public class XUnitSOAtestParser {
         }
     }
 
-    private Map<InputFile, XUnitTestClassReport> mapToInputFile(Map<String, XUnitTestClassReport> indexByClassname) {
-        Map<InputFile, XUnitTestClassReport> result = new HashMap<>();
+    private Map<InputFile, SOAtestReport> mapToInputFile(Map<String, SOAtestReport> indexByClassname) {
+        Map<InputFile, SOAtestReport> result = new HashMap<>();
         indexByClassname.forEach((className, index) -> {
             InputFile resource = getUnitTestResource(className, index);
             if (resource != null) {
-                XUnitTestClassReport report = result.computeIfAbsent(resource, r -> new XUnitTestClassReport());
+                SOAtestReport report = result.computeIfAbsent(resource, r -> new SOAtestReport());
                 // in case of repeated/parameterized tests (JUnit 5.x) we may end up with tests having the same name
-                index.getResults().forEach(report::add);
+                index.getResults().forEach(report::addTestCaseDataFrom);
             } else {
                 Logger.getLogger().debug(NLS.getFormatted(Messages.ResourceNotFound, className));
             }
@@ -110,29 +96,29 @@ public class XUnitSOAtestParser {
         return result;
     }
 
-    private static void save(XUnitTestClassReport report, InputFile inputFile, SensorContext context) {
+    private static void save(SOAtestReport report, InputFile inputFile, SensorContext context) {
         int testsCount = report.getTests();
-        saveMeasure(context, inputFile, ParasoftMetrics.SOATEST_TESTS, testsCount);
-        saveMeasure(context, inputFile, ParasoftMetrics.SOATEST_TEST_FAILURES, report.getFailures());
+        saveMeasure(context, inputFile, SOAtestMetrics.SOATEST_TESTS, testsCount);
+        saveMeasure(context, inputFile, SOAtestMetrics.SOATEST_TEST_FAILURES, report.getFailures());
 
         double successDensity = 0;
         if (testsCount > 0 && report.getFailures() >= 0) {
             double density = report.getFailures() * 100D / testsCount;
             successDensity = 100D - density;
         }
-        saveMeasure(context, inputFile, ParasoftMetrics.SOATEST_TEST_SUCCESS_DENSITY, successDensity);
+        saveMeasure(context, inputFile, SOAtestMetrics.SOATEST_TEST_SUCCESS_DENSITY, successDensity);
 
-        saveMeasure(context, inputFile, ParasoftMetrics.SOATEST_TEST_EXECUTION_TIME, report.getDurationMilliseconds());
+        saveMeasure(context, inputFile, SOAtestMetrics.SOATEST_TEST_EXECUTION_TIME, report.getDurationMilliseconds());
     }
 
-    @CheckForNull
-    private InputFile getUnitTestResource(String className, XUnitTestClassReport xUnitTestClassReport) {
+//    @CheckForNull TODO need work?
+    private InputFile getUnitTestResource(String className, SOAtestReport SOAtestReport) {
         InputFile resource = findResourceByClassName(className);
         if (resource == null) {
             // fall back on testSuite class name (repeated and parameterized tests from JUnit 5.0 are using test name as classname)
             // Was fixed in JUnit 5.0.3 (see: https://github.com/junit-team/junit5/issues/1182)
-            return xUnitTestClassReport.getResults().stream()
-                    .map(r -> findResourceByClassName(r.getTestSuiteClassName()))
+            return SOAtestReport.getResults().stream()
+                    .map(r -> findResourceByClassName(r.getTestSuiteName()))
                     .filter(Objects::nonNull)
                     .findFirst()
                     .orElse(null);

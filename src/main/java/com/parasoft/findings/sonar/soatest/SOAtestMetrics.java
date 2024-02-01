@@ -22,11 +22,14 @@ import org.sonar.api.measures.Metrics;
 import java.util.Arrays;
 import java.util.List;
 
-public class ParasoftMetrics implements Metrics {
+public class SOAtestMetrics implements Metrics {
 
     public static String DOMAIN_PARASOFT = "Parasoft";
 
     public static final String SOATEST_TESTS_KEY = "parasoft_soatest_tests";
+    public static final String SOATEST_TEST_FAILURES_KEY = "parasoft_soatest_test_failures";
+    public static final String SOATEST_TEST_SUCCESS_DENSITY_KEY = "parasoft_soatest_test_success_density";
+    public static final String SOATEST_TEST_EXECUTION_TIME_KEY = "parasoft_soatest_test_execution_time";
 
     public static final Metric<Integer> SOATEST_TESTS =
             new Metric.Builder(SOATEST_TESTS_KEY, "SOAtest Tests", Metric.ValueType.INT)
@@ -35,8 +38,6 @@ public class ParasoftMetrics implements Metrics {
                     .setQualitative(false)
                     .setDomain(DOMAIN_PARASOFT)
                     .create();
-
-    public static final String SOATEST_TEST_FAILURES_KEY = "parasoft_soatest_test_failures";
     public static final Metric<Integer> SOATEST_TEST_FAILURES =
             new Metric.Builder(SOATEST_TEST_FAILURES_KEY, "SOAtest Test Failures", Metric.ValueType.INT)
                     .setDescription("Number of SOAtest test failures")
@@ -46,8 +47,6 @@ public class ParasoftMetrics implements Metrics {
                     .setBestValue(0.0)
                     .setOptimizedBestValue(true)
                     .create();
-
-    public static final String SOATEST_TEST_SUCCESS_DENSITY_KEY = "parasoft_soatest_test_success_density";
     public static final Metric<Double> SOATEST_TEST_SUCCESS_DENSITY =
             new Metric.Builder(SOATEST_TEST_SUCCESS_DENSITY_KEY, "SOAtest Test Success", Metric.ValueType.PERCENT)
                     .setDescription("Density of successful SOAtest tests")
@@ -58,8 +57,6 @@ public class ParasoftMetrics implements Metrics {
                     .setBestValue(100.0)
                     .setOptimizedBestValue(true)
                     .create();
-
-    public static final String SOATEST_TEST_EXECUTION_TIME_KEY = "parasoft_soatest_test_execution_time";
     public static final Metric<Long> SOATEST_TEST_EXECUTION_TIME =
             new Metric.Builder(SOATEST_TEST_EXECUTION_TIME_KEY, "SOAtest Test Duration", Metric.ValueType.MILLISEC)
                     .setDescription("Execution duration of SOAtest tests")
@@ -67,7 +64,7 @@ public class ParasoftMetrics implements Metrics {
                     .setQualitative(false)
                     .setDomain(DOMAIN_PARASOFT)
                     .create();
-    
+
     @Override
     public List<Metric> getMetrics() {
         return Arrays.asList(SOATEST_TESTS, SOATEST_TEST_FAILURES, SOATEST_TEST_SUCCESS_DENSITY, SOATEST_TEST_EXECUTION_TIME);

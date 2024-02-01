@@ -20,7 +20,7 @@ import org.sonar.api.ce.measure.Component;
 import org.sonar.api.ce.measure.Measure;
 import org.sonar.api.ce.measure.MeasureComputer;
 
-import static com.parasoft.findings.sonar.soatest.ParasoftMetrics.*;
+import static com.parasoft.findings.sonar.soatest.SOAtestMetrics.*;
 
 public class SOAtestMeasureComputer implements MeasureComputer {
 
@@ -39,21 +39,21 @@ public class SOAtestMeasureComputer implements MeasureComputer {
 
     @Override
     public void compute(MeasureComputerContext context) {
-         // measure is already defined on files by XUnitSOAtestParser in scanner stack
+        // measures are calculated and saved in files by SOAtestXUnitParser in scanner stack
         if (context.getComponent().getType() != Component.Type.FILE) {
-            int sumTests = createAggregatedIntMeasure(context, SOATEST_TESTS_KEY);
-            int sumTestFailures = createAggregatedIntMeasure(context, SOATEST_TEST_FAILURES_KEY);
+            int totalTests = sumAndAddMeasure(context, SOATEST_TESTS_KEY);
+            int totalFailures = sumAndAddMeasure(context, SOATEST_TEST_FAILURES_KEY);
 
-            if (sumTests > 0 && sumTestFailures >= 0) {
-                double density = sumTestFailures * 100D / sumTests;
+            if (totalTests > 0 && totalFailures >= 0) {
+                double density = totalFailures * 100D / totalTests;
                 context.addMeasure(SOATEST_TEST_SUCCESS_DENSITY_KEY, 100D - density);
             }
 
-            createAggregatedLongMeasure(context, SOATEST_TEST_EXECUTION_TIME_KEY);
+            sumAndAddExecutionTimeMeasure(context);
         }
     }
 
-    private static int createAggregatedIntMeasure(MeasureComputerContext context, String metric) {
+    private static int sumAndAddMeasure(MeasureComputerContext context, String metric) {
         int sum = 0;
         for (Measure child : context.getChildrenMeasures(metric)) {
             sum += child.getIntValue();
@@ -62,11 +62,11 @@ public class SOAtestMeasureComputer implements MeasureComputer {
         return sum;
     }
 
-    private static void createAggregatedLongMeasure(MeasureComputerContext context, String metric) {
+    private static void sumAndAddExecutionTimeMeasure(MeasureComputerContext context) {
         long sum = 0;
-        for (Measure child : context.getChildrenMeasures(metric)) {
+        for (Measure child : context.getChildrenMeasures(SOATEST_TEST_EXECUTION_TIME_KEY)) {
             sum += child.getLongValue();
         }
-        context.addMeasure(metric, sum);
+        context.addMeasure(SOATEST_TEST_EXECUTION_TIME_KEY, sum);
     }
 }

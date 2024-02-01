@@ -18,8 +18,8 @@ package com.parasoft.findings.sonar.sensor;
 
 import com.parasoft.findings.sonar.Logger;
 import com.parasoft.findings.sonar.Messages;
-import com.parasoft.findings.sonar.soatest.XUnitSOAtestParser;
-import com.parasoft.findings.sonar.soatest.SOAtestReportConverter;
+import com.parasoft.findings.sonar.importer.SOAtestXUnitParser;
+import com.parasoft.findings.sonar.converter.SOAtestReportConverter;
 import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
@@ -41,24 +41,25 @@ public class SOAtestSensor implements Sensor {
 
     @Override
     public void describe(SensorDescriptor descriptor) {
-        descriptor.name(PARASOFT_SOATEST_IMPORTER)
+        descriptor
+                .name(PARASOFT_SOATEST_IMPORTER)
                 .onlyWhenConfiguration((config) -> config.hasKey(PARASOFT_SOATEST_REPORT_PATHS_KEY));
     }
 
     @Override
     public void execute(SensorContext context) {
-        List<File> xUnitFiles = convert(context);
-        collect(context, xUnitFiles);
+        List<File> xUnitReports = transform(context);
+        parse(context, xUnitReports);
     }
 
-    private List<File> convert(SensorContext context) {
+    private List<File> transform(SensorContext context) {
         Logger.getLogger().info(Messages.ConvertingSOAtestReportsToXUnitReports);
-        return new SOAtestReportConverter(fs).convert(context);
+        return new SOAtestReportConverter(fs).transform(context);
     }
 
-    private void collect(SensorContext context, List<File> xUnitFiles) {
+    private void parse(SensorContext context, List<File> xUnitReports) {
         Logger.getLogger().info(Messages.ParsingXUnitReports);
-        new XUnitSOAtestParser(fs).collect(context, xUnitFiles);
+        new SOAtestXUnitParser(fs).parse(context, xUnitReports);
     }
 
 }

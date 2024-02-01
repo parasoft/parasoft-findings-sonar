@@ -27,6 +27,8 @@ import java.util.Properties;
 import java.util.Set;
 
 import com.parasoft.findings.sonar.*;
+import com.parasoft.findings.sonar.utils.MapperUtil;
+import com.parasoft.findings.sonar.utils.SonarAPIVersionUtil;
 import com.parasoft.findings.utils.common.nls.NLS;
 import com.parasoft.findings.utils.common.util.CollectionUtil;
 import com.parasoft.findings.utils.common.util.IOUtils;

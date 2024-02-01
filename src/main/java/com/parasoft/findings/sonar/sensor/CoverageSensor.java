@@ -11,7 +11,7 @@ import com.parasoft.findings.sonar.Logger;
 import com.parasoft.findings.sonar.Messages;
 import com.parasoft.findings.sonar.ParasoftConstants;
 import com.parasoft.findings.sonar.exception.InvalidReportException;
-import com.parasoft.findings.sonar.exception.CoverageReportAndProjectNotMatchedException;
+import com.parasoft.findings.sonar.exception.CoverageSourceMismatchException;
 import com.parasoft.findings.utils.common.nls.NLS;
 import net.sf.saxon.s9api.*;
 import org.dom4j.Document;
@@ -62,7 +62,7 @@ public class CoverageSensor implements ProjectSensor {
                 throw new InvalidReportException(Messages.NoValidCoberturaReport);
             }
             if (processedReportsCount == 0) {
-                throw new CoverageReportAndProjectNotMatchedException(Messages.NotMatchedCoverageReportAndProject);
+                throw new CoverageSourceMismatchException(Messages.NotMatchedCoverageReportAndProject);
             }
         }
     }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.parasoft.findings.sonar.soatest;
+package com.parasoft.findings.sonar.converter;
 
 import com.parasoft.findings.sonar.Logger;
 import com.parasoft.findings.sonar.Messages;
@@ -50,43 +50,38 @@ public class SOAtestReportConverter {
         this.fs = fs;
     }
 
-    public List<File> convert(SensorContext context) {
+    public List<File> transform(SensorContext context) {
         String[] reportPaths = context.config().getStringArray(
                 ParasoftConstants.PARASOFT_SOATEST_REPORT_PATHS_KEY);
         if (reportPaths != null && reportPaths.length > 0) {
-            return transformToXunitReports(reportPaths);
+            List<File> xunitReports = new ArrayList<>();
+            for (String reportPath : reportPaths) {
+                File reportFile = new File(reportPath);
+                if (!reportFile.isAbsolute()) {
+                    reportFile = new File(fs.baseDir(), reportPath);
+                }
+                if (!reportFile.isFile() || !reportFile.exists() || !reportFile.canRead()) {
+                    Logger.getLogger().warn(NLS.getFormatted(Messages.InvalidReportFile, reportFile.getAbsolutePath()));
+                } else {
+                    Logger.getLogger().info(NLS.getFormatted(Messages.ParsingReportFile, reportFile.getName()));
+                    File resultFile = transformToXUnitFormat(reportFile);
+                    if (resultFile != null) {
+                        Logger.getLogger().info(NLS.getFormatted(Messages.TransformReportToXUnitFormat, reportFile.getAbsolutePath(), resultFile.getAbsolutePath()));
+                        xunitReports.add(resultFile);
+                    }
+                }
+            }
+            if (xunitReports.isEmpty()) {
+                throw new InvalidReportException(Messages.NoValidSOAtestReportsFound);
+            }
+            return xunitReports;
         }
         return Collections.emptyList();
     }
 
-    public List<File> transformToXunitReports(String[] reportPaths) {
-        List<File> xunitReports = new ArrayList<>();
-
-        for (String reportPath : reportPaths) {
-            File reportFile = new File(reportPath);
-            if (!reportFile.isAbsolute()) {
-                reportFile = new File(fs.baseDir(), reportPath);
-            }
-            if (!reportFile.isFile() || !reportFile.exists() || !reportFile.canRead()) {
-                Logger.getLogger().warn(NLS.getFormatted(Messages.InvalidReportFile, reportFile.getAbsolutePath()));
-            } else {
-                Logger.getLogger().info(NLS.getFormatted(Messages.ParsingReportFile, reportFile.getName()));
-                File resultFile = transformToFXunitFormat(reportFile);
-                if (resultFile != null) {
-                    Logger.getLogger().info(NLS.getFormatted(Messages.TransformReportToXUnitFormat, reportFile.getAbsolutePath(), resultFile.getAbsolutePath()));
-                    xunitReports.add(resultFile);
-                }
-            }
-        }
-        if (xunitReports.isEmpty()) {
-            throw new InvalidReportException(Messages.NoValidSOAtestReportsFound);
-        }
-        return xunitReports;
-    }
-
-    public File transformToFXunitFormat(File report) {
+    private File transformToXUnitFormat(File report) {
         try {
-            File result = new File(getXunitReportFilePath(report));
+            File result = new File(getXUnitReportFilePath(report));
 
             Source xsltFile = new StreamSource(getClass().getResourceAsStream("/com/parasoft/findings/sonar/res/xsl/soatest-xunit.xsl"));
             Processor processor = new Processor(false);
@@ -112,7 +107,7 @@ public class SOAtestReportConverter {
         }
     }
 
-    public String getXunitReportFilePath(File reportFile) {
+    private String getXUnitReportFilePath(File reportFile) {
         String fileName = reportFile.getName();
         String filePath = reportFile.getAbsolutePath();
         int dotIndex = fileName.lastIndexOf(".");
