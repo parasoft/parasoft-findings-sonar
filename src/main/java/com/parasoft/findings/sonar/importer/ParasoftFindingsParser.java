@@ -19,6 +19,9 @@ package com.parasoft.findings.sonar.importer;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,12 +38,17 @@ import com.parasoft.findings.utils.results.testableinput.IFileTestableInput;
 import com.parasoft.findings.utils.results.testableinput.ITestableInput;
 import com.parasoft.findings.utils.results.violations.*;
 
+import org.dom4j.Element;
 import org.sonar.api.batch.fs.InputFile;
+import org.sonar.api.batch.measure.Metric;
 import org.sonar.api.batch.rule.ActiveRules;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.issue.NewIssue;
 import org.sonar.api.batch.sensor.issue.NewIssueLocation;
+import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.rule.RuleKey;
+
+import java.io.Serializable;
 
 /**
  * A parser for Parasoft files containing xml report.
@@ -184,5 +192,66 @@ public class ParasoftFindingsParser
             _importer = new XmlReportViolationsImporter(_properties);
         }
         return _importer;
+    }
+
+    public UnitTestResult loadTestResults(Element rootElement) {
+        Element executedTestsDetailsElement = findExecutedTestsDetailsElement(rootElement);
+        Element totalElement = (executedTestsDetailsElement != null) ? executedTestsDetailsElement.element("Total") : null;
+
+        if (totalElement != null) {
+            return new UnitTestResult(parseInt(totalElement.attributeValue("total"), 0),
+                                      parseInt(totalElement.attributeValue("fail"), 0),
+                                      parseInt(totalElement.attributeValue("err"), 0),
+                                      getTimeAttributeInMS(totalElement.attributeValue("time"), 0L));
+        }
+        return new UnitTestResult(0, 0, 0, 0L);
+    }
+
+    public void saveMeasures(SensorContext context, UnitTestResult unitTestResult) {
+        if (unitTestResult.getTotalTests() > 0) {
+            saveMeasure(context, CoreMetrics.TESTS, unitTestResult.getTotalTests());
+            saveMeasure(context, CoreMetrics.TEST_ERRORS, unitTestResult.getErrors());
+            saveMeasure(context, CoreMetrics.TEST_FAILURES, unitTestResult.getFailures());
+            if (unitTestResult.getDuration() > 0) {
+                saveMeasure(context, CoreMetrics.TEST_EXECUTION_TIME, unitTestResult.getDuration());
+            }
+        }
+    }
+
+    // For cppTest professional report, "ExecutedTestsDetails" node is under root element.
+    private Element findExecutedTestsDetailsElement(Element rootElement) {
+        return (rootElement.element("ExecutedTestsDetails") != null) ?
+                rootElement.element("ExecutedTestsDetails") :
+                rootElement.element("Exec").element("ExecutedTestsDetails");
+    }
+
+    private int parseInt(String value, int defaultValue) {
+        if (value == null || value.isEmpty()) {
+            return defaultValue;
+        }
+        try {
+            return Integer.parseInt(value);
+        } catch (Exception e) {
+            return defaultValue;
+        }
+    }
+
+    //  Get a time attribute in milliseconds
+    private long getTimeAttributeInMS(String value, long defaultValue) {
+        if (value == null || value.isEmpty()) {
+            return defaultValue;
+        }
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("H:mm:ss.SSS");
+            LocalTime localTime = LocalTime.parse(value, formatter);
+            return localTime.toNanoOfDay() / 1_000_000;
+        } catch (Exception e) {
+            return defaultValue;
+        }
+    }
+
+    // Create a new measure for your specified metric through using SonarQube's Measure API
+    private <T extends Serializable> void saveMeasure(SensorContext context, Metric<T> metric, T value) {
+        context.<T>newMeasure().forMetric(metric).on(context.project()).withValue(value).save();
     }
 }

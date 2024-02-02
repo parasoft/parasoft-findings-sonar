@@ -46,6 +46,7 @@ public final class Messages
     public static String NoValidCoverageReportsFound;
     public static String NoValidSOAtestReportsFound;
     public static String InvalidCoberturaCoverageReport;
+    public static String InvalidReport;
     public static String NotMatchedCoverageReportAndProject;
     public static String NoValidCoberturaReport;
     public static String SOAtestReportPathName;
@@ -55,6 +56,11 @@ public final class Messages
     public static String FailedToParseXUnitReport;
     public static String TotalDurationNotAccurateWithNegativeTimeTests;
     public static String ResourceNotFound;
+    public static String NoUnitTestReports;
+    public static String NoStaticAnalysisReports;
+    public static String UnitTestResults;
+    public static String ParsingUnitTestReportFile;
+    public static String ParsingStaticAnalysisReportFile;
 
     static {
         // initialize resource bundle
