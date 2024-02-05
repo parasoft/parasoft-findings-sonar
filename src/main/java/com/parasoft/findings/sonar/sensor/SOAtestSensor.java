@@ -18,26 +18,20 @@ package com.parasoft.findings.sonar.sensor;
 
 import com.parasoft.findings.sonar.Logger;
 import com.parasoft.findings.sonar.Messages;
-import com.parasoft.findings.sonar.soatest.XUnitSOAtestParser;
-import com.parasoft.findings.sonar.soatest.SOAtestReportConverter;
-import org.sonar.api.batch.fs.FileSystem;
+import com.parasoft.findings.sonar.importer.XSLConverter;
+import com.parasoft.findings.sonar.importer.SOAtestTestsParser;
 import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 
 import static com.parasoft.findings.sonar.ParasoftConstants.PARASOFT_SOATEST_IMPORTER;
 import static com.parasoft.findings.sonar.ParasoftConstants.PARASOFT_SOATEST_REPORT_PATHS_KEY;
 
 public class SOAtestSensor implements Sensor {
-
-    private final FileSystem fs;
-
-    public SOAtestSensor(FileSystem fs) {
-        this.fs = fs;
-    }
 
     @Override
     public void describe(SensorDescriptor descriptor) {
@@ -53,12 +47,17 @@ public class SOAtestSensor implements Sensor {
 
     private List<File> convert(SensorContext context) {
         Logger.getLogger().info(Messages.ConvertingSOAtestReportsToXUnitReports);
-        return new SOAtestReportConverter(fs).convert(context);
+        String[] reportPaths = context.config().getStringArray(PARASOFT_SOATEST_REPORT_PATHS_KEY);
+        if (reportPaths != null && reportPaths.length > 0) {
+            return new XSLConverter(context.fileSystem(), "soatest-xunit.xsl",
+                    "-xunit_converted-from-xml-report.xml").transformReports(reportPaths);
+        }
+        return Collections.emptyList();
     }
 
     private void collect(SensorContext context, List<File> xUnitFiles) {
         Logger.getLogger().info(Messages.ParsingXUnitReports);
-        new XUnitSOAtestParser(fs).collect(context, xUnitFiles);
+        new SOAtestTestsParser().collect(context, xUnitFiles);
     }
 
 }

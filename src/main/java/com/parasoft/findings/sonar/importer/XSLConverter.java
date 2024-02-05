@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package com.parasoft.findings.sonar.soatest;
+package com.parasoft.findings.sonar.importer;
 
 import com.parasoft.findings.sonar.Logger;
 import com.parasoft.findings.sonar.Messages;
-import com.parasoft.findings.sonar.ParasoftConstants;
-import com.parasoft.findings.sonar.exception.InvalidReportException;
 import com.parasoft.findings.utils.common.nls.NLS;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
@@ -30,65 +28,78 @@ import net.sf.saxon.s9api.Xslt30Transformer;
 import net.sf.saxon.s9api.XsltCompiler;
 import net.sf.saxon.s9api.XsltExecutable;
 import org.sonar.api.batch.fs.FileSystem;
-import org.sonar.api.batch.sensor.SensorContext;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-public class SOAtestReportConverter {
+public class XSLConverter {
+
+    private static final String XSL_RESOURCE_DIR = "/com/parasoft/findings/sonar/res/xsl/";
 
     private final FileSystem fs;
 
+    private final String xsl;
 
-    public SOAtestReportConverter(FileSystem fs) {
+    private final String targetReportNameSuffix;
+
+    public XSLConverter(FileSystem fs, String xslName, String targetReportNameSuffix) {
         this.fs = fs;
+        this.xsl = XSL_RESOURCE_DIR + xslName;
+        this.targetReportNameSuffix = targetReportNameSuffix;
     }
 
-    public List<File> convert(SensorContext context) {
-        String[] reportPaths = context.config().getStringArray(
-                ParasoftConstants.PARASOFT_SOATEST_REPORT_PATHS_KEY);
-        if (reportPaths != null && reportPaths.length > 0) {
-            return transformToXunitReports(reportPaths);
-        }
-        return Collections.emptyList();
-    }
-
-    public List<File> transformToXunitReports(String[] reportPaths) {
-        List<File> xunitReports = new ArrayList<>();
+    public List<File> transformReports(String[] reportPaths) {
+        List<File> targetReports = new ArrayList<>();
 
         for (String reportPath : reportPaths) {
             File reportFile = new File(reportPath);
             if (!reportFile.isAbsolute()) {
                 reportFile = new File(fs.baseDir(), reportPath);
             }
-            if (!reportFile.isFile() || !reportFile.exists() || !reportFile.canRead()) {
-                Logger.getLogger().warn(NLS.getFormatted(Messages.InvalidReportFile, reportFile.getAbsolutePath()));
-            } else {
-                Logger.getLogger().info(NLS.getFormatted(Messages.ParsingReportFile, reportFile.getName()));
-                File resultFile = transformToFXunitFormat(reportFile);
-                if (resultFile != null) {
-                    Logger.getLogger().info(NLS.getFormatted(Messages.TransformReportToXUnitFormat, reportFile.getAbsolutePath(), resultFile.getAbsolutePath()));
-                    xunitReports.add(resultFile);
-                }
-            }
+            transformReportFile(reportFile, targetReports);
         }
-        if (xunitReports.isEmpty()) {
-            throw new InvalidReportException(Messages.NoValidSOAtestReportsFound);
+        if (targetReports.isEmpty()) {
+            Logger.getLogger().warn(Messages.NoValidReportsFound);
         }
-        return xunitReports;
+        return targetReports;
     }
 
-    public File transformToFXunitFormat(File report) {
-        try {
-            File result = new File(getXunitReportFilePath(report));
+    public List<File> transformReports(Set<File> reportFiles) {
+        List<File> targetReports = new ArrayList<>();
 
-            Source xsltFile = new StreamSource(getClass().getResourceAsStream("/com/parasoft/findings/sonar/res/xsl/soatest-xunit.xsl"));
+        for (File reportFile : reportFiles) {
+            transformReportFile(reportFile.getAbsoluteFile(), targetReports);
+        }
+        if (targetReports.isEmpty()) {
+            Logger.getLogger().warn(Messages.NoValidReportsFound);
+        }
+        return targetReports;
+    }
+
+    private void transformReportFile(File reportFile, List<File> targetReports) {
+        if (!reportFile.isFile() || !reportFile.exists() || !reportFile.canRead()) {
+            Logger.getLogger().warn(NLS.getFormatted(Messages.InvalidReportFile, reportFile.getAbsolutePath()));
+        } else {
+            Logger.getLogger().info(NLS.getFormatted(Messages.ParsingReportFile, reportFile.getAbsolutePath()));
+            File resultFile = transformReport(reportFile);
+            if (resultFile != null) {
+                Logger.getLogger().info(NLS.getFormatted(Messages.TransformedReport, reportFile.getAbsolutePath(), resultFile.getAbsolutePath()));
+                targetReports.add(resultFile);
+            }
+        }
+    }
+
+    private File transformReport(File report) {
+        try {
+            File result = new File(getTargetReportFilePath(report));
+
+            Source xsltFile = new StreamSource(getClass().getResourceAsStream(xsl));
             Processor processor = new Processor(false);
             XsltCompiler compiler = processor.newXsltCompiler();
             XsltExecutable stylesheet = compiler.compile(xsltFile);
@@ -112,11 +123,11 @@ public class SOAtestReportConverter {
         }
     }
 
-    public String getXunitReportFilePath(File reportFile) {
+    private String getTargetReportFilePath(File reportFile) {
         String fileName = reportFile.getName();
         String filePath = reportFile.getAbsolutePath();
         int dotIndex = fileName.lastIndexOf(".");
         String fileNameWithoutExt = dotIndex > -1 ? fileName.substring(0, dotIndex) : fileName;
-        return filePath.replace(fileName, fileNameWithoutExt + "-xunit_converted-from-xml-report.xml");
+        return filePath.replace(fileName, fileNameWithoutExt + targetReportNameSuffix);
     }
 }

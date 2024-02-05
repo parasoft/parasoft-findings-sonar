@@ -38,13 +38,11 @@ public final class Messages
     public static String CoverageSubCategory;
     public static String UploadCodeCoverageData;
     public static String InvalidReportFile;
-    public static String TransformReportToCoberturaFormat;
-    public static String TransformReportToXUnitFormat;
+    public static String TransformedReport;
     public static String FailedToTransformReport;
     public static String FailedToLoadCoberturaReport;
     public static String FileNotFoundInProject;
-    public static String NoValidCoverageReportsFound;
-    public static String NoValidSOAtestReportsFound;
+    public static String NoValidReportsFound;
     public static String InvalidCoberturaCoverageReport;
     public static String InvalidReport;
     public static String NotMatchedCoverageReportAndProject;
@@ -61,6 +59,9 @@ public final class Messages
     public static String UnitTestResults;
     public static String ParsingUnitTestReportFile;
     public static String ParsingStaticAnalysisReportFile;
+    public static String SkipAddingUnitTestMeasuresForFile;
+    public static String UnitTestSummaryForProject;
+    public static String CollectedUnitTestsForFile;
 
     static {
         // initialize resource bundle

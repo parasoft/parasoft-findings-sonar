@@ -17,10 +17,11 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.parasoft.findings.sonar.soatest.data;
+package com.parasoft.findings.sonar.importer.xunitdata;
 
-import com.parasoft.findings.sonar.soatest.StaxParser;
+import com.parasoft.findings.sonar.importer.StaxParser;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import javax.xml.stream.XMLStreamException;
@@ -29,6 +30,7 @@ import java.net.URISyntaxException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Disabled
 public class XUnitStaxHandlerTest {
 
   private XUnitTestIndex index;

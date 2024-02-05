@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.parasoft.findings.sonar.soatest;
+package com.parasoft.findings.sonar.importer.soatest;
 
 import org.sonar.api.ce.measure.Component;
 import org.sonar.api.ce.measure.Measure;
 import org.sonar.api.ce.measure.MeasureComputer;
 
-import static com.parasoft.findings.sonar.soatest.ParasoftMetrics.*;
+import static com.parasoft.findings.sonar.importer.soatest.SOAtestMetrics.*;
 
 public class SOAtestMeasureComputer implements MeasureComputer {
 
@@ -39,7 +39,7 @@ public class SOAtestMeasureComputer implements MeasureComputer {
 
     @Override
     public void compute(MeasureComputerContext context) {
-         // measure is already defined on files by XUnitSOAtestParser in scanner stack
+         // measure is already defined on files by SOAtestTestsParser in scanner stack
         if (context.getComponent().getType() != Component.Type.FILE) {
             int sumTests = createAggregatedIntMeasure(context, SOATEST_TESTS_KEY);
             int sumTestFailures = createAggregatedIntMeasure(context, SOATEST_TEST_FAILURES_KEY);

@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.parasoft.findings.sonar.soatest.data;
+package com.parasoft.findings.sonar.importer.xunitdata;
 
 import org.junit.jupiter.api.Test;
 

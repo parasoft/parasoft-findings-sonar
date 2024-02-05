@@ -6,7 +6,7 @@
     <xsl:variable name="newLine" select="'&#xA;'" />
     <xsl:variable name="isFunctionalResult" select="/ResultsSession/@toolName = 'SOAtest'"/>
     <xsl:variable name="isSoatestDesktop" select="count(/ResultsSession/ExecutedTestsDetails) = 1"/>
-    <xsl:param name="pipelineBuildWorkingDirectory"/>
+    <xsl:param name="pipelineBuildWorkingDirectory"><xsl:value-of select="/ResultsSession/@pipelineBuildWorkingDirectory"/></xsl:param>
 
     <xsl:template match="/">
         <xsl:choose>
