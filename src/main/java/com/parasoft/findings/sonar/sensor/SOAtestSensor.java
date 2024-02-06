@@ -20,6 +20,7 @@ import com.parasoft.findings.sonar.Logger;
 import com.parasoft.findings.sonar.Messages;
 import com.parasoft.findings.sonar.importer.XSLConverter;
 import com.parasoft.findings.sonar.importer.SOAtestTestsParser;
+import com.parasoft.findings.utils.common.nls.NLS;
 import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
@@ -46,17 +47,20 @@ public class SOAtestSensor implements Sensor {
     }
 
     private List<File> convert(SensorContext context) {
-        Logger.getLogger().info(Messages.ConvertingSOAtestReportsToXUnitReports);
         String[] reportPaths = context.config().getStringArray(PARASOFT_SOATEST_REPORT_PATHS_KEY);
-        if (reportPaths != null && reportPaths.length > 0) {
-            return new XSLConverter(context.fileSystem(), "soatest-xunit.xsl",
-                    "-xunit_converted-from-xml-report.xml").transformReports(reportPaths);
+
+        if (reportPaths == null || reportPaths.length == 0) {
+            Logger.getLogger().info(NLS.getFormatted(Messages.ParasoftReportNotSpecified, Messages.SOAtest));
+            return Collections.emptyList();
         }
-        return Collections.emptyList();
+
+        Logger.getLogger().info(NLS.getFormatted(Messages.ConvertingParasoftReportsToXUnitReports, Messages.SOAtest));
+
+        return new XSLConverter(context.fileSystem(), XSLConverter.SOA_XUNIT_XSL_NAME_SUFFIX,
+                XSLConverter.XUNIT_TARGET_REPORT_NAME_SUFFIX).transformReports(reportPaths);
     }
 
     private void collect(SensorContext context, List<File> xUnitFiles) {
-        Logger.getLogger().info(Messages.ParsingXUnitReports);
         new SOAtestTestsParser().collect(context, xUnitFiles);
     }
 

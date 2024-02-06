@@ -37,7 +37,7 @@ public final class Messages
     public static String CoverageReportPathDesc;
     public static String CoverageSubCategory;
     public static String UploadCodeCoverageData;
-    public static String InvalidReportFile;
+    public static String SkippedInvalidReportFile;
     public static String TransformedReport;
     public static String FailedToTransformReport;
     public static String FailedToLoadCoberturaReport;
@@ -49,19 +49,24 @@ public final class Messages
     public static String NoValidCoberturaReport;
     public static String SOAtestReportPathName;
     public static String SOAtestReportPathDesc;
-    public static String ConvertingSOAtestReportsToXUnitReports;
-    public static String ParsingXUnitReports;
+    public static String ConvertingParasoftReportsToXUnitReports;
+    public static String ConvertingCoverageReportsToCoberturaReports;
+    public static String ConvertingReport;
+    public static String ParsingXUnitReport;
     public static String FailedToParseXUnitReport;
     public static String TotalDurationNotAccurateWithNegativeTimeTests;
     public static String ResourceNotFound;
-    public static String NoUnitTestReports;
-    public static String NoStaticAnalysisReports;
+    public static String ParasoftReportNotSpecified;
     public static String UnitTestResults;
-    public static String ParsingUnitTestReportFile;
-    public static String ParsingStaticAnalysisReportFile;
     public static String SkipAddingUnitTestMeasuresForFile;
-    public static String UnitTestSummaryForProject;
+    public static String AddedUnitTestsForProjectSummary;
+    public static String AddedSOAtestTestsForProjectSummary;
     public static String CollectedUnitTestsForFile;
+    public static String CollectedSOAtestTestsForFile;
+    public static String UnitTest;
+    public static String SOAtest;
+    public static String Coverage;
+    public static String StaticAnalysis;
 
     static {
         // initialize resource bundle

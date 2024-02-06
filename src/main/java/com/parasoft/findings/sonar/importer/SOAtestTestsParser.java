@@ -27,7 +27,7 @@ import org.sonar.api.batch.sensor.SensorContext;
 public class SOAtestTestsParser extends AbstractSOAtestAndJtestTestsParser {
 
     @Override
-    protected UnitTestSummary saveMeasuresOnFile(XUnitTestClassReport report, InputFile inputFile, SensorContext context) {
+    protected TestSummary saveMeasuresOnFile(XUnitTestClassReport report, InputFile inputFile, SensorContext context) {
         int testsCount = report.getTests();
         int failureTestsCount = report.getFailures();
         long duration = report.getDurationMilliseconds();
@@ -42,11 +42,16 @@ public class SOAtestTestsParser extends AbstractSOAtestAndJtestTestsParser {
         }
         saveMeasureOnFile(context, inputFile, SOAtestMetrics.SOATEST_TEST_SUCCESS_DENSITY, successDensity);
 
-        UnitTestSummary unitTestSummaryForFile = new UnitTestSummary(testsCount, failureTestsCount, duration);
+        TestSummary testSummaryForFile = new TestSummary(testsCount, failureTestsCount, duration);
 
-        Logger.getLogger().info(NLS.getFormatted(Messages.CollectedUnitTestsForFile, inputFile));
-        Logger.getLogger().info(unitTestSummaryForFile);
+        Logger.getLogger().info(NLS.getFormatted(Messages.CollectedSOAtestTestsForFile, inputFile));
+        Logger.getLogger().info(testSummaryForFile);
 
-        return unitTestSummaryForFile;
+        return testSummaryForFile;
+    }
+
+    @Override
+    protected void logTestSummaryForProject(TestSummary testSummaryForProject) {
+        Logger.getLogger().info(NLS.getFormatted(Messages.AddedSOAtestTestsForProjectSummary, testSummaryForProject));
     }
 }

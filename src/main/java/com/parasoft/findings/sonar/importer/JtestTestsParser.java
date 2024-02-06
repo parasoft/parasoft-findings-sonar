@@ -27,7 +27,7 @@ import org.sonar.api.measures.CoreMetrics;
 public class JtestTestsParser extends AbstractSOAtestAndJtestTestsParser {
 
     @Override
-    protected UnitTestSummary saveMeasuresOnFile(XUnitTestClassReport report, InputFile inputFile, SensorContext context) {
+    protected TestSummary saveMeasuresOnFile(XUnitTestClassReport report, InputFile inputFile, SensorContext context) {
         try {
             int skippedTestsCount = report.getSkipped();
             int testsCount = report.getTests() - skippedTestsCount;
@@ -40,7 +40,7 @@ public class JtestTestsParser extends AbstractSOAtestAndJtestTestsParser {
             saveMeasureOnFile(context, inputFile, CoreMetrics.TEST_ERRORS, errorTestsCount);
             saveMeasureOnFile(context, inputFile, CoreMetrics.TEST_FAILURES, failureTestsCount);
             saveMeasureOnFile(context, inputFile, CoreMetrics.TEST_EXECUTION_TIME, duration);
-            UnitTestSummary unitTestSummaryForFile = new UnitTestSummary(testsCount, errorTestsCount, failureTestsCount, duration);
+            TestSummary unitTestSummaryForFile = new TestSummary(testsCount, errorTestsCount, failureTestsCount, duration);
 
             Logger.getLogger().info(NLS.getFormatted(Messages.CollectedUnitTestsForFile, inputFile));
             Logger.getLogger().info(unitTestSummaryForFile);
@@ -51,6 +51,11 @@ public class JtestTestsParser extends AbstractSOAtestAndJtestTestsParser {
             Logger.getLogger().debug(e.getMessage());
         }
 
-        return new UnitTestSummary();
+        return new TestSummary();
+    }
+
+    @Override
+    protected void logTestSummaryForProject(TestSummary testSummaryForProject) {
+        Logger.getLogger().info(NLS.getFormatted(Messages.AddedUnitTestsForProjectSummary, testSummaryForProject));
     }
 }

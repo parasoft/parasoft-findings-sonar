@@ -49,19 +49,25 @@ public class CoverageSensor implements ProjectSensor {
     @Override
     public void execute(SensorContext sensorContext) {
         String[] reportPaths = sensorContext.config().getStringArray(ParasoftConstants.PARASOFT_COVERAGE_REPORT_PATHS_KEY);
-        if (reportPaths != null && reportPaths.length > 0) {
-            List<File> coberturaReports = new XSLConverter(fs, "cobertura.xsl",
-                    "-cobertura.xml").transformReports(reportPaths);
-            for (File coberturaReport : coberturaReports) {
-                Logger.getLogger().info(NLS.getFormatted(Messages.UploadCodeCoverageData, coberturaReport.getName()));
-                uploadFileCoverageData(coberturaReport, sensorContext);
-            }
-            if (validCoberturaReportsCount == 0) {
-                throw new InvalidReportException(Messages.NoValidCoberturaReport);
-            }
-            if (processedReportsCount == 0) {
-                throw new CoverageReportAndProjectNotMatchedException(Messages.NotMatchedCoverageReportAndProject);
-            }
+
+        if (reportPaths == null || reportPaths.length == 0) {
+            Logger.getLogger().info(NLS.getFormatted(Messages.ParasoftReportNotSpecified, Messages.Coverage));
+            return;
+        }
+
+        Logger.getLogger().info(Messages.ConvertingCoverageReportsToCoberturaReports);
+
+        List<File> coberturaReports = new XSLConverter(fs, XSLConverter.COBERTURA_XSL_NAME_SUFFIX,
+                XSLConverter.COBERTURA_TARGET_REPORT_NAME_SUFFIX).transformReports(reportPaths);
+        for (File coberturaReport : coberturaReports) {
+            Logger.getLogger().info(NLS.getFormatted(Messages.UploadCodeCoverageData, coberturaReport.getName()));
+            uploadFileCoverageData(coberturaReport, sensorContext);
+        }
+        if (validCoberturaReportsCount == 0) {
+            throw new InvalidReportException(Messages.NoValidCoberturaReport);
+        }
+        if (processedReportsCount == 0) {
+            throw new CoverageReportAndProjectNotMatchedException(Messages.NotMatchedCoverageReportAndProject);
         }
     }
 

@@ -21,7 +21,7 @@ import java.util.*;
 
 import com.parasoft.findings.sonar.*;
 import com.parasoft.findings.sonar.importer.ParasoftDottestAndCpptestTestsParser;
-import com.parasoft.findings.sonar.importer.UnitTestSummary;
+import com.parasoft.findings.sonar.importer.TestSummary;
 import com.parasoft.findings.utils.common.nls.NLS;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -104,15 +104,17 @@ public abstract class AbstractParasoftFindingsSensor
      */
     protected void processUnitTestReports(Map<File, Element> reportFiles, SensorContext context ) {
         if (isUnitTestReportsEmpty(reportFiles)) {
-            Logger.getLogger().info(Messages.NoUnitTestReports);
             return;
         }
         ParasoftDottestAndCpptestTestsParser testsParser = new ParasoftDottestAndCpptestTestsParser();
-        UnitTestSummary unitTestSummaryForProject = new UnitTestSummary();
+        TestSummary unitTestSummaryForProject = new TestSummary();
         for (var file : reportFiles.keySet()) {
-            Logger.getLogger().info(NLS.getFormatted(Messages.ParsingUnitTestReportFile, file));
-            UnitTestSummary unitTestSummaryForReport = testsParser.loadTestResults(reportFiles.get(file));
+            Logger.getLogger().info(NLS.getFormatted(Messages.ParsingReportFile, Messages.UnitTest, file));
+
+            TestSummary unitTestSummaryForReport = testsParser.loadTestResults(reportFiles.get(file));
+
             Logger.getLogger().info(unitTestSummaryForReport.toString());
+
             unitTestSummaryForProject.mergeFrom(unitTestSummaryForReport);
         }
         testsParser.saveMeasuresOnProject(context, unitTestSummaryForProject);
@@ -120,7 +122,7 @@ public abstract class AbstractParasoftFindingsSensor
 
     protected boolean isUnitTestReportsEmpty(Map<File, Element> reportFiles) {
         if (reportFiles.isEmpty()) {
-            Logger.getLogger().info(Messages.NoUnitTestReports);
+            Logger.getLogger().info(NLS.getFormatted(Messages.ParasoftReportNotSpecified, Messages.UnitTest));
             return true;
         }
         return false;
@@ -128,11 +130,11 @@ public abstract class AbstractParasoftFindingsSensor
 
     private void processStaticAnalysisReports(List<File> reportFiles, ParasoftIssuesParser findingsParser, SensorContext context) {
         if (reportFiles.isEmpty()) {
-            Logger.getLogger().info(Messages.NoStaticAnalysisReports);
+            Logger.getLogger().info(NLS.getFormatted(Messages.ParasoftReportNotSpecified, Messages.StaticAnalysis));
             return;
         }
         for (var file : reportFiles) {
-            Logger.getLogger().info(NLS.getFormatted(Messages.ParsingStaticAnalysisReportFile, file));
+            Logger.getLogger().info(NLS.getFormatted(Messages.ParsingReportFile, Messages.StaticAnalysis, file));
             loadFindings(file, findingsParser, context);
         }
     }

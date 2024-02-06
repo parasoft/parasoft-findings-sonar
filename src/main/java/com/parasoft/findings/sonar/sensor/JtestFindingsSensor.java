@@ -8,9 +8,12 @@
 
 package com.parasoft.findings.sonar.sensor;
 
+import com.parasoft.findings.sonar.Logger;
+import com.parasoft.findings.sonar.Messages;
 import com.parasoft.findings.sonar.ParasoftProduct;
 import com.parasoft.findings.sonar.importer.XSLConverter;
 import com.parasoft.findings.sonar.importer.JtestTestsParser;
+import com.parasoft.findings.utils.common.nls.NLS;
 import org.dom4j.Element;
 import org.sonar.api.batch.sensor.SensorContext;
 
@@ -32,7 +35,9 @@ public class JtestFindingsSensor extends AbstractParasoftFindingsSensor
             return;
         }
 
-        List<File> transformedReports = new XSLConverter(context.fileSystem(), "xunit.xsl", "-xunit_converted-from-xml-report.xml")
+        Logger.getLogger().info(NLS.getFormatted(Messages.ConvertingParasoftReportsToXUnitReports, Messages.UnitTest));
+
+        List<File> transformedReports = new XSLConverter(context.fileSystem(), XSLConverter.XUNIT_XSL_NAME_SUFFIX, XSLConverter.XUNIT_TARGET_REPORT_NAME_SUFFIX)
                                             .transformReports(reportFiles.keySet());
         new JtestTestsParser().collect(context, transformedReports);
     }

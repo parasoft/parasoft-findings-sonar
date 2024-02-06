@@ -54,6 +54,7 @@ abstract class AbstractSOAtestAndJtestTestsParser {
         StaxParser parser = new StaxParser(index);
         for (File report : reports) {
             try {
+                Logger.getLogger().info(NLS.getFormatted(Messages.ParsingXUnitReport, report));
                 parser.parse(report);
             } catch (XMLStreamException e) {
                 throw new InvalidReportException(NLS.getFormatted(Messages.FailedToParseXUnitReport, report), e);
@@ -65,20 +66,19 @@ abstract class AbstractSOAtestAndJtestTestsParser {
     private void saveMeasures(XUnitTestIndex index, SensorContext context) {
         long negativeTimeTestNumber = 0;
         Map<InputFile, XUnitTestClassReport> indexByInputFile = mapToInputFile(index.getIndexByFilePath(), context.fileSystem());
-        UnitTestSummary unitTestSummaryForProject = new UnitTestSummary();
+        TestSummary testSummaryForProject = new TestSummary();
         for (Map.Entry<InputFile, XUnitTestClassReport> entry : indexByInputFile.entrySet()) {
             XUnitTestClassReport report = entry.getValue();
             if (report.getTests() > 0) {
                 negativeTimeTestNumber += report.getNegativeTimeTestNumber();
-                unitTestSummaryForProject.mergeFrom(saveMeasuresOnFile(report, entry.getKey(), context));
+                testSummaryForProject.mergeFrom(saveMeasuresOnFile(report, entry.getKey(), context));
             }
         }
         if (negativeTimeTestNumber > 0) {
             Logger.getLogger().warn(NLS.getFormatted(Messages.TotalDurationNotAccurateWithNegativeTimeTests, negativeTimeTestNumber));
         }
 
-        Logger.getLogger().info(Messages.UnitTestSummaryForProject);
-        Logger.getLogger().info(unitTestSummaryForProject);
+        logTestSummaryForProject(testSummaryForProject);
     }
 
     private Map<InputFile, XUnitTestClassReport> mapToInputFile(Map<String, XUnitTestClassReport> indexByFilePath, FileSystem fs) {
@@ -96,7 +96,9 @@ abstract class AbstractSOAtestAndJtestTestsParser {
         return result;
     }
 
-    protected abstract UnitTestSummary saveMeasuresOnFile(XUnitTestClassReport report, InputFile inputFile, SensorContext context);
+    protected abstract TestSummary saveMeasuresOnFile(XUnitTestClassReport report, InputFile inputFile, SensorContext context);
+
+    protected abstract void logTestSummaryForProject(TestSummary testSummaryForProject);
 
     protected <T extends Serializable> void saveMeasureOnFile(SensorContext context, InputFile inputFile, Metric<T> metric, T value) {
         context.<T>newMeasure().forMetric(metric).on(inputFile).withValue(value).save();

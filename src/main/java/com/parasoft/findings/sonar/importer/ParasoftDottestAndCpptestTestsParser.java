@@ -14,30 +14,29 @@ import java.time.format.DateTimeFormatter;
 
 public class ParasoftDottestAndCpptestTestsParser {
 
-    public UnitTestSummary loadTestResults(Element rootElement) {
+    public TestSummary loadTestResults(Element rootElement) {
         Element executedTestsDetailsElement = findExecutedTestsDetailsElement(rootElement);
         Element totalElement = (executedTestsDetailsElement != null) ? executedTestsDetailsElement.element("Total") : null;
 
         if (totalElement != null) {
-            return new UnitTestSummary(parseInt(totalElement.attributeValue("total"), 0),
+            return new TestSummary(parseInt(totalElement.attributeValue("total"), 0),
                     parseInt(totalElement.attributeValue("fail"), 0),
                     parseInt(totalElement.attributeValue("err"), 0),
                     getTimeAttributeInMS(totalElement.attributeValue("time"), 0L));
         }
-        return new UnitTestSummary();
+        return new TestSummary();
     }
 
-    public void saveMeasuresOnProject(SensorContext context, UnitTestSummary unitTestResult) {
-        if (unitTestResult.getTotalTests() > 0) {
-            saveMeasureOnProject(context, CoreMetrics.TESTS, unitTestResult.getTotalTests());
-            saveMeasureOnProject(context, CoreMetrics.TEST_ERRORS, unitTestResult.getErrors());
-            saveMeasureOnProject(context, CoreMetrics.TEST_FAILURES, unitTestResult.getFailures());
-            if (unitTestResult.getDuration() > 0) {
-                saveMeasureOnProject(context, CoreMetrics.TEST_EXECUTION_TIME, unitTestResult.getDuration());
+    public void saveMeasuresOnProject(SensorContext context, TestSummary unitTestSummary) {
+        if (unitTestSummary.getTotalTests() > 0) {
+            saveMeasureOnProject(context, CoreMetrics.TESTS, unitTestSummary.getTotalTests());
+            saveMeasureOnProject(context, CoreMetrics.TEST_ERRORS, unitTestSummary.getErrors());
+            saveMeasureOnProject(context, CoreMetrics.TEST_FAILURES, unitTestSummary.getFailures());
+            if (unitTestSummary.getDuration() > 0) {
+                saveMeasureOnProject(context, CoreMetrics.TEST_EXECUTION_TIME, unitTestSummary.getDuration());
             }
         }
-        Logger.getLogger().info(Messages.UnitTestSummaryForProject);
-        Logger.getLogger().info(unitTestResult);
+        Logger.getLogger().info(NLS.getFormatted(Messages.AddedUnitTestsForProjectSummary, unitTestSummary));
     }
 
     // For cppTest professional report, "ExecutedTestsDetails" node is under root element.

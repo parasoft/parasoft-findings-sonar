@@ -40,6 +40,12 @@ import java.util.Set;
 
 public class XSLConverter {
 
+    public static final String XUNIT_XSL_NAME_SUFFIX = "xunit.xsl";
+    public static final String SOA_XUNIT_XSL_NAME_SUFFIX = "soatest-xunit.xsl";
+    public static final String COBERTURA_XSL_NAME_SUFFIX = "cobertura.xsl";
+    public static final String XUNIT_TARGET_REPORT_NAME_SUFFIX = "-xunit_converted-from-xml-report.xml";
+    public static final String COBERTURA_TARGET_REPORT_NAME_SUFFIX =  "-cobertura.xml";
+
     private static final String XSL_RESOURCE_DIR = "/com/parasoft/findings/sonar/res/xsl/";
 
     private final FileSystem fs;
@@ -65,7 +71,7 @@ public class XSLConverter {
             transformReportFile(reportFile, targetReports);
         }
         if (targetReports.isEmpty()) {
-            Logger.getLogger().warn(Messages.NoValidReportsFound);
+            Logger.getLogger().warn(NLS.getFormatted(Messages.NoValidReportsFound, getReportType()));
         }
         return targetReports;
     }
@@ -77,16 +83,16 @@ public class XSLConverter {
             transformReportFile(reportFile.getAbsoluteFile(), targetReports);
         }
         if (targetReports.isEmpty()) {
-            Logger.getLogger().warn(Messages.NoValidReportsFound);
+            Logger.getLogger().warn(NLS.getFormatted(Messages.NoValidReportsFound, getReportType()));
         }
         return targetReports;
     }
 
     private void transformReportFile(File reportFile, List<File> targetReports) {
         if (!reportFile.isFile() || !reportFile.exists() || !reportFile.canRead()) {
-            Logger.getLogger().warn(NLS.getFormatted(Messages.InvalidReportFile, reportFile.getAbsolutePath()));
+            Logger.getLogger().warn(NLS.getFormatted(Messages.SkippedInvalidReportFile, getReportType(), reportFile.getAbsolutePath()));
         } else {
-            Logger.getLogger().info(NLS.getFormatted(Messages.ParsingReportFile, reportFile.getAbsolutePath()));
+            Logger.getLogger().info(NLS.getFormatted(Messages.ConvertingReport, reportFile.getAbsolutePath()));
             File resultFile = transformReport(reportFile);
             if (resultFile != null) {
                 Logger.getLogger().info(NLS.getFormatted(Messages.TransformedReport, reportFile.getAbsolutePath(), resultFile.getAbsolutePath()));
@@ -129,5 +135,17 @@ public class XSLConverter {
         int dotIndex = fileName.lastIndexOf(".");
         String fileNameWithoutExt = dotIndex > -1 ? fileName.substring(0, dotIndex) : fileName;
         return filePath.replace(fileName, fileNameWithoutExt + targetReportNameSuffix);
+    }
+
+    private String getReportType() {
+        if (xsl.endsWith(XUNIT_XSL_NAME_SUFFIX)) {
+            return Messages.UnitTest;
+        } else if (xsl.endsWith(SOA_XUNIT_XSL_NAME_SUFFIX)) {
+            return Messages.SOAtest;
+        } else if (xsl.endsWith(COBERTURA_XSL_NAME_SUFFIX)) {
+            return Messages.Coverage;
+        } else {
+            throw new UnsupportedOperationException("Unsupported report type"); // should never happen
+        }
     }
 }
