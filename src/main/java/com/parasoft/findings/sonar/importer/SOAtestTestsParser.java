@@ -19,7 +19,6 @@ package com.parasoft.findings.sonar.importer;
 import com.parasoft.findings.sonar.Logger;
 import com.parasoft.findings.sonar.Messages;
 import com.parasoft.findings.sonar.importer.soatest.SOAtestMetrics;
-import com.parasoft.findings.sonar.importer.xunitdata.XUnitTestClassReport;
 import com.parasoft.findings.utils.common.nls.NLS;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.sensor.SensorContext;
@@ -27,27 +26,23 @@ import org.sonar.api.batch.sensor.SensorContext;
 public class SOAtestTestsParser extends AbstractSOAtestAndJtestTestsParser {
 
     @Override
-    protected TestSummary saveMeasuresOnFile(XUnitTestClassReport report, InputFile inputFile, SensorContext context) {
-        int testsCount = report.getTests();
-        int failureTestsCount = report.getFailures();
-        long duration = report.getDurationMilliseconds();
+    protected boolean saveMeasuresOnFile(TestSummary testSummaryOnFile, InputFile inputFile, SensorContext context) {
+        int testsCount = testSummaryOnFile.getTotalTests();
         saveMeasureOnFile(context, inputFile, SOAtestMetrics.SOATEST_TESTS, testsCount);
-        saveMeasureOnFile(context, inputFile, SOAtestMetrics.SOATEST_TEST_FAILURES, failureTestsCount);
-        saveMeasureOnFile(context, inputFile, SOAtestMetrics.SOATEST_TEST_EXECUTION_TIME, report.getDurationMilliseconds());
+        saveMeasureOnFile(context, inputFile, SOAtestMetrics.SOATEST_TEST_FAILURES, testSummaryOnFile.getFailures());
+        saveMeasureOnFile(context, inputFile, SOAtestMetrics.SOATEST_TEST_EXECUTION_TIME, testSummaryOnFile.getDuration());
 
         double successDensity = 0;
-        if (testsCount > 0 && report.getFailures() >= 0) {
-            double density = report.getFailures() * 100D / testsCount;
+        if (testsCount > 0 && testSummaryOnFile.getFailures() >= 0) {
+            double density = testSummaryOnFile.getFailures() * 100D / testsCount;
             successDensity = 100D - density;
         }
         saveMeasureOnFile(context, inputFile, SOAtestMetrics.SOATEST_TEST_SUCCESS_DENSITY, successDensity);
 
-        TestSummary testSummaryForFile = new TestSummary(testsCount, failureTestsCount, duration);
-
         Logger.getLogger().info(NLS.getFormatted(Messages.CollectedSOAtestTestsForFile, inputFile));
-        Logger.getLogger().info(testSummaryForFile);
+        Logger.getLogger().info(testSummaryOnFile);
 
-        return testSummaryForFile;
+        return true;
     }
 
     @Override
