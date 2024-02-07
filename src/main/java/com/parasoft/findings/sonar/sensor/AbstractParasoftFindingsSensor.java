@@ -20,6 +20,8 @@ import java.io.File;
 import java.util.*;
 
 import com.parasoft.findings.sonar.*;
+import com.parasoft.findings.sonar.importer.ParasoftDottestAndCpptestTestsParser;
+import com.parasoft.findings.sonar.importer.TestSummary;
 import com.parasoft.findings.utils.common.nls.NLS;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -30,11 +32,11 @@ import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.scanner.ScannerSide;
 import org.sonar.api.scanner.sensor.ProjectSensor;
 
-import com.parasoft.findings.sonar.importer.ParasoftFindingsParser;
+import com.parasoft.findings.sonar.importer.ParasoftIssuesParser;
 
 /**
  * Global sensor that is executed as a part of sonar runtime.
- * In final version it should reads report location, import and create sonar issues
+ * In final version it should read report location, import and create sonar issues
  */
 @ScannerSide
 public abstract class AbstractParasoftFindingsSensor
@@ -61,7 +63,7 @@ public abstract class AbstractParasoftFindingsSensor
             reportLocationPath = new String[0];
         }
 
-        var findingsParser = new ParasoftFindingsParser(new Properties());
+        var findingsParser = new ParasoftIssuesParser(new Properties());
         Map<File, Element> unitTestReports = new HashMap<>();
         List<File> staticAnalysisReports = new ArrayList<>();
         for (var path : reportLocationPath) {
@@ -92,32 +94,47 @@ public abstract class AbstractParasoftFindingsSensor
             }
         }
 
-        processUnitTestReports(unitTestReports, findingsParser, context);
+        processUnitTestReports(unitTestReports, context);
         processStaticAnalysisReports(staticAnalysisReports, findingsParser, context);
     }
 
-    private void processUnitTestReports(Map<File, Element> reportFiles, ParasoftFindingsParser findingsParser, SensorContext context ) {
-        if (reportFiles.isEmpty()) {
-            Logger.getLogger().info(Messages.NoUnitTestReports);
+    /**
+     * The default implementation of this method processes the unit test reports of dottest and cpptest.
+     * For jtest reports it is overridden in the {@link JtestFindingsSensor} class.
+     */
+    protected void processUnitTestReports(Map<File, Element> reportFiles, SensorContext context ) {
+        if (isUnitTestReportsEmpty(reportFiles)) {
             return;
         }
-        UnitTestResult unitTestResult = new UnitTestResult(0, 0, 0, 0L);
+        ParasoftDottestAndCpptestTestsParser testsParser = new ParasoftDottestAndCpptestTestsParser();
+        TestSummary unitTestSummaryForProject = new TestSummary();
         for (var file : reportFiles.keySet()) {
-            Logger.getLogger().info(NLS.getFormatted(Messages.ParsingUnitTestReportFile, file));
-            UnitTestResult result = findingsParser.loadTestResults(reportFiles.get(file));
-            Logger.getLogger().info(result.toString());
-            unitTestResult.mergeFrom(result);
+            Logger.getLogger().info(NLS.getFormatted(Messages.ParsingReportFile, Messages.UnitTest, file));
+
+            TestSummary unitTestSummaryForReport = testsParser.loadTestResults(reportFiles.get(file));
+
+            Logger.getLogger().info(unitTestSummaryForReport.toString());
+
+            unitTestSummaryForProject.mergeFrom(unitTestSummaryForReport);
         }
-        findingsParser.saveMeasures(context, unitTestResult);
+        testsParser.saveMeasuresOnProject(context, unitTestSummaryForProject);
     }
 
-    private void processStaticAnalysisReports(List<File> reportFiles, ParasoftFindingsParser findingsParser, SensorContext context) {
+    protected boolean isUnitTestReportsEmpty(Map<File, Element> reportFiles) {
         if (reportFiles.isEmpty()) {
-            Logger.getLogger().info(Messages.NoStaticAnalysisReports);
+            Logger.getLogger().info(NLS.getFormatted(Messages.ParasoftReportNotSpecified, Messages.UnitTest));
+            return true;
+        }
+        return false;
+    }
+
+    private void processStaticAnalysisReports(List<File> reportFiles, ParasoftIssuesParser findingsParser, SensorContext context) {
+        if (reportFiles.isEmpty()) {
+            Logger.getLogger().info(NLS.getFormatted(Messages.ParasoftReportNotSpecified, Messages.StaticAnalysis));
             return;
         }
         for (var file : reportFiles) {
-            Logger.getLogger().info(NLS.getFormatted(Messages.ParsingStaticAnalysisReportFile, file));
+            Logger.getLogger().info(NLS.getFormatted(Messages.ParsingReportFile, Messages.StaticAnalysis, file));
             loadFindings(file, findingsParser, context);
         }
     }
@@ -151,7 +168,7 @@ public abstract class AbstractParasoftFindingsSensor
         }
     }
 
-    private void loadFindings(File reportFile, ParasoftFindingsParser findingsParser, SensorContext context)
+    private void loadFindings(File reportFile, ParasoftIssuesParser findingsParser, SensorContext context)
     {
         var fs = context.fileSystem();
         var findingsCount = findingsParser.loadFindings(reportFile);

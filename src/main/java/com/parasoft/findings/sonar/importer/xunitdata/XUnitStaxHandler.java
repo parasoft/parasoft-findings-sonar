@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.parasoft.findings.sonar.soatest.data;
+package com.parasoft.findings.sonar.importer.xunitdata;
 
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.staxmate.in.ElementFilter;
@@ -52,22 +52,11 @@ public class XUnitStaxHandler {
   private void parseTestCase(String testSuiteClassName, SMInputCursor testCase) throws XMLStreamException {
     for (SMEvent event = testCase.getNext(); event != null; event = testCase.getNext()) {
       if (event.compareTo(SMEvent.START_ELEMENT) == 0) {
-        String testClassName = getClassname(testCase, testSuiteClassName);
-        XUnitTestClassReport classReport = index.index(testClassName);
+        String testFilePath = testCase.getAttrValue("file");
+        XUnitTestClassReport classReport = index.index(testFilePath);
         parseTestCase(testCase, testSuiteClassName, classReport);
       }
     }
-  }
-
-  private static String getClassname(SMInputCursor testCaseCursor, String defaultClassname) throws XMLStreamException {
-    String testClassName = testCaseCursor.getAttrValue("classname");
-    if (StringUtils.isNotBlank(testClassName) && testClassName.endsWith(")")) {
-      int openParenthesisIndex = testClassName.indexOf('(');
-      if (openParenthesisIndex > 0) {
-        testClassName = testClassName.substring(0, openParenthesisIndex);
-      }
-    }
-    return StringUtils.defaultIfBlank(testClassName, defaultClassname);
   }
 
   private static void parseTestCase(SMInputCursor testCaseCursor, String testSuiteClassName, XUnitTestClassReport report) throws XMLStreamException {

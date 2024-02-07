@@ -17,12 +17,12 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.parasoft.findings.sonar.soatest;
+package com.parasoft.findings.sonar.importer;
 
 import com.ctc.wstx.api.WstxInputProperties;
 import com.ctc.wstx.stax.WstxInputFactory;
-import com.parasoft.findings.sonar.soatest.data.XUnitStaxHandler;
-import com.parasoft.findings.sonar.soatest.data.XUnitTestIndex;
+import com.parasoft.findings.sonar.importer.xunitdata.XUnitStaxHandler;
+import com.parasoft.findings.sonar.importer.xunitdata.XUnitTestIndex;
 import org.codehaus.staxmate.SMInputFactory;
 import org.codehaus.staxmate.in.SMHierarchicCursor;
 import org.sonarsource.analyzer.commons.xml.SafeStaxParserFactory;

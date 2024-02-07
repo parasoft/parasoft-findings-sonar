@@ -14,17 +14,26 @@
  * limitations under the License.
  */
 
-package com.parasoft.findings.sonar;
+package com.parasoft.findings.sonar.importer;
 
+import com.parasoft.findings.sonar.Messages;
 import com.parasoft.findings.utils.common.nls.NLS;
 
-public class UnitTestResult {
+public class TestSummary {
     private int totalTests;
     private int failures;
     private int errors;
     private long duration;
 
-    public UnitTestResult(int totalTests, int failures, int errors, long duration) {
+    public TestSummary() {
+        this(0, 0, 0, 0L);
+    }
+
+    public TestSummary(int totalTests, int failures, long duration) {
+        this(totalTests, failures, 0, duration);
+    }
+
+    public TestSummary(int totalTests, int failures, int errors, long duration) {
         this.totalTests = totalTests;
         this.failures = failures;
         this.errors = errors;
@@ -47,14 +56,14 @@ public class UnitTestResult {
         return duration;
     }
 
-    public void mergeFrom(UnitTestResult unitTestResultToMerge) {
-        if (unitTestResultToMerge == null) {
+    public void mergeFrom(TestSummary testSummaryToMerge) {
+        if (testSummaryToMerge == null) {
             return;
         }
-        this.totalTests += unitTestResultToMerge.totalTests;
-        this.failures += unitTestResultToMerge.failures;
-        this.errors += unitTestResultToMerge.errors;
-        this.duration += unitTestResultToMerge.duration;
+        this.totalTests += testSummaryToMerge.totalTests;
+        this.failures += testSummaryToMerge.failures;
+        this.errors += testSummaryToMerge.errors;
+        this.duration += testSummaryToMerge.duration;
     }
 
     public String toString() {

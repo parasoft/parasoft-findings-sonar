@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.parasoft.findings.sonar.soatest;
+package com.parasoft.findings.sonar.importer.soatest;
 
 import org.sonar.api.measures.Metric;
 import org.sonar.api.measures.Metrics;
@@ -22,7 +22,7 @@ import org.sonar.api.measures.Metrics;
 import java.util.Arrays;
 import java.util.List;
 
-public class ParasoftMetrics implements Metrics {
+public class SOAtestMetrics implements Metrics {
 
     public static String DOMAIN_PARASOFT = "Parasoft";
 
@@ -67,7 +67,7 @@ public class ParasoftMetrics implements Metrics {
                     .setQualitative(false)
                     .setDomain(DOMAIN_PARASOFT)
                     .create();
-    
+
     @Override
     public List<Metric> getMetrics() {
         return Arrays.asList(SOATEST_TESTS, SOATEST_TEST_FAILURES, SOATEST_TEST_SUCCESS_DENSITY, SOATEST_TEST_EXECUTION_TIME);
