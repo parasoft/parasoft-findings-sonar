@@ -17,6 +17,7 @@
 package com.parasoft.findings.sonar.importer;
 
 import com.parasoft.findings.sonar.Messages;
+import com.parasoft.findings.sonar.importer.xunit.data.XUnitTestCase;
 import com.parasoft.findings.utils.common.nls.NLS;
 
 public class TestSummary {
@@ -29,15 +30,21 @@ public class TestSummary {
         this(0, 0, 0, 0L);
     }
 
-    public TestSummary(int totalTests, int failures, long duration) {
-        this(totalTests, failures, 0, duration);
-    }
-
     public TestSummary(int totalTests, int failures, int errors, long duration) {
         this.totalTests = totalTests;
         this.failures = failures;
         this.errors = errors;
         this.duration = duration;
+    }
+
+    public void add(XUnitTestCase testCase) {
+        totalTests++;
+        if (testCase.getStatus() == XUnitTestCase.Status.FAILURE) {
+            failures++;
+        } else if (testCase.getStatus() == XUnitTestCase.Status.ERROR) {
+            errors++;
+        }
+        duration += testCase.getTime();
     }
 
     public int getTotalTests() {

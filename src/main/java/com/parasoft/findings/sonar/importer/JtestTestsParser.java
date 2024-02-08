@@ -18,7 +18,6 @@ package com.parasoft.findings.sonar.importer;
 
 import com.parasoft.findings.sonar.Logger;
 import com.parasoft.findings.sonar.Messages;
-import com.parasoft.findings.sonar.importer.xunitdata.XUnitTestClassReport;
 import com.parasoft.findings.utils.common.nls.NLS;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.sensor.SensorContext;
@@ -27,31 +26,21 @@ import org.sonar.api.measures.CoreMetrics;
 public class JtestTestsParser extends AbstractSOAtestAndJtestTestsParser {
 
     @Override
-    protected TestSummary saveMeasuresOnFile(XUnitTestClassReport report, InputFile inputFile, SensorContext context) {
+    protected boolean saveMeasuresOnFile(TestSummary testSummaryOnFile, InputFile inputFile, SensorContext context) {
         try {
-            int skippedTestsCount = report.getSkipped();
-            int testsCount = report.getTests() - skippedTestsCount;
-            int errorTestsCount = report.getErrors();
-            int failureTestsCount = report.getFailures();
-            long duration = report.getDurationMilliseconds();
-
-            saveMeasureOnFile(context, inputFile, CoreMetrics.SKIPPED_TESTS, skippedTestsCount);
-            saveMeasureOnFile(context, inputFile, CoreMetrics.TESTS, testsCount);
-            saveMeasureOnFile(context, inputFile, CoreMetrics.TEST_ERRORS, errorTestsCount);
-            saveMeasureOnFile(context, inputFile, CoreMetrics.TEST_FAILURES, failureTestsCount);
-            saveMeasureOnFile(context, inputFile, CoreMetrics.TEST_EXECUTION_TIME, duration);
-            TestSummary unitTestSummaryForFile = new TestSummary(testsCount, errorTestsCount, failureTestsCount, duration);
+            saveMeasureOnFile(context, inputFile, CoreMetrics.TESTS, testSummaryOnFile.getTotalTests());
+            saveMeasureOnFile(context, inputFile, CoreMetrics.TEST_ERRORS, testSummaryOnFile.getErrors());
+            saveMeasureOnFile(context, inputFile, CoreMetrics.TEST_FAILURES, testSummaryOnFile.getFailures());
+            saveMeasureOnFile(context, inputFile, CoreMetrics.TEST_EXECUTION_TIME, testSummaryOnFile.getDuration());
 
             Logger.getLogger().info(NLS.getFormatted(Messages.CollectedUnitTestsForFile, inputFile));
-            Logger.getLogger().info(unitTestSummaryForFile);
-
-            return unitTestSummaryForFile;
+            Logger.getLogger().info(testSummaryOnFile);
+            return true;
         } catch (UnsupportedOperationException e) {
             Logger.getLogger().warn(NLS.getFormatted(Messages.SkipAddingUnitTestMeasuresForFile, inputFile));
             Logger.getLogger().debug(e.getMessage());
+            return false;
         }
-
-        return new TestSummary();
     }
 
     @Override

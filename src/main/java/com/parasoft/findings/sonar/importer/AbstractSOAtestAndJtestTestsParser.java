@@ -23,16 +23,19 @@ package com.parasoft.findings.sonar.importer;
 import com.parasoft.findings.sonar.Logger;
 import com.parasoft.findings.sonar.Messages;
 import com.parasoft.findings.sonar.exception.InvalidReportException;
-import com.parasoft.findings.sonar.importer.xunitdata.XUnitTestClassReport;
-import com.parasoft.findings.sonar.importer.xunitdata.XUnitTestIndex;
+import com.parasoft.findings.sonar.importer.xunit.XUnitSAXParser;
+import com.parasoft.findings.sonar.importer.xunit.data.XUnitTestSuite;
+import com.parasoft.findings.sonar.importer.xunit.data.XUnitTestsContainer;
 import com.parasoft.findings.utils.common.nls.NLS;
 import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.measures.Metric;
+import org.xml.sax.SAXException;
 
-import javax.xml.stream.XMLStreamException;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
@@ -45,50 +48,45 @@ abstract class AbstractSOAtestAndJtestTestsParser {
     }
 
     private void parseFiles(SensorContext context, List<File> reports) {
-        XUnitTestIndex index = parseFiles(reports);
-        saveMeasures(index, context);
+        XUnitTestsContainer xUnitTestsContainerOnProject = parseFiles(reports);
+        saveMeasuresOnProject(xUnitTestsContainerOnProject, context);
     }
 
-    private XUnitTestIndex parseFiles(List<File> reports) {
-        XUnitTestIndex index = new XUnitTestIndex();
-        StaxParser parser = new StaxParser(index);
+    private XUnitTestsContainer parseFiles(List<File> reports) {
+
+        XUnitSAXParser xUnitSAXParser = new XUnitSAXParser();
+        XUnitTestsContainer xUnitTestsContainerOnProject = new XUnitTestsContainer();
         for (File report : reports) {
             try {
                 Logger.getLogger().info(NLS.getFormatted(Messages.ParsingXUnitReport, report));
-                parser.parse(report);
-            } catch (XMLStreamException e) {
+                xUnitTestsContainerOnProject.mergeFrom(xUnitSAXParser.parse(report));
+            } catch (ParserConfigurationException | IOException | SAXException e) {
                 throw new InvalidReportException(NLS.getFormatted(Messages.FailedToParseXUnitReport, report), e);
             }
         }
-        return index;
+        return xUnitTestsContainerOnProject;
     }
 
-    private void saveMeasures(XUnitTestIndex index, SensorContext context) {
-        long negativeTimeTestNumber = 0;
-        Map<InputFile, XUnitTestClassReport> indexByInputFile = mapToInputFile(index.getIndexByFilePath(), context.fileSystem());
-        TestSummary testSummaryForProject = new TestSummary();
-        for (Map.Entry<InputFile, XUnitTestClassReport> entry : indexByInputFile.entrySet()) {
-            XUnitTestClassReport report = entry.getValue();
-            if (report.getTests() > 0) {
-                negativeTimeTestNumber += report.getNegativeTimeTestNumber();
-                testSummaryForProject.mergeFrom(saveMeasuresOnFile(report, entry.getKey(), context));
+    private void saveMeasuresOnProject(XUnitTestsContainer xUnitTestsContainerOnProject, SensorContext context) {
+        Map<InputFile, XUnitTestSuite> inputFileAndTestSuitePairs = mapToInputFile(xUnitTestsContainerOnProject.getTestSuites(), context.fileSystem());
+        TestSummary testSummaryOfSavedTests = new TestSummary();
+        for (Map.Entry<InputFile, XUnitTestSuite> entry : inputFileAndTestSuitePairs.entrySet()) {
+            XUnitTestSuite testSuite = entry.getValue();
+            if (testSuite.getTestSummary().getTotalTests() > 0) {
+                if (saveMeasuresOnFile(testSuite.getTestSummary(), entry.getKey(), context)) {
+                    testSummaryOfSavedTests.mergeFrom(testSuite.getTestSummary());
+                }
             }
         }
-        if (negativeTimeTestNumber > 0) {
-            Logger.getLogger().warn(NLS.getFormatted(Messages.TotalDurationNotAccurateWithNegativeTimeTests, negativeTimeTestNumber));
-        }
-
-        logTestSummaryForProject(testSummaryForProject);
+        logTestSummaryForProject(testSummaryOfSavedTests);
     }
 
-    private Map<InputFile, XUnitTestClassReport> mapToInputFile(Map<String, XUnitTestClassReport> indexByFilePath, FileSystem fs) {
-        Map<InputFile, XUnitTestClassReport> result = new HashMap<>();
-        indexByFilePath.forEach((filePath, index) -> {
+    private Map<InputFile, XUnitTestSuite> mapToInputFile(Map<String, XUnitTestSuite> testSuites, FileSystem fs) {
+        Map<InputFile, XUnitTestSuite> result = new HashMap<>();
+        testSuites.forEach((filePath, testSuite) -> {
             InputFile resource = fs.inputFile(fs.predicates().hasPath(filePath));
             if (resource != null) {
-                XUnitTestClassReport report = result.computeIfAbsent(resource, r -> new XUnitTestClassReport());
-                // in case of repeated/parameterized tests (JUnit 5.x) we may end up with tests having the same name
-                index.getResults().forEach(report::add);
+                result.put(resource, testSuite);
             } else {
                 Logger.getLogger().debug(NLS.getFormatted(Messages.ResourceNotFound, filePath));
             }
@@ -96,7 +94,7 @@ abstract class AbstractSOAtestAndJtestTestsParser {
         return result;
     }
 
-    protected abstract TestSummary saveMeasuresOnFile(XUnitTestClassReport report, InputFile inputFile, SensorContext context);
+    protected abstract boolean saveMeasuresOnFile(TestSummary testSummaryOnFile, InputFile inputFile, SensorContext context);
 
     protected abstract void logTestSummaryForProject(TestSummary testSummaryForProject);
 
