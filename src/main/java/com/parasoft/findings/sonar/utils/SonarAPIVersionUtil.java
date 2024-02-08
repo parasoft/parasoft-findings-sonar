@@ -1,4 +1,4 @@
-package com.parasoft.findings.sonar;
+package com.parasoft.findings.sonar.utils;
 
 import org.sonar.api.SonarRuntime;
 import org.sonar.api.utils.Version;

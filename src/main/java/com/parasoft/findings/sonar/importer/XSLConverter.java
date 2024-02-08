@@ -92,10 +92,10 @@ public class XSLConverter {
         if (!reportFile.isFile() || !reportFile.exists() || !reportFile.canRead()) {
             Logger.getLogger().warn(NLS.getFormatted(Messages.SkippedInvalidReportFile, getReportType(), reportFile.getAbsolutePath()));
         } else {
-            Logger.getLogger().info(NLS.getFormatted(Messages.ConvertingReport, reportFile.getAbsolutePath()));
+            Logger.getLogger().info(NLS.getFormatted(Messages.TransformingReport, reportFile.getAbsolutePath()));
             File resultFile = transformReport(reportFile);
             if (resultFile != null) {
-                Logger.getLogger().info(NLS.getFormatted(Messages.TransformedReport, reportFile.getAbsolutePath(), resultFile.getAbsolutePath()));
+                Logger.getLogger().info(NLS.getFormatted(Messages.TransformedReport, resultFile.getAbsolutePath()));
                 targetReports.add(resultFile);
             }
         }

@@ -51,7 +51,7 @@ public enum ParasoftProduct {
     public final String ruleProvider;
     public final String analyzerId;
 
-    private ParasoftProduct(String profileName, String subcategory, List<String> languages, List<String> ruleRepoIds,
+    ParasoftProduct(String profileName, String subcategory, List<String> languages, List<String> ruleRepoIds,
         String builtinRulesPath, String reportPathKey, String reportPathName,
         String reportPathDesc, String rulesPath, String docPath, String ruleProvider, String analyzerId)
     {

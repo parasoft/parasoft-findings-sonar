@@ -58,12 +58,12 @@ public abstract class AbstractParasoftFindingsSensor
     @Override
     public void execute(final SensorContext context)
     {
-        var reportLocationPath = context.config().getStringArray(_product.reportPathKey);
+        String[] reportLocationPath = context.config().getStringArray(_product.reportPathKey);
         if (reportLocationPath == null) {
             reportLocationPath = new String[0];
         }
 
-        var findingsParser = new ParasoftIssuesParser(new Properties());
+        ParasoftIssuesParser findingsParser = new ParasoftIssuesParser(new Properties());
         Map<File, Element> unitTestReports = new HashMap<>();
         List<File> staticAnalysisReports = new ArrayList<>();
         for (var path : reportLocationPath) {
@@ -86,10 +86,10 @@ public abstract class AbstractParasoftFindingsSensor
                             unitTestReports.put(reportFile, rootElement);
                             break;
                         default:
-                            Logger.getLogger().warn(NLS.getFormatted(Messages.InvalidReport, reportFile.getAbsolutePath()));
+                            Logger.getLogger().warn(NLS.getFormatted(Messages.SkippedInvalidReport, reportFile.getAbsolutePath()));
                     }
                 } catch (DocumentException e) {
-                    Logger.getLogger().error(NLS.getFormatted(Messages.InvalidReport, reportFile.getAbsolutePath()), e);
+                    Logger.getLogger().error(NLS.getFormatted(Messages.SkippedInvalidReport, reportFile.getAbsolutePath()), e);
                 }
             }
         }

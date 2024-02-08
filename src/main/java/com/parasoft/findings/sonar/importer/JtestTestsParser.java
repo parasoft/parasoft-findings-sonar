@@ -33,11 +33,11 @@ public class JtestTestsParser extends AbstractSOAtestAndJtestTestsParser {
             saveMeasureOnFile(context, inputFile, CoreMetrics.TEST_FAILURES, testSummaryOnFile.getFailures());
             saveMeasureOnFile(context, inputFile, CoreMetrics.TEST_EXECUTION_TIME, testSummaryOnFile.getDuration());
 
-            Logger.getLogger().info(NLS.getFormatted(Messages.CollectedUnitTestsForFile, inputFile));
+            Logger.getLogger().info(NLS.getFormatted(Messages.AddedUnitTestResultsForFile, inputFile));
             Logger.getLogger().info(testSummaryOnFile);
             return true;
         } catch (UnsupportedOperationException e) {
-            Logger.getLogger().warn(NLS.getFormatted(Messages.SkipAddingUnitTestMeasuresForFile, inputFile));
+            Logger.getLogger().warn(NLS.getFormatted(Messages.SkipAddingUnitTestResultsForFile, inputFile));
             Logger.getLogger().debug(e.getMessage());
             return false;
         }

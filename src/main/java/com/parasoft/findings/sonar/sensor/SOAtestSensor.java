@@ -54,7 +54,7 @@ public class SOAtestSensor implements Sensor {
             return Collections.emptyList();
         }
 
-        Logger.getLogger().info(NLS.getFormatted(Messages.ConvertingParasoftReportsToXUnitReports, Messages.SOAtest));
+        Logger.getLogger().info(NLS.getFormatted(Messages.TransformingParasoftReportsToXUnitReports, Messages.SOAtest));
 
         return new XSLConverter(context.fileSystem(), XSLConverter.SOA_XUNIT_XSL_NAME_SUFFIX,
                 XSLConverter.XUNIT_TARGET_REPORT_NAME_SUFFIX).transformReports(reportPaths);

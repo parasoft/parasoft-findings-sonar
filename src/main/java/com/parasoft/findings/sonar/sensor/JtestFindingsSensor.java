@@ -35,7 +35,7 @@ public class JtestFindingsSensor extends AbstractParasoftFindingsSensor
             return;
         }
 
-        Logger.getLogger().info(NLS.getFormatted(Messages.ConvertingParasoftReportsToXUnitReports, Messages.UnitTest));
+        Logger.getLogger().info(NLS.getFormatted(Messages.TransformingParasoftReportsToXUnitReports, Messages.UnitTest));
 
         List<File> transformedReports = new XSLConverter(context.fileSystem(), XSLConverter.XUNIT_XSL_NAME_SUFFIX, XSLConverter.XUNIT_TARGET_REPORT_NAME_SUFFIX)
                                             .transformReports(reportFiles.keySet());

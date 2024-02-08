@@ -34,10 +34,10 @@ public class ParasoftDottestAndCpptestTestsParser {
         Element totalElement = (executedTestsDetailsElement != null) ? executedTestsDetailsElement.element("Total") : null;
 
         if (totalElement != null) {
-            return new TestSummary(parseInt(totalElement.attributeValue("total"), 0),
-                    parseInt(totalElement.attributeValue("fail"), 0),
-                    parseInt(totalElement.attributeValue("err"), 0),
-                    getTimeAttributeInMS(totalElement.attributeValue("time"), 0L));
+            return new TestSummary(parseInt(totalElement.attributeValue("total")),
+                    parseInt(totalElement.attributeValue("fail")),
+                    parseInt(totalElement.attributeValue("err")),
+                    getTimeAttributeInMS(totalElement.attributeValue("time")));
         }
         return new TestSummary();
     }
@@ -61,28 +61,28 @@ public class ParasoftDottestAndCpptestTestsParser {
                 rootElement.element("Exec").element("ExecutedTestsDetails");
     }
 
-    private int parseInt(String value, int defaultValue) {
+    private int parseInt(String value) {
         if (value == null || value.isEmpty()) {
-            return defaultValue;
+            return 0;
         }
         try {
             return Integer.parseInt(value);
         } catch (Exception e) {
-            return defaultValue;
+            return 0;
         }
     }
 
     //  Get a time attribute in milliseconds
-    private long getTimeAttributeInMS(String value, long defaultValue) {
+    private long getTimeAttributeInMS(String value) {
         if (value == null || value.isEmpty()) {
-            return defaultValue;
+            return 0L;
         }
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("H:mm:ss.SSS");
             LocalTime localTime = LocalTime.parse(value, formatter);
             return localTime.toNanoOfDay() / 1_000_000;
         } catch (Exception e) {
-            return defaultValue;
+            return 0L;
         }
     }
 

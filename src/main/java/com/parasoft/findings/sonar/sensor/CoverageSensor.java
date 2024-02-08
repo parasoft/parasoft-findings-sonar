@@ -11,7 +11,7 @@ import com.parasoft.findings.sonar.Logger;
 import com.parasoft.findings.sonar.Messages;
 import com.parasoft.findings.sonar.ParasoftConstants;
 import com.parasoft.findings.sonar.exception.InvalidReportException;
-import com.parasoft.findings.sonar.exception.CoverageReportAndProjectNotMatchedException;
+import com.parasoft.findings.sonar.exception.CoverageSourceMismatchException;
 import com.parasoft.findings.sonar.importer.XSLConverter;
 import com.parasoft.findings.utils.common.nls.NLS;
 import org.dom4j.Document;
@@ -47,32 +47,31 @@ public class CoverageSensor implements ProjectSensor {
     }
 
     @Override
-    public void execute(SensorContext sensorContext) {
-        String[] reportPaths = sensorContext.config().getStringArray(ParasoftConstants.PARASOFT_COVERAGE_REPORT_PATHS_KEY);
+    public void execute(SensorContext context) {
+        String[] reportPaths = context.config().getStringArray(ParasoftConstants.PARASOFT_COVERAGE_REPORT_PATHS_KEY);
 
         if (reportPaths == null || reportPaths.length == 0) {
             Logger.getLogger().info(NLS.getFormatted(Messages.ParasoftReportNotSpecified, Messages.Coverage));
             return;
         }
 
-        Logger.getLogger().info(Messages.ConvertingCoverageReportsToCoberturaReports);
+        Logger.getLogger().info(Messages.TransformingCoverageReportsToCoberturaReports);
 
         List<File> coberturaReports = new XSLConverter(fs, XSLConverter.COBERTURA_XSL_NAME_SUFFIX,
                 XSLConverter.COBERTURA_TARGET_REPORT_NAME_SUFFIX).transformReports(reportPaths);
         for (File coberturaReport : coberturaReports) {
-            Logger.getLogger().info(NLS.getFormatted(Messages.UploadCodeCoverageData, coberturaReport.getName()));
-            uploadFileCoverageData(coberturaReport, sensorContext);
+            uploadFileCoverageData(coberturaReport, context);
         }
         if (validCoberturaReportsCount == 0) {
             throw new InvalidReportException(Messages.NoValidCoberturaReport);
         }
         if (processedReportsCount == 0) {
-            throw new CoverageReportAndProjectNotMatchedException(Messages.NotMatchedCoverageReportAndProject);
+            throw new CoverageSourceMismatchException(Messages.NotMatchedCoverageReportAndProject);
         }
     }
 
     public void uploadFileCoverageData(File report, SensorContext context) {
-
+        Logger.getLogger().info(NLS.getFormatted(Messages.UploadCodeCoverageData, report.getAbsoluteFile()));
         try {
             SAXReader reader = new SAXReader();
             Document document = reader.read(report);
@@ -117,6 +116,7 @@ public class CoverageSensor implements ProjectSensor {
                     processedReportsCount++;
                 }
             }
+            Logger.getLogger().info(NLS.getFormatted(Messages.UploadedCodeCoverageData));
         } catch (Exception e) {
             Logger.getLogger().error(NLS.getFormatted(Messages.FailedToLoadCoberturaReport, report.getAbsolutePath()), e);
         }

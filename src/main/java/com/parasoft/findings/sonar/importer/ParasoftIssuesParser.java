@@ -28,6 +28,8 @@ import java.util.Properties;
 import java.util.Set;
 
 import com.parasoft.findings.sonar.*;
+import com.parasoft.findings.sonar.utils.MapperUtil;
+import com.parasoft.findings.sonar.utils.SonarAPIVersionUtil;
 import com.parasoft.findings.utils.common.nls.NLS;
 import com.parasoft.findings.utils.common.util.CollectionUtil;
 import com.parasoft.findings.utils.common.util.IOUtils;
@@ -61,7 +63,6 @@ public class ParasoftIssuesParser
     {
         _properties = properties;
         FindingsLogger.setCurrentFactory(new SonarLoggerHandlerFactory());
-        Logger.getLogger().info("Service initialization"); //$NON-NLS-1$
     }
 
     public int loadFindings(File file)
@@ -98,7 +99,7 @@ public class ParasoftIssuesParser
                 if (violations == null) {
                     violations = new HashSet<>();
                     _violations.put(inputPath, violations);
-                    Logger.getLogger().info("Collected location with finding(s): " + inputPath); //$NON-NLS-1$
+                    Logger.getLogger().info("Added location with finding(s): " + inputPath); //$NON-NLS-1$
                 }
                 violations.add(violation);
                 loadedFindings++;

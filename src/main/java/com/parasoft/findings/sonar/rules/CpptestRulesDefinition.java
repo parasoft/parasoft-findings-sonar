@@ -1,6 +1,6 @@
 package com.parasoft.findings.sonar.rules;
 
-import com.parasoft.findings.sonar.MapperUtil;
+import com.parasoft.findings.sonar.utils.MapperUtil;
 import com.parasoft.findings.utils.rules.RuleDescription;
 import org.sonar.api.config.Configuration;
 

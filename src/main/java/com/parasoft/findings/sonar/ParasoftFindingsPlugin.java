@@ -7,6 +7,7 @@ import com.parasoft.findings.sonar.sensor.CpptestFindingsSensor;
 import com.parasoft.findings.sonar.sensor.DottestFindingsSensor;
 import com.parasoft.findings.sonar.sensor.JtestFindingsSensor;
 import com.parasoft.findings.sonar.sensor.SOAtestSensor;
+import com.parasoft.findings.sonar.utils.SonarAPIVersionUtil;
 import org.sonar.api.Plugin;
 
 import com.parasoft.findings.sonar.rules.CpptestProfile;

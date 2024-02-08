@@ -2,7 +2,7 @@ package com.parasoft.findings.sonar.sensor;
 
 import com.parasoft.findings.sonar.Messages;
 import com.parasoft.findings.sonar.ParasoftConstants;
-import com.parasoft.findings.sonar.exception.CoverageReportAndProjectNotMatchedException;
+import com.parasoft.findings.sonar.exception.CoverageSourceMismatchException;
 import com.parasoft.findings.sonar.exception.InvalidReportException;
 import com.parasoft.findings.sonar.importer.XSLConverter;
 import org.junit.jupiter.api.AfterEach;
@@ -153,7 +153,7 @@ public class CoverageSensorTest {
         setUp();
         doReturn(null).when(fileSystem).inputFile(any());
 
-        Exception exception = assertThrows(CoverageReportAndProjectNotMatchedException.class, () -> {
+        Exception exception = assertThrows(CoverageSourceMismatchException.class, () -> {
             CoverageSensor underTest = new CoverageSensor(fileSystem);
             underTest.execute(sensorContext);
         });

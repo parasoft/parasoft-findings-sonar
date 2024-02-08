@@ -49,12 +49,12 @@ public class XUnitSAXParser {
         }
 
         public void startElement(String uri, String localName, String qName,
-                                 Attributes attributes) throws SAXException {
+                                 Attributes attributes) {
             if ("testcase".equals(qName)) {
                 String name = attributes.getValue("name");
                 String file = attributes.getValue("file");
                 String classname = attributes.getValue("classname");
-                long time = getTimeAttributeInMS(attributes.getValue("time"), 0L);
+                long time = getTimeAttributeInMS(attributes.getValue("time"));
 
                 currentTestCase = new XUnitTestCase(name, file, classname, time);
                 currentText.setLength(0);
@@ -62,7 +62,7 @@ public class XUnitSAXParser {
         }
 
         public void endElement(String uri, String localName,
-                               String qName) throws SAXException {
+                               String qName) {
             if ("testcase".equals(qName)) {
                 xUnitTestsContainer.addTestCase(currentTestCase);
             } else if (qName.equalsIgnoreCase("failure")) {
@@ -74,18 +74,18 @@ public class XUnitSAXParser {
             }
         }
 
-        public void characters(char ch[], int start, int length) throws SAXException {
+        public void characters(char[] ch, int start, int length) throws SAXException {
             currentText.append(new String(ch, start, length));
         }
 
-        private long getTimeAttributeInMS(String value, long defaultValue) {
+        private long getTimeAttributeInMS(String value) {
             if (value == null || value.isEmpty()) {
-                return defaultValue;
+                return 0L;
             }
             try {
-                return (long) (Double.parseDouble(value) * 1000L);
+                return Math.round(Double.parseDouble(value) * 1000);
             } catch (Exception e) {
-                return defaultValue;
+                return 0L;
             }
         }
     }

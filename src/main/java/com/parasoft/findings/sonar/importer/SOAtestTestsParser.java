@@ -39,7 +39,7 @@ public class SOAtestTestsParser extends AbstractSOAtestAndJtestTestsParser {
         }
         saveMeasureOnFile(context, inputFile, SOAtestMetrics.SOATEST_TEST_SUCCESS_DENSITY, successDensity);
 
-        Logger.getLogger().info(NLS.getFormatted(Messages.CollectedSOAtestTestsForFile, inputFile));
+        Logger.getLogger().info(NLS.getFormatted(Messages.AddedSOAtestTestResultsForFile, inputFile));
         Logger.getLogger().info(testSummaryOnFile);
 
         return true;
