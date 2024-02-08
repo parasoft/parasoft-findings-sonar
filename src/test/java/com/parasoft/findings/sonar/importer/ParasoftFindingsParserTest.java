@@ -37,9 +37,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Parasoft Jtest UTA: Test class for ParasoftFindingsParser
+ * Parasoft Jtest UTA: Test class for ParasoftIssuesParser
  *
- * @see ParasoftFindingsParser
+ * @see ParasoftIssuesParser
  * @author bmcglau
  */
 public class ParasoftFindingsParserTest {
@@ -47,7 +47,7 @@ public class ParasoftFindingsParserTest {
     @Test
     public void testParasoftFindingsParser1() throws URISyntaxException {
         // Test loadFindings(File file)
-        ParasoftFindingsParser parasoftFindingsParser = new ParasoftFindingsParser(new Properties());
+        ParasoftIssuesParser parasoftFindingsParser = new ParasoftIssuesParser(new Properties());
         int result = parasoftFindingsParser.loadFindings(new File("src/test/java/staticReport/CC++test-2023.1.1-static-report.xml"));
         assertEquals(6, result);
 
@@ -70,7 +70,7 @@ public class ParasoftFindingsParserTest {
     @Test
     public void testParasoftFindingsParser2() throws URISyntaxException {
         // Test loadFindings(File file)
-        ParasoftFindingsParser parasoftFindingsParser = new ParasoftFindingsParser(new Properties());
+        ParasoftIssuesParser parasoftFindingsParser = new ParasoftIssuesParser(new Properties());
         int result = parasoftFindingsParser.loadFindings(new File("src/test/java/staticReport/CC++test-2023.1.1-static-report.xml"));
         assertEquals(6, result);
 

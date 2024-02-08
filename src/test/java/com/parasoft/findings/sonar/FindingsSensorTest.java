@@ -43,7 +43,7 @@ class FindingsSensorTest
         when(context.fileSystem()).thenReturn(filesys);
         when(filesys.baseDir()).thenReturn(new File("."));
         when(filesys.predicates()).thenReturn(pred);
-        
+
         sensor.describe(desc);
         sensor.execute(context);
     }
