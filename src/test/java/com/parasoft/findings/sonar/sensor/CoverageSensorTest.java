@@ -4,9 +4,12 @@ import com.parasoft.findings.sonar.Messages;
 import com.parasoft.findings.sonar.ParasoftConstants;
 import com.parasoft.findings.sonar.exception.CoverageReportAndProjectNotMatchedException;
 import com.parasoft.findings.sonar.exception.InvalidReportException;
+import com.parasoft.findings.sonar.importer.XSLConverter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import org.mockito.MockedConstruction;
+import org.mockito.Mockito;
 import org.sonar.api.batch.fs.FilePredicate;
 import org.sonar.api.batch.fs.FilePredicates;
 import org.sonar.api.batch.fs.FileSystem;
@@ -17,6 +20,7 @@ import org.sonar.api.batch.sensor.coverage.NewCoverage;
 import org.sonar.api.config.Configuration;
 
 import java.io.File;
+import java.util.function.Predicate;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -40,6 +44,8 @@ public class CoverageSensorTest {
 
     public String[] paths;
 
+    public MockedConstruction<XSLConverter> mockedXSLConverterConstruction;
+
     @AfterEach
     private void cleanUp() {
         if (paths != null) {
@@ -51,6 +57,9 @@ public class CoverageSensorTest {
                     }
                 }
             }
+        }
+        if (mockedXSLConverterConstruction != null) {
+            mockedXSLConverterConstruction.close();
         }
     }
 
@@ -81,24 +90,27 @@ public class CoverageSensorTest {
     public void testDescribe() {
         SensorDescriptor sensorDescriptor = mock(SensorDescriptor.class);
         doReturn(sensorDescriptor).when(sensorDescriptor).onlyOnFileType(any());
+        doReturn(sensorDescriptor).when(sensorDescriptor).name(any());
         CoverageSensor coverageSensor = new CoverageSensor(mock(FileSystem.class));
 
         coverageSensor.describe(sensorDescriptor);
 
         verify(sensorDescriptor).onlyOnFileType(InputFile.Type.MAIN);
         verify(sensorDescriptor).name(ParasoftConstants.PARASOFT_COVERAGE_IMPORTER);
+        verify(sensorDescriptor).onlyWhenConfiguration(any(Predicate.class));
     }
 
     @Test
     public void testCoverageSensor_noReport() {
         paths = new String[]{};
         setUp();
+        mockedXSLConverterConstruction = Mockito.mockConstruction(XSLConverter.class);
 
         CoverageSensor underTest = mock(CoverageSensor.class);
         doCallRealMethod().when(underTest).execute(sensorContext);
         underTest.execute(sensorContext);
 
-        verify(underTest, times(0)).transformToCoberturaReports(any());
+        assertEquals(0, mockedXSLConverterConstruction.constructed().size());
     }
 
     @Test
@@ -162,7 +174,7 @@ public class CoverageSensorTest {
             underTest.execute(sensorContext);
         });
 
-        assertEquals(Messages.NoValidCoverageReportsFound, exception.getMessage());
+        assertEquals(Messages.NoValidCoberturaReport, exception.getMessage());
         assertFalse(new File(paths[0] + "-cobertura.xml").exists());
         verify(newCoverage, times(0)).lineHits(anyInt(), anyInt());
         verify(newCoverage, times(0)).save();
@@ -201,27 +213,5 @@ public class CoverageSensorTest {
         verify(sensorContext, atLeastOnce()).newCoverage();
         verify(newCoverage, atLeastOnce()).save();
         verify(newCoverage, times(0)).lineHits(anyInt(), anyInt());
-    }
-
-    @Test
-    public void testGetCoberturaReportFilePath_withExtensionName() {
-        File file = new File("test.xml");
-        setUp();
-
-        CoverageSensor underTest = new CoverageSensor(fileSystem);
-        String result = underTest.getCoberturaReportFilePath(file);
-
-        assertTrue(result.contains("test-cobertura.xml"));
-    }
-
-    @Test
-    public void testGetCoberturaReportFilePath_withoutExtensionName() {
-        File file = new File("test");
-        setUp();
-
-        CoverageSensor underTest = new CoverageSensor(fileSystem);
-        String result = underTest.getCoberturaReportFilePath(file);
-
-        assertTrue(result.contains("test-cobertura.xml"));
     }
 }

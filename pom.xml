@@ -245,7 +245,6 @@
             <version>4.6.1</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>net.sf.saxon</groupId>
             <artifactId>Saxon-HE</artifactId>
@@ -262,5 +261,4 @@
             <version>1.0.1</version>
         </dependency>
     </dependencies>
-
 </project>

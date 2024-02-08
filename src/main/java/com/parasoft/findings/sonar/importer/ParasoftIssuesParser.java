@@ -19,6 +19,7 @@ package com.parasoft.findings.sonar.importer;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -45,7 +46,7 @@ import org.sonar.api.rule.RuleKey;
 /**
  * A parser for Parasoft files containing xml report.
  */
-public class ParasoftFindingsParser
+public class ParasoftIssuesParser
 {
     private final Properties _properties;
 
@@ -54,9 +55,9 @@ public class ParasoftFindingsParser
     private final Map<String, Set<IRuleViolation>> _violations = Collections.synchronizedMap(new HashMap<>());
 
     /**
-     * Creates a new instance of {@link ParasoftFindingsParser}.
+     * Creates a new instance of {@link ParasoftIssuesParser}.
      */
-    public ParasoftFindingsParser(Properties properties)
+    public ParasoftIssuesParser(Properties properties)
     {
         _properties = properties;
         FindingsLogger.setCurrentFactory(new SonarLoggerHandlerFactory());
