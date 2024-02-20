@@ -50,11 +50,11 @@ public class XUnitSAXParser {
 
         public void startElement(String uri, String localName, String qName,
                                  Attributes attributes) {
-            if ("testcase".equals(qName)) {
-                String name = attributes.getValue("name");
-                String file = attributes.getValue("file");
-                String classname = attributes.getValue("classname");
-                long time = getTimeAttributeInMS(attributes.getValue("time"));
+            if ("testcase".equals(qName)) { //$NON-NLS-1$
+                String name = attributes.getValue("name"); //$NON-NLS-1$
+                String file = attributes.getValue("file"); //$NON-NLS-1$
+                String classname = attributes.getValue("classname"); //$NON-NLS-1$
+                long time = getTimeAttributeInMS(attributes.getValue("time")); //$NON-NLS-1$
 
                 currentTestCase = new XUnitTestCase(name, file, classname, time);
                 currentText.setLength(0);
@@ -63,12 +63,12 @@ public class XUnitSAXParser {
 
         public void endElement(String uri, String localName,
                                String qName) {
-            if ("testcase".equals(qName)) {
+            if ("testcase".equals(qName)) { //$NON-NLS-1$
                 xUnitTestsContainer.addTestCase(currentTestCase);
-            } else if (qName.equalsIgnoreCase("failure")) {
+            } else if (qName.equalsIgnoreCase("failure")) { //$NON-NLS-1$
                 currentTestCase.setFailure(XUnitTestCase.Status.FAILURE);
                 currentTestCase.setStackTrace(currentText.toString().trim());
-            } else if (qName.equalsIgnoreCase("error")) {
+            } else if (qName.equalsIgnoreCase("error")) { //$NON-NLS-1$
                 currentTestCase.setFailure(XUnitTestCase.Status.ERROR);
                 currentTestCase.setStackTrace(currentText.toString().trim());
             }
