@@ -57,8 +57,7 @@ public class CoverageSensor implements ProjectSensor {
 
         Logger.getLogger().info(Messages.TransformingCoverageReportsToCoberturaReports);
 
-        List<File> coberturaReports = new XSLConverter(fs, XSLConverter.COBERTURA_XSL_NAME_SUFFIX,
-                XSLConverter.COBERTURA_TARGET_REPORT_NAME_SUFFIX).transformReports(reportPaths);
+        List<File> coberturaReports = new XSLConverter(fs).transformReports(reportPaths, XSLConverter.ReportType.COVERAGE);
         for (File coberturaReport : coberturaReports) {
             uploadFileCoverageData(coberturaReport, context);
         }

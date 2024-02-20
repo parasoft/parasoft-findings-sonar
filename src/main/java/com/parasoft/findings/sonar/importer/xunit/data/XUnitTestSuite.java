@@ -47,7 +47,4 @@ public class XUnitTestSuite {
         this.filePath = filePath;
     }
 
-    public String getFilePath() {
-        return filePath;
-    }
 }

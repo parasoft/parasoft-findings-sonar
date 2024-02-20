@@ -24,9 +24,15 @@ import java.util.Map;
 public class JtestFindingsSensor extends AbstractParasoftFindingsSensor
 {
 
-    public JtestFindingsSensor()
+    private final XSLConverter xslConverter;
+
+    private final JtestTestsParser jtestTestsParser;
+
+    public JtestFindingsSensor(XSLConverter xslConverter, JtestTestsParser jtestTestsParser)
     {
         super(ParasoftProduct.JTEST);
+        this.xslConverter = xslConverter;
+        this.jtestTestsParser = jtestTestsParser;
     }
 
     @Override
@@ -37,8 +43,8 @@ public class JtestFindingsSensor extends AbstractParasoftFindingsSensor
 
         Logger.getLogger().info(NLS.getFormatted(Messages.TransformingParasoftReportsToXUnitReports, Messages.UnitTest));
 
-        List<File> transformedReports = new XSLConverter(context.fileSystem(), XSLConverter.XUNIT_XSL_NAME_SUFFIX, XSLConverter.XUNIT_TARGET_REPORT_NAME_SUFFIX)
-                                            .transformReports(reportFiles.keySet());
-        new JtestTestsParser().collect(context, transformedReports);
+        List<File> transformedReports = xslConverter
+                                            .transformReports(reportFiles.keySet(), XSLConverter.ReportType.UNIT_TEST);
+        jtestTestsParser.collect(context, transformedReports);
     }
 }
