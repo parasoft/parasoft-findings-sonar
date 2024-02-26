@@ -76,7 +76,7 @@ public abstract class AbstractRulesDefinition
     public static Set<LanguageRules> findLanguageRules(String productProfileName)
     {
         if (!_rulesMap.containsKey(productProfileName)) {
-            Logger.getLogger().error("Profile '" + productProfileName + "' does not exist!"); //$NON-NLS-1$ //$NON-NLS-2$
+            Logger.getLogger().error(NLS.getFormatted(Messages.ProfileDoesNotExist, productProfileName));
             return null;
         }
         return _rulesMap.get(productProfileName);
@@ -92,7 +92,7 @@ public abstract class AbstractRulesDefinition
             return;
         }
 
-        Logger.getLogger().info("Initializing " + getClass().getSimpleName()); //$NON-NLS-1$
+        Logger.getLogger().info(NLS.getFormatted(Messages.Initializing, getClass().getSimpleName()));
         var builtinRulesDir = getBuiltinRulesDir();
         if (builtinRulesDir != null) {
             var rulesDirs = getRulesDirs();
@@ -106,16 +106,16 @@ public abstract class AbstractRulesDefinition
                         continue;
                     }
                     try {
-                        Logger.getLogger().info("Loading rules from " + rulesFile.getName()); //$NON-NLS-1$
+                        Logger.getLogger().info(NLS.getFormatted(Messages.LoadingRules, rulesFile.getName()));
                         var importer = new RuleDescriptionImporter();
                         addRules(rulesFile.getName(), importer.performImport(rulesFile));
                     } catch (Exception e) {
-                        Logger.getLogger().error("Error reading rules file " + rulesFile.getName(), e); //$NON-NLS-1$
+                        Logger.getLogger().error(NLS.getFormatted(Messages.ErrorReadingRulesFile, rulesFile.getName()), e);
                     }
                 }
             }
         } else {
-            Logger.getLogger().warn("Built-in rules root directory not found: " + _tempPath + "/" + _product.builtinRulesPath); //$NON-NLS-1$ //$NON-NLS-2$
+            Logger.getLogger().warn(NLS.getFormatted(Messages.rulesRootDirectoryNotFound, _tempPath, _product.builtinRulesPath));
         }
 
         for (LanguageRules lr : _rulesMap.get(_product.profileName)) {
@@ -132,10 +132,10 @@ public abstract class AbstractRulesDefinition
     {
         if(_tempPath == null) {
             try {
-                _tempPath = Files.createTempDirectory("parasoft_findings_sonar_").toFile().getAbsolutePath();
-                Logger.getLogger().info("Temporary folder is created: " + _tempPath); //$NON-NLS-1$
+                _tempPath = Files.createTempDirectory("parasoft_findings_sonar_").toFile().getAbsolutePath(); //$NON-NLS-1$
+                Logger.getLogger().info(NLS.getFormatted(Messages.TemporaryFolderIsCreated, _tempPath));
             } catch (IOException e) {
-                Logger.getLogger().error("Failed to create temporary folder", e); //$NON-NLS-1$
+                Logger.getLogger().error(NLS.getFormatted(Messages.FailedToCreateTemporaryFolder), e);
                 return false;
             }
         }
@@ -147,15 +147,15 @@ public abstract class AbstractRulesDefinition
                     _pluginJarFile = new ZipFile(jar.getPath());
                     String expectedBuiltinRulesStoragePath = new File(_tempPath, BUILTIN_RULES_DIR_NAME).getAbsolutePath();
                     _pluginJarFile.extractFile(BUILTIN_RULES_PATH, _tempPath, BUILTIN_RULES_DIR_NAME);
-                    Logger.getLogger().info("The built-in rule files have been extracted to: " + expectedBuiltinRulesStoragePath); //$NON-NLS-1$
+                    Logger.getLogger().info(NLS.getFormatted(Messages.RuleFilesHaveBeenExtracted, expectedBuiltinRulesStoragePath));
                 } catch (ZipException | URISyntaxException e) {
-                    Logger.getLogger().error("Failed to extract built-in rule files from " + _pluginJarFile, e); //$NON-NLS-1$
+                    Logger.getLogger().error(NLS.getFormatted(Messages.FailedToExtractRuleFiles, _pluginJarFile), e);
                     return false;
                 }
                 replaceCpptestRuleFilesWithLocalizedIfNeeded();
             } else {
                 // Generally, this code block will never be accessed.
-                Logger.getLogger().error("No plugin JAR file is found, please contact Parasoft support."); //$NON-NLS-1$
+                Logger.getLogger().error(NLS.getFormatted(Messages.NoPluginJARFileIsFound));
                 return false;
             }
         }
@@ -168,7 +168,7 @@ public abstract class AbstractRulesDefinition
     * */
     private void replaceCpptestRuleFilesWithLocalizedIfNeeded()
     {
-        File cpptestRulesDirectory = new File(_tempPath + "/" + ParasoftProduct.CPPTEST.builtinRulesPath, ParasoftProduct.CPPTEST.rulesPath + "/rules");
+        File cpptestRulesDirectory = new File(_tempPath + "/" + ParasoftProduct.CPPTEST.builtinRulesPath, ParasoftProduct.CPPTEST.rulesPath + "/rules"); //$NON-NLS-1$ //$NON-NLS-2$
         if(!cpptestRulesDirectory.exists()) {
             return;
         }
@@ -181,7 +181,7 @@ public abstract class AbstractRulesDefinition
                 FileUtil.recursiveCopy(chineseRulesDirectory, cpptestRulesDirectory);
             }
         } catch (IOException e) {
-            Logger.getLogger().error("Error handling localized rule files", e); //$NON-NLS-1$
+            Logger.getLogger().error(NLS.getFormatted(Messages.ErrorHandlingLocalizedRuleFiles), e);
         }
 
         FileUtil.recursiveDelete(japaneseRulesDirectory);
@@ -233,7 +233,7 @@ public abstract class AbstractRulesDefinition
                 }
             }
             if (!added) {
-                Logger.getLogger().warn("Rule " + rule.getRuleId() + "not added - no LanguageRules for language " + lang); //$NON-NLS-1$ //$NON-NLS-2$
+                Logger.getLogger().warn(NLS.getFormatted(Messages.RuleNotAdded, rule.getRuleId() ,lang));
             }
         }
     }
@@ -270,7 +270,7 @@ public abstract class AbstractRulesDefinition
             addOwasp(newRule, ruleDescription);
             addCwe(newRule, ruleDescription);
         }
-        Logger.getLogger().info(rules.getRules().size() + " Rules for " + rules.language + " loaded into repository " + rules.repositoryId); //$NON-NLS-1$ //$NON-NLS-2$
+        Logger.getLogger().info(NLS.getFormatted(Messages.loadedIntoRepository, rules.getRules().size(), rules.language, rules.repositoryId));
     }
 
     @SuppressWarnings("nls")
@@ -289,14 +289,14 @@ public abstract class AbstractRulesDefinition
                     try {
                         ADD_OWASP_METHOD.invoke(newRule, Y2021_VERSION, new OwaspTop10[] {value});
                     } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-                        Logger.getLogger().info("Unable to set OWASP 2021 standard for rule " + ruleDescription.getRuleId(), e);
+                        Logger.getLogger().info(NLS.getFormatted(Messages.UnableToSetOWASPStandardForRule, ruleDescription.getRuleId()), e);
                     }
                 }
             } else {
-                Logger.getLogger().warn("Unsupported OWASP version " + ruleIdParts[0] + " for rule " + ruleDescription.getRuleId());
+                Logger.getLogger().warn(NLS.getFormatted(Messages.UnsupportedOWASPVersion, ruleIdParts[0], ruleDescription.getRuleId()));
             }
         } else {
-            Logger.getLogger().info("OWASP rule " + ruleDescription.getRuleId() + " does not have a standard in its ruleId");
+            Logger.getLogger().info(NLS.getFormatted(Messages.DoesNotHaveAStandardInItsRuleId, ruleDescription.getRuleId()));
         }
     }
 
@@ -335,7 +335,7 @@ public abstract class AbstractRulesDefinition
                 // Ignore
             }
         }
-        Logger.getLogger().warn("CWE Rule " + ruleDescription.getRuleId() + " does not have a CWE ID in its ruleId");
+        Logger.getLogger().warn(NLS.getFormatted(Messages.DoesNotHaveACWEIDInItsRuleId, ruleDescription.getRuleId()));
     }
 
     protected void addUnknownRule(NewRepository repository)
@@ -371,11 +371,11 @@ public abstract class AbstractRulesDefinition
                 try {
                     return FileUtil.readFile(docFile, IStringConstants.UTF_8);
                 } catch (IOException e) {
-                    Logger.getLogger().error("Unable to read docs file: " + docFile.getAbsolutePath(), e); //$NON-NLS-1$
+                    Logger.getLogger().error(NLS.getFormatted(Messages.UnableToReadDocsFile, docFile.getAbsolutePath()), e);
                 }
             } else {
                 docFile = new File(docRoot, ruleId + ".html"); //$NON-NLS-1$
-                Logger.getLogger().error("Failed to determine local file for rule doc location: " + docFile.getAbsolutePath()); //$NON-NLS-1$
+                Logger.getLogger().error(NLS.bind(Messages.FailedToDetermineLocalFile, docFile.getAbsolutePath()));
             }
             return NLS.bind(Messages.RuleDocNotFoundAt, docFile.getAbsolutePath());
         }

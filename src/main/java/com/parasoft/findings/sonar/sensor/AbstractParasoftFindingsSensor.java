@@ -154,8 +154,8 @@ public abstract class AbstractParasoftFindingsSensor
     }
 
     private ReportType determineReportType(Element rootElement) {
-        Element codingStandardsElement = rootElement.element("CodingStandards");
-        Element execElement = rootElement.element("Exec");
+        Element codingStandardsElement = rootElement.element("CodingStandards"); //$NON-NLS-1$
+        Element execElement = rootElement.element("Exec"); //$NON-NLS-1$
 
         if (codingStandardsElement != null && execElement != null ) {
             return ReportType.XML_STATIC_AND_TESTS;

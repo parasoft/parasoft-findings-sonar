@@ -65,6 +65,31 @@ public final class Messages
     public static String SOAtest;
     public static String Coverage;
     public static String StaticAnalysis;
+    public static String ResultIsNotInstanceOfIRuleViolation;
+    public static String InputIsNotInstanceOfIFileTestableInput;
+    public static String AddedLocationWithFinding;
+    public static String Initializing;
+    public static String LanguageRulesFound;
+    public static String ActivatingRules;
+    public static String LanguageRulesNotFound;
+    public static String ProfileDoesNotExist;
+    public static String LoadingRules;
+    public static String ErrorReadingRulesFile;
+    public static String rulesRootDirectoryNotFound;
+    public static String TemporaryFolderIsCreated;
+    public static String FailedToCreateTemporaryFolder;
+    public static String RuleFilesHaveBeenExtracted;
+    public static String FailedToExtractRuleFiles;
+    public static String NoPluginJARFileIsFound;
+    public static String ErrorHandlingLocalizedRuleFiles;
+    public static String RuleNotAdded;
+    public static String loadedIntoRepository;
+    public static String UnableToSetOWASPStandardForRule;
+    public static String UnsupportedOWASPVersion;
+    public static String DoesNotHaveAStandardInItsRuleId;
+    public static String DoesNotHaveACWEIDInItsRuleId;
+    public static String UnableToReadDocsFile;
+    public static String FailedToDetermineLocalFile;
 
     static {
         // initialize resource bundle

@@ -31,13 +31,13 @@ public class ParasoftDottestAndCpptestTestsParser {
 
     public TestSummary loadTestResults(Element rootElement) {
         Element executedTestsDetailsElement = findExecutedTestsDetailsElement(rootElement);
-        Element totalElement = (executedTestsDetailsElement != null) ? executedTestsDetailsElement.element("Total") : null;
+        Element totalElement = (executedTestsDetailsElement != null) ? executedTestsDetailsElement.element("Total") : null; //$NON-NLS-1$
 
         if (totalElement != null) {
-            return new TestSummary(parseInt(totalElement.attributeValue("total")),
-                    parseInt(totalElement.attributeValue("fail")),
-                    parseInt(totalElement.attributeValue("err")),
-                    getTimeAttributeInMS(totalElement.attributeValue("time")));
+            return new TestSummary(parseInt(totalElement.attributeValue("total")), //$NON-NLS-1$
+                    parseInt(totalElement.attributeValue("fail")), //$NON-NLS-1$
+                    parseInt(totalElement.attributeValue("err")), //$NON-NLS-1$
+                    getTimeAttributeInMS(totalElement.attributeValue("time"))); //$NON-NLS-1$
         }
         return new TestSummary();
     }
@@ -56,9 +56,9 @@ public class ParasoftDottestAndCpptestTestsParser {
 
     // For cppTest professional report, "ExecutedTestsDetails" node is under root element.
     private Element findExecutedTestsDetailsElement(Element rootElement) {
-        return (rootElement.element("ExecutedTestsDetails") != null) ?
-                rootElement.element("ExecutedTestsDetails") :
-                rootElement.element("Exec").element("ExecutedTestsDetails");
+        return (rootElement.element("ExecutedTestsDetails") != null) ? //$NON-NLS-1$
+                rootElement.element("ExecutedTestsDetails") : //$NON-NLS-1$
+                rootElement.element("Exec").element("ExecutedTestsDetails"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     private int parseInt(String value) {
@@ -78,7 +78,7 @@ public class ParasoftDottestAndCpptestTestsParser {
             return 0L;
         }
         try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("H:mm:ss.SSS");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("H:mm:ss.SSS"); //$NON-NLS-1$
             LocalTime localTime = LocalTime.parse(value, formatter);
             return localTime.toNanoOfDay() / 1_000_000;
         } catch (Exception e) {

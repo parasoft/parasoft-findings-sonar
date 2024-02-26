@@ -79,7 +79,7 @@ public class ParasoftIssuesParser
                 if (result instanceof IRuleViolation) {
                     violation = (IRuleViolation)result;
                 } else {
-                    Logger.getLogger().error("Result is not instance of IRuleViolation"); //$NON-NLS-1$
+                    Logger.getLogger().error(NLS.getFormatted(Messages.ResultIsNotInstanceOfIRuleViolation));
                     continue;
                 }
                 ResultLocation location = violation.getResultLocation();
@@ -89,7 +89,7 @@ public class ParasoftIssuesParser
                     if (testableInput instanceof IFileTestableInput) {
                         inputPath = ((IFileTestableInput) testableInput).getFileLocation().toURI().getPath();
                     } else {
-                        Logger.getLogger().error("Input is not instance of IFileTestableInput but " + testableInput.getClass().getSimpleName()); //$NON-NLS-1$
+                        Logger.getLogger().error(NLS.getFormatted(Messages.InputIsNotInstanceOfIFileTestableInput, testableInput.getClass().getSimpleName()));
                     }
                 }
                 if (inputPath == null) {
@@ -99,7 +99,7 @@ public class ParasoftIssuesParser
                 if (violations == null) {
                     violations = new HashSet<>();
                     _violations.put(inputPath, violations);
-                    Logger.getLogger().info("Added location with finding(s): " + inputPath); //$NON-NLS-1$
+                    Logger.getLogger().info(NLS.getFormatted(Messages.AddedLocationWithFinding, inputPath));
                 }
                 violations.add(violation);
                 loadedFindings++;

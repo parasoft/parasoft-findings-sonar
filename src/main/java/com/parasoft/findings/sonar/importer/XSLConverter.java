@@ -40,13 +40,13 @@ import java.util.Set;
 
 public class XSLConverter {
 
-    public static final String XUNIT_XSL_NAME_SUFFIX = "xunit.xsl";
-    public static final String SOA_XUNIT_XSL_NAME_SUFFIX = "soatest-xunit.xsl";
-    public static final String COBERTURA_XSL_NAME_SUFFIX = "cobertura.xsl";
-    public static final String XUNIT_TARGET_REPORT_NAME_SUFFIX = "-xunit_converted-from-xml-report.xml";
-    public static final String COBERTURA_TARGET_REPORT_NAME_SUFFIX =  "-cobertura.xml";
+    public static final String XUNIT_XSL_NAME_SUFFIX = "xunit.xsl"; //$NON-NLS-1$
+    public static final String SOA_XUNIT_XSL_NAME_SUFFIX = "soatest-xunit.xsl"; //$NON-NLS-1$
+    public static final String COBERTURA_XSL_NAME_SUFFIX = "cobertura.xsl"; //$NON-NLS-1$
+    public static final String XUNIT_TARGET_REPORT_NAME_SUFFIX = "-xunit_converted-from-xml-report.xml"; //$NON-NLS-1$
+    public static final String COBERTURA_TARGET_REPORT_NAME_SUFFIX =  "-cobertura.xml"; //$NON-NLS-1$
 
-    private static final String XSL_RESOURCE_DIR = "/com/parasoft/findings/sonar/res/xsl/";
+    private static final String XSL_RESOURCE_DIR = "/com/parasoft/findings/sonar/res/xsl/"; //$NON-NLS-1$
 
     private final FileSystem fs;
 
@@ -112,11 +112,11 @@ public class XSLConverter {
             Xslt30Transformer transformer = stylesheet.load30();
 
             Serializer out = processor.newSerializer(result);
-            out.setOutputProperty(Serializer.Property.METHOD, "xml");
-            out.setOutputProperty(Serializer.Property.INDENT, "yes");
+            out.setOutputProperty(Serializer.Property.METHOD, "xml"); //$NON-NLS-1$
+            out.setOutputProperty(Serializer.Property.INDENT, "yes"); //$NON-NLS-1$
 
             Map<QName, XdmValue> paramsMap = new LinkedHashMap<>();
-            QName paramName = new QName("pipelineBuildWorkingDirectory");
+            QName paramName = new QName("pipelineBuildWorkingDirectory"); //$NON-NLS-1$
             XdmValue paramValue = new XdmAtomicValue(fs.baseDir().getAbsolutePath());
             paramsMap.put(paramName, paramValue);
             transformer.setStylesheetParameters(paramsMap);
