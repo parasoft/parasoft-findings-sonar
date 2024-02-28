@@ -22,11 +22,13 @@ import org.dom4j.Element;
 import org.sonar.api.batch.measure.Metric;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.measures.CoreMetrics;
+import org.sonar.api.scanner.ScannerSide;
 
 import java.io.Serializable;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
+@ScannerSide
 public class ParasoftDottestAndCpptestTestsParser {
 
     public TestSummary loadTestResults(Element rootElement) {
