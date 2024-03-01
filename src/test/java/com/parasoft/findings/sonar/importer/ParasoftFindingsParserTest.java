@@ -48,7 +48,7 @@ public class ParasoftFindingsParserTest {
     public void testParasoftFindingsParser1() throws URISyntaxException {
         // Test loadFindings(File file)
         ParasoftIssuesParser parasoftFindingsParser = new ParasoftIssuesParser(new Properties());
-        int result = parasoftFindingsParser.loadFindings(new File("src/test/java/staticReport/CC++test-2023.1.1-static-report.xml"));
+        int result = parasoftFindingsParser.loadFindings(new File("src/test/resources/cpptest/Cpptest-std-2023.1.1-static-report.xml"));
         assertEquals(6, result);
 
         SensorContext context = mock(SensorContext.class);
@@ -71,7 +71,7 @@ public class ParasoftFindingsParserTest {
     public void testParasoftFindingsParser2() throws URISyntaxException {
         // Test loadFindings(File file)
         ParasoftIssuesParser parasoftFindingsParser = new ParasoftIssuesParser(new Properties());
-        int result = parasoftFindingsParser.loadFindings(new File("src/test/java/staticReport/CC++test-2023.1.1-static-report.xml"));
+        int result = parasoftFindingsParser.loadFindings(new File("src/test/resources/cpptest/Cpptest-std-2023.1.1-static-report.xml"));
         assertEquals(6, result);
 
         SensorContext context = mock(SensorContext.class);

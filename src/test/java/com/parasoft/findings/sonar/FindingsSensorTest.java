@@ -14,6 +14,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 
+import com.parasoft.findings.sonar.importer.ParasoftDottestAndCpptestTestsParser;
 import com.parasoft.findings.sonar.importer.JtestTestsParser;
 import com.parasoft.findings.sonar.importer.XSLConverter;
 import com.parasoft.findings.sonar.sensor.AbstractParasoftFindingsSensor;
@@ -53,8 +54,8 @@ class FindingsSensorTest
     static Object[][] testBasic_Params() {
         return new Object[][] {
             {new JtestFindingsSensor(mock(XSLConverter.class), mock(JtestTestsParser.class))},
-            {new DottestFindingsSensor()},
-            {new CpptestFindingsSensor()}
+            {new DottestFindingsSensor(mock(ParasoftDottestAndCpptestTestsParser.class))},
+            {new CpptestFindingsSensor(mock(ParasoftDottestAndCpptestTestsParser.class))}
         };
     }
 }

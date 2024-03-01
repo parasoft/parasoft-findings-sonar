@@ -14,4 +14,7 @@ public interface ParasoftConstants
     String PARASOFT_SOATEST_SUBCATEGORY = "Parasoft SOAtest";
     String PARASOFT_SOATEST_REPORT_PATHS_KEY = "sonar.parasoft.soatest.reportPaths";
     String PARASOFT_SOATEST_IMPORTER = "Parasoft SOAtest Importer";
+    String PARASOFT_CPPTEST_REPORT_PATHS_KEY = "sonar.parasoft.cpptest.reportPaths";
+    String PARASOFT_DOTTEST_REPORT_PATHS_KEY = "sonar.parasoft.dottest.reportPaths";
+    String PARASOFT_JTEST_REPORT_PATHS_KEY = "sonar.parasoft.jtest.reportPaths";
 }

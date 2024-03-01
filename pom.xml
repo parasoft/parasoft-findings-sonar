@@ -270,7 +270,6 @@
             <version>${sonar.apiMinVersion}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>net.sf.saxon</groupId>
             <artifactId>Saxon-HE</artifactId>

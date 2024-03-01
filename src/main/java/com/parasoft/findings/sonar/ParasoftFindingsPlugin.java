@@ -1,5 +1,6 @@
 package com.parasoft.findings.sonar;
 
+import com.parasoft.findings.sonar.importer.ParasoftDottestAndCpptestTestsParser;
 import com.parasoft.findings.sonar.importer.JtestTestsParser;
 import com.parasoft.findings.sonar.importer.SOAtestTestsParser;
 import com.parasoft.findings.sonar.importer.XSLConverter;
@@ -36,7 +37,7 @@ public class ParasoftFindingsPlugin
             JtestRulesDefinition.class, DottestRulesDefinition.class, CpptestRulesDefinition.class,
             JtestProfile.class,         DottestProfile.class,         CpptestProfile.class,
             JtestFindingsSensor.class,  DottestFindingsSensor.class,  CpptestFindingsSensor.class,
-            CoverageSensor.class, SOAtestSensor.class
+            CoverageSensor.class, SOAtestSensor.class, ParasoftDottestAndCpptestTestsParser.class
         );
         // register custom metric for SOAtest test execution
         context.addExtensions(SOAtestMetrics.class, SOAtestMeasureComputer.class);
