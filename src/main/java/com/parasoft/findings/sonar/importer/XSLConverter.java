@@ -123,7 +123,7 @@ public class XSLConverter {
         }
     }
 
-    private static String getTargetReportFilePath(File reportFile, ReportType reportType) {
+    private String getTargetReportFilePath(File reportFile, ReportType reportType) {
         String fileName = reportFile.getName();
         String filePath = reportFile.getAbsolutePath();
         int dotIndex = fileName.lastIndexOf(".");
@@ -131,7 +131,7 @@ public class XSLConverter {
         return filePath.replace(fileName, fileNameWithoutExt + getTargetReportNameSuffix(reportType));
     }
 
-    private static String getTargetReportNameSuffix(ReportType reportType) {
+    private String getTargetReportNameSuffix(ReportType reportType) {
         switch (reportType) {
             case UNIT_TEST:
             case SOATEST:
@@ -143,7 +143,7 @@ public class XSLConverter {
         }
     }
 
-    private static String getXsl(ReportType reportType) {
+    private String getXsl(ReportType reportType) {
         switch (reportType) {
             case UNIT_TEST:
                 return XSL_RESOURCE_DIR + XUNIT_XSL_NAME_SUFFIX;
@@ -156,7 +156,7 @@ public class XSLConverter {
         }
     }
 
-    private static String getReportTypeMessage(ReportType reportType) {
+    private String getReportTypeMessage(ReportType reportType) {
         switch (reportType) {
             case UNIT_TEST:
                 return Messages.UnitTest;

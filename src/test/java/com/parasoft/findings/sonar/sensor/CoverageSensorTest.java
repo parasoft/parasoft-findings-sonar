@@ -8,8 +8,6 @@ import com.parasoft.findings.sonar.importer.XSLConverter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-import org.mockito.MockedConstruction;
-import org.mockito.Mockito;
 import org.sonar.api.batch.fs.FilePredicate;
 import org.sonar.api.batch.fs.FilePredicates;
 import org.sonar.api.batch.fs.FileSystem;
@@ -44,7 +42,7 @@ public class CoverageSensorTest {
 
     public String[] paths;
 
-    public MockedConstruction<XSLConverter> mockedXSLConverterConstruction;
+    public XSLConverter xslConverter;
 
     @AfterEach
     private void cleanUp() {
@@ -58,15 +56,13 @@ public class CoverageSensorTest {
                 }
             }
         }
-        if (mockedXSLConverterConstruction != null) {
-            mockedXSLConverterConstruction.close();
-        }
     }
 
     public void setUp() {
         fileSystem = mock(FileSystem.class);
         doReturn(new File(System.getProperty("user.dir"))).when(fileSystem).baseDir();
 
+        xslConverter = spy(new XSLConverter(fileSystem));
         configuration = mock(Configuration.class);
         doReturn(paths).when(configuration).getStringArray(any());
 
@@ -91,7 +87,7 @@ public class CoverageSensorTest {
         SensorDescriptor sensorDescriptor = mock(SensorDescriptor.class);
         doReturn(sensorDescriptor).when(sensorDescriptor).onlyOnFileType(any());
         doReturn(sensorDescriptor).when(sensorDescriptor).name(any());
-        CoverageSensor coverageSensor = new CoverageSensor(mock(FileSystem.class));
+        CoverageSensor coverageSensor = new CoverageSensor(fileSystem, xslConverter);
 
         coverageSensor.describe(sensorDescriptor);
 
@@ -104,13 +100,11 @@ public class CoverageSensorTest {
     public void testCoverageSensor_noReport() {
         paths = new String[]{};
         setUp();
-        mockedXSLConverterConstruction = Mockito.mockConstruction(XSLConverter.class);
-
         CoverageSensor underTest = mock(CoverageSensor.class);
         doCallRealMethod().when(underTest).execute(sensorContext);
         underTest.execute(sensorContext);
 
-        assertEquals(0, mockedXSLConverterConstruction.constructed().size());
+        verify(xslConverter, times(0)).transformReports(any(String[].class), any());
     }
 
     @Test
@@ -118,7 +112,7 @@ public class CoverageSensorTest {
         paths = new String[]{"src/test/java/coverageReport/normalCoverageReport.xml"};
         setUp();
 
-        CoverageSensor underTest = new CoverageSensor(fileSystem);
+        CoverageSensor underTest = new CoverageSensor(fileSystem, xslConverter);
         underTest.execute(sensorContext);
 
         assertTrue(new File("src/test/java/coverageReport/normalCoverageReport-cobertura.xml").exists());
@@ -139,7 +133,7 @@ public class CoverageSensorTest {
             }
         }).when(fileSystem).inputFile(any());
 
-        CoverageSensor underTest = new CoverageSensor(fileSystem);
+        CoverageSensor underTest = new CoverageSensor(fileSystem, xslConverter);
         underTest.execute(sensorContext);
 
         assertTrue(new File("src/test/java/coverageReport/normalCoverageReport-cobertura.xml").exists());
@@ -154,7 +148,7 @@ public class CoverageSensorTest {
         doReturn(null).when(fileSystem).inputFile(any());
 
         Exception exception = assertThrows(CoverageSourceMismatchException.class, () -> {
-            CoverageSensor underTest = new CoverageSensor(fileSystem);
+            CoverageSensor underTest = new CoverageSensor(fileSystem, xslConverter);
             underTest.execute(sensorContext);
         });
 
@@ -170,7 +164,7 @@ public class CoverageSensorTest {
         setUp();
 
         Exception exception = assertThrows(InvalidReportException.class, () -> {
-            CoverageSensor underTest = new CoverageSensor(fileSystem);
+            CoverageSensor underTest = new CoverageSensor(fileSystem, xslConverter);
             underTest.execute(sensorContext);
         });
 
@@ -185,7 +179,7 @@ public class CoverageSensorTest {
         File file = new File("src/test/java/coverageReport/NoPackageCoberturaReport.xml");
         setUp();
 
-        CoverageSensor underTest = new CoverageSensor(fileSystem);
+        CoverageSensor underTest = new CoverageSensor(fileSystem, xslConverter);
         underTest.uploadFileCoverageData(file, sensorContext);
 
         verify(sensorContext, times(0)).newCoverage();
@@ -196,7 +190,7 @@ public class CoverageSensorTest {
         File file = new File("src/test/java/coverageReport/NoClassCoberturaReport.xml");
         setUp();
 
-        CoverageSensor underTest = new CoverageSensor(fileSystem);
+        CoverageSensor underTest = new CoverageSensor(fileSystem, xslConverter);
         underTest.uploadFileCoverageData(file, sensorContext);
 
         verify(sensorContext, times(0)).newCoverage();
@@ -207,7 +201,7 @@ public class CoverageSensorTest {
         File file = new File("src/test/java/coverageReport/NoLineCoberturaReport.xml");
         setUp();
 
-        CoverageSensor underTest = new CoverageSensor(fileSystem);
+        CoverageSensor underTest = new CoverageSensor(fileSystem, xslConverter);
         underTest.uploadFileCoverageData(file, sensorContext);
 
         verify(sensorContext, atLeastOnce()).newCoverage();

@@ -32,7 +32,6 @@ import static org.mockito.Mockito.*;
 
 public class SOAtestSensorTest {
 
-
     private static final File BASE_DIR = new File("src/test/resources/soatest");
 
     @TempDir
@@ -55,7 +54,7 @@ public class SOAtestSensorTest {
     }
 
     @Test
-    public void testDescribeExecuteOnlyWhenKeyPresent() {
+    public void testDescribe_onlyWhenKeyPresent() {
         Configuration configWithKey = mock(Configuration.class);
         when(configWithKey.hasKey(PARASOFT_SOATEST_REPORT_PATHS_KEY)).thenReturn(true);
         Configuration configWithoutKey = mock(Configuration.class);
@@ -68,7 +67,7 @@ public class SOAtestSensorTest {
     }
 
     @Test
-    public void testExecuteWarnsWhenKeyIsEmpty() {
+    public void testExecute_warnsWhenKeyIsEmpty() {
         Configuration configWithEmptyKey = mock(Configuration.class);
         when(configWithEmptyKey.getStringArray(PARASOFT_SOATEST_REPORT_PATHS_KEY)).thenReturn(new String[0]);
         SensorContextTester context = SensorContextTester.create(tempDir);
@@ -83,7 +82,7 @@ public class SOAtestSensorTest {
     }
 
     @Test
-    public void testExecuteShouldNotFailIfReportsNotFound() {
+    public void testExecute_shouldNotFailIfReportsNotFound() {
         SensorContextTester context = SensorContextTester.create(tempDir);
         MapSettings settings = new MapSettings();
         settings.setProperty(PARASOFT_SOATEST_REPORT_PATHS_KEY, "unknown");
@@ -91,34 +90,33 @@ public class SOAtestSensorTest {
 
         assertDoesNotThrow(() -> new SOAtestSensor(new XSLConverter(context.fileSystem()),
                 new SOAtestTestsParser()).execute(context));
+        assertThat(logTester.logs(Level.WARN)).contains("Skipped invalid Parasoft SOAtest XML report: " + new File(tempDir, "unknown").getAbsolutePath());
+        assertThat(logTester.logs(Level.WARN)).contains("No valid Parasoft SOAtest report found.");
     }
 
     @Test
-    public void testConvertMultipleReports() {
+    public void testExecute_convertMultipleReports() {
         SensorContextTester context = SensorContextTester.create(BASE_DIR);
         MapSettings settings = new MapSettings();
         settings.setProperty(PARASOFT_SOATEST_REPORT_PATHS_KEY,
-                "parabank_soatest-2022.2.0-report.xml,multiple-resources-and-directory-levels_soatest-2022.2.0-report.xml," +
-                        new File(BASE_DIR,"parabank_soatest-2022.2.0-report_copy.xml").getAbsolutePath());
+                "SOAtest-2022.2.0-report1.xml," +
+                new File(BASE_DIR,"SOAtest-2022.2.0-report2.xml").getAbsolutePath());
         context.setSettings(settings);
 
         new SOAtestSensor(new XSLConverter(context.fileSystem()), mock(SOAtestTestsParser.class)).execute(context);
 
-        assertThat(new File(BASE_DIR, "parabank_soatest-2022.2.0-report" + XUNIT_TARGET_REPORT_NAME_SUFFIX))
+        assertThat(new File(BASE_DIR, "SOAtest-2022.2.0-report1" + XUNIT_TARGET_REPORT_NAME_SUFFIX))
                 .isFile().size().isGreaterThan(0);
-        assertThat(new File(BASE_DIR,
-                "multiple-resources-and-directory-levels_soatest-2022.2.0-report" + XUNIT_TARGET_REPORT_NAME_SUFFIX))
-                .isFile().size().isGreaterThan(0);
-        assertThat(new File(BASE_DIR, "parabank_soatest-2022.2.0-report_copy" + XUNIT_TARGET_REPORT_NAME_SUFFIX))
+        assertThat(new File(BASE_DIR, "SOAtest-2022.2.0-report2" + XUNIT_TARGET_REPORT_NAME_SUFFIX))
                 .isFile().size().isGreaterThan(0);
     }
 
     @Test
-    public void testExecuteShouldSaveMeasures() {
+    public void testExecute_shouldSaveMeasures() {
         SensorContextTester context = SensorContextTester.create(BASE_DIR);
         MapSettings settings = new MapSettings();
         settings.setProperty(PARASOFT_SOATEST_REPORT_PATHS_KEY,
-                new File(BASE_DIR,"parabank_soatest-2022.2.0-report.xml").getAbsolutePath());
+                new File(BASE_DIR,"SOAtest-2022.2.0-report2.xml").getAbsolutePath());
         context.setSettings(settings);
         context.fileSystem()
                 .add(resource("TestAssets/PB-ParabankServices-v3.tst"))
@@ -144,12 +142,12 @@ public class SOAtestSensorTest {
     }
 
     @Test
-    public void testExecuteShouldAggregateResultsFromSameReports() {
+    public void testExecute_shouldAggregateResultsFromSameReports() {
         SensorContextTester context = SensorContextTester.create(BASE_DIR);
         MapSettings settings = new MapSettings();
         settings.setProperty(PARASOFT_SOATEST_REPORT_PATHS_KEY,
-                new File(BASE_DIR,"parabank_soatest-2022.2.0-report.xml").getAbsolutePath() + "," +
-                        new File(BASE_DIR,"parabank_soatest-2022.2.0-report_copy.xml").getAbsolutePath());
+                new File(BASE_DIR,"SOAtest-2022.2.0-report2.xml").getAbsolutePath() + "," +
+                new File(BASE_DIR,"SOAtest-2022.2.0-report2-copy.xml").getAbsolutePath());
         context.setSettings(settings);
         SOAtestTestsParser spySOAtestTestsParser = spy(new SOAtestTestsParser());
         doAnswer(invocation -> resource((String) invocation.getArguments()[0])).when(spySOAtestTestsParser)

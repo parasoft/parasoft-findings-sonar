@@ -36,11 +36,12 @@ public class ParasoftFindingsPlugin
             JtestRulesDefinition.class, DottestRulesDefinition.class, CpptestRulesDefinition.class,
             JtestProfile.class,         DottestProfile.class,         CpptestProfile.class,
             JtestFindingsSensor.class,  DottestFindingsSensor.class,  CpptestFindingsSensor.class,
-            CoverageSensor.class, JtestTestsParser.class
+            CoverageSensor.class, SOAtestSensor.class
         );
-        // register custom metric and sensor for SOAtest test execution
-        context.addExtensions(SOAtestMetrics.class, SOAtestMeasureComputer.class, XSLConverter.class,
-                SOAtestTestsParser.class, SOAtestSensor.class);
+        // register custom metric for SOAtest test execution
+        context.addExtensions(SOAtestMetrics.class, SOAtestMeasureComputer.class);
+        // register dependencies used by sensors
+        context.addExtensions(JtestTestsParser.class, SOAtestTestsParser.class, XSLConverter.class);
         // register properties
         context.addExtensions(ParasoftConfiguration.getProperties());
     }
