@@ -79,22 +79,22 @@ public class CoverageSensor implements ProjectSensor {
             Document document = reader.read(report);
 
             Element root = document.getRootElement();
-            Element packagesElement = root.element("packages");
+            Element packagesElement = root.element("packages"); //$NON-NLS-1$
             List<Element> packageElements;
-            if (packagesElement == null || (packageElements = packagesElement.elements("package")) == null || packageElements.isEmpty()) {
+            if (packagesElement == null || (packageElements = packagesElement.elements("package")) == null || packageElements.isEmpty()) {  //$NON-NLS-1$
                 Logger.getLogger().error(NLS.getFormatted(Messages.InvalidCoberturaCoverageReport, report.getAbsolutePath()));
                 return;
             }
             validCoberturaReportsCount++;
 
             for (Element packageElement : packageElements) {
-                Element classesElement = packageElement.element("classes");
+                Element classesElement = packageElement.element("classes"); //$NON-NLS-1$
                 List<Element> classElements;
-                if (classesElement == null || (classElements = classesElement.elements("class")) == null || classElements.isEmpty()) {
+                if (classesElement == null || (classElements = classesElement.elements("class")) == null || classElements.isEmpty()) { //$NON-NLS-1$
                     continue;
                 }
                 for (Element classElement : classElements) {
-                    String filename = classElement.attributeValue("filename");
+                    String filename = classElement.attributeValue("filename"); //$NON-NLS-1$
                     InputFile file = fs.inputFile(fs.predicates().hasRelativePath(filename));
                     if (file == null) {
                         Logger.getLogger().warn(NLS.getFormatted(Messages.FileNotFoundInProject, filename));
@@ -102,16 +102,16 @@ public class CoverageSensor implements ProjectSensor {
                     }
                     NewCoverage coverage = context.newCoverage().onFile(file);
 
-                    Element linesElement = classElement.element("lines");
+                    Element linesElement = classElement.element("lines"); //$NON-NLS-1$
                     List<Element> lineElements;
-                    if (linesElement == null || (lineElements = linesElement.elements("line")) == null || lineElements.isEmpty()) {
+                    if (linesElement == null || (lineElements = linesElement.elements("line")) == null || lineElements.isEmpty()) { //$NON-NLS-1$
                         coverage.save();
                         continue;
                     }
 
                     for (Element line : lineElements) {
-                        int lineNumber = Integer.parseInt(line.attributeValue("number"));
-                        int hits = Integer.parseInt(line.attributeValue("hits"));
+                        int lineNumber = Integer.parseInt(line.attributeValue("number")); //$NON-NLS-1$
+                        int hits = Integer.parseInt(line.attributeValue("hits")); //$NON-NLS-1$
                         coverage.lineHits(lineNumber, hits);
                     }
                     coverage.save();

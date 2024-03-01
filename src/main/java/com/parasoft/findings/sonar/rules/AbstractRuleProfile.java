@@ -10,6 +10,8 @@ package com.parasoft.findings.sonar.rules;
 
 import java.util.Set;
 
+import com.parasoft.findings.utils.common.nls.NLS;
+import com.parasoft.findings.sonar.Messages;
 import org.sonar.api.server.profile.BuiltInQualityProfilesDefinition;
 
 import com.parasoft.findings.sonar.Logger;
@@ -28,22 +30,22 @@ public abstract class AbstractRuleProfile implements BuiltInQualityProfilesDefin
     @Override
     public void define(Context context)
     {
-        Logger.getLogger().info("Initializing " + getClass().getSimpleName()); //$NON-NLS-1$
+        Logger.getLogger().info(NLS.getFormatted(Messages.Initializing, getClass().getSimpleName()));
         if (_rules == null) {
             _rules = AbstractRulesDefinition.findLanguageRules(_product.profileName);
         }
         if (_rules != null) {
-            Logger.getLogger().info("  " + _rules.size() + " LanguageRules found for " + _product.profileName); //$NON-NLS-1$ //$NON-NLS-2$
+            Logger.getLogger().info(NLS.getFormatted(Messages.LanguageRulesFound, _rules.size(), _product.profileName));
             for (LanguageRules lr : _rules) {
                 var profile = context.createBuiltInQualityProfile(_product.profileName, lr.language);
-                Logger.getLogger().info("  Activating " + lr.getRuleIds().size() + " rules for " + lr.language); //$NON-NLS-1$ //$NON-NLS-2$
+                Logger.getLogger().info(NLS.getFormatted(Messages.ActivatingRules, lr.getRuleIds().size(), lr.language));
                 for (String ruleId : lr.getRuleIds()) {
                     profile.activateRule(lr.repositoryId, ruleId);
                 }
                 profile.done();
             }
         } else {
-            Logger.getLogger().warn("  LanguageRules not found for " + _product.profileName); //$NON-NLS-1$
+            Logger.getLogger().warn(NLS.getFormatted(Messages.LanguageRulesNotFound,  _product.profileName));
         }
     }
 }
