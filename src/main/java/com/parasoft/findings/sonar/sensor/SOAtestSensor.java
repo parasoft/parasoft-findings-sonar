@@ -18,8 +18,10 @@ package com.parasoft.findings.sonar.sensor;
 
 import com.parasoft.findings.sonar.Logger;
 import com.parasoft.findings.sonar.Messages;
+import com.parasoft.findings.sonar.SonarLoggerHandlerFactory;
 import com.parasoft.findings.sonar.importer.XSLConverter;
 import com.parasoft.findings.sonar.importer.SOAtestTestsParser;
+import com.parasoft.findings.utils.common.logging.FindingsLogger;
 import com.parasoft.findings.utils.common.nls.NLS;
 import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
@@ -34,6 +36,14 @@ import static com.parasoft.findings.sonar.ParasoftConstants.PARASOFT_SOATEST_REP
 
 public class SOAtestSensor implements Sensor {
 
+    private final XSLConverter xslConverter;
+    private final SOAtestTestsParser soatestTestsParser;
+
+    public SOAtestSensor(XSLConverter xslConverter, SOAtestTestsParser soatestTestsParser) {
+        this.xslConverter = xslConverter;
+        this.soatestTestsParser = soatestTestsParser;
+    }
+
     @Override
     public void describe(SensorDescriptor descriptor) {
         descriptor.name(PARASOFT_SOATEST_IMPORTER)
@@ -42,7 +52,11 @@ public class SOAtestSensor implements Sensor {
 
     @Override
     public void execute(SensorContext context) {
+        FindingsLogger.setCurrentFactory(new SonarLoggerHandlerFactory());
         List<File> xUnitFiles = convert(context);
+        if (xUnitFiles == null || xUnitFiles.isEmpty()) {
+            return;
+        }
         collect(context, xUnitFiles);
     }
 
@@ -56,12 +70,11 @@ public class SOAtestSensor implements Sensor {
 
         Logger.getLogger().info(NLS.getFormatted(Messages.TransformingParasoftReportsToXUnitReports, Messages.SOAtest));
 
-        return new XSLConverter(context.fileSystem(), XSLConverter.SOA_XUNIT_XSL_NAME_SUFFIX,
-                XSLConverter.XUNIT_TARGET_REPORT_NAME_SUFFIX).transformReports(reportPaths);
+        return xslConverter.transformReports(reportPaths, XSLConverter.ReportType.SOATEST);
     }
 
     private void collect(SensorContext context, List<File> xUnitFiles) {
-        new SOAtestTestsParser().collect(context, xUnitFiles);
+        soatestTestsParser.collect(context, xUnitFiles);
     }
 
 }

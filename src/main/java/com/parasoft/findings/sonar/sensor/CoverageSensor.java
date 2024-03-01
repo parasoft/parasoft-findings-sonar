@@ -31,12 +31,15 @@ public class CoverageSensor implements ProjectSensor {
 
     private final FileSystem fs;
 
+    private final XSLConverter xslConverter;
+
     private int validCoberturaReportsCount = 0;
 
     private int processedReportsCount = 0;
 
-    public CoverageSensor(FileSystem fs) {
+    public CoverageSensor(FileSystem fs, XSLConverter xslConverter) {
         this.fs = fs;
+        this.xslConverter = xslConverter;
     }
 
     @Override
@@ -57,8 +60,7 @@ public class CoverageSensor implements ProjectSensor {
 
         Logger.getLogger().info(Messages.TransformingCoverageReportsToCoberturaReports);
 
-        List<File> coberturaReports = new XSLConverter(fs, XSLConverter.COBERTURA_XSL_NAME_SUFFIX,
-                XSLConverter.COBERTURA_TARGET_REPORT_NAME_SUFFIX).transformReports(reportPaths);
+        List<File> coberturaReports = this.xslConverter.transformReports(reportPaths, XSLConverter.ReportType.COVERAGE);
         for (File coberturaReport : coberturaReports) {
             uploadFileCoverageData(coberturaReport, context);
         }

@@ -57,7 +57,4 @@ public class XUnitTestsContainer {
         return testSuites;
     }
 
-    public TestSummary getTestSummary() {
-        return testSummary;
-    }
 }
