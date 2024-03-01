@@ -19,6 +19,7 @@ import org.sonar.api.testfixtures.log.LogTesterJUnit5;
 
 import java.io.File;
 
+import static com.parasoft.findings.sonar.ParasoftConstants.PARASOFT_JTEST_REPORT_PATHS_KEY;
 import static com.parasoft.findings.sonar.importer.XSLConverter.XUNIT_TARGET_REPORT_NAME_SUFFIX;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -48,7 +49,7 @@ public class JtestFindingsSensorTest {
     public void testExecute_staticAnalysisReport() {
         SensorContextTester context = SensorContextTester.create(BASE_DIR);
         MapSettings settings = new MapSettings();
-        settings.setProperty("sonar.parasoft.jtest.reportPaths", "Jtest-2022.2.0-static-report.xml");
+        settings.setProperty(PARASOFT_JTEST_REPORT_PATHS_KEY, "Jtest-2022.2.0-static-report.xml");
         context.setSettings(settings);
 
         new JtestFindingsSensor(new XSLConverter(context.fileSystem()), new JtestTestsParser()).execute(context);
@@ -62,7 +63,7 @@ public class JtestFindingsSensorTest {
     public void testExecute_UnitTestReport() {
         SensorContextTester context = SensorContextTester.create(BASE_DIR);
         MapSettings settings = new MapSettings();
-        settings.setProperty("sonar.parasoft.jtest.reportPaths", new File(BASE_DIR,"Jtest-2022.2.0-unitTests-report.xml").getAbsolutePath());
+        settings.setProperty(PARASOFT_JTEST_REPORT_PATHS_KEY, new File(BASE_DIR,"Jtest-2022.2.0-unitTests-report.xml").getAbsolutePath());
         context.setSettings(settings);
         context.fileSystem()
                 .add(resource("src/main/java/parasoft/ForUnit.java", InputFile.Type.MAIN))
@@ -86,8 +87,7 @@ public class JtestFindingsSensorTest {
     public void testExecute_unitTestReport_sourceNotFound() {
         SensorContextTester context = SensorContextTester.create(BASE_DIR);
         MapSettings settings = new MapSettings();
-        // TODO 添加constants
-        settings.setProperty("sonar.parasoft.jtest.reportPaths", new File(BASE_DIR,"Jtest-2022.2.0-unitTests-report.xml").getAbsolutePath());
+        settings.setProperty(PARASOFT_JTEST_REPORT_PATHS_KEY, new File(BASE_DIR,"Jtest-2022.2.0-unitTests-report.xml").getAbsolutePath());
         context.setSettings(settings);
         context.fileSystem()
                 .add(resource("src/main/java/parasoft/ForUnit.java", InputFile.Type.MAIN));
@@ -105,7 +105,7 @@ public class JtestFindingsSensorTest {
     public void testExecute_reportNotExists() {
         SensorContextTester context = SensorContextTester.create(BASE_DIR);
         MapSettings settings = new MapSettings();
-        settings.setProperty("sonar.parasoft.jtest.reportPaths", "/wrongReport.xml");
+        settings.setProperty(PARASOFT_JTEST_REPORT_PATHS_KEY, "/wrongReport.xml");
         context.setSettings(settings);
 
         new JtestFindingsSensor(new XSLConverter(context.fileSystem()), new JtestTestsParser()).execute(context);
