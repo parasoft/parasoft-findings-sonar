@@ -201,7 +201,7 @@ class RulesDefinitionTest
         var rulesPath = new File(targetPath);
         rulesPath.mkdirs();
 
-        IOUtils.copy(new FileInputStream(new File("src/test/java", filename)),
+        IOUtils.copy(new FileInputStream(new File("src/test/resources/rules", filename)),
                 new FileOutputStream(new File(rulesPath, filename)));
     }
 

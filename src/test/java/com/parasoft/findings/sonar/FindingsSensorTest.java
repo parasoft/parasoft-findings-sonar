@@ -42,7 +42,7 @@ class FindingsSensorTest
         FilePredicates pred = mock(FilePredicates.class);
 
         when(context.config()).thenReturn(config);
-        when(config.getStringArray(any())).thenReturn(new String[] {"src/test/java/report.xml"});
+        when(config.getStringArray(any())).thenReturn(new String[] {"src/test/resources/jtest/Jtest-2022.2.0-static-report.xml"});
         when(context.fileSystem()).thenReturn(filesys);
         when(filesys.baseDir()).thenReturn(new File("."));
         when(filesys.predicates()).thenReturn(pred);
