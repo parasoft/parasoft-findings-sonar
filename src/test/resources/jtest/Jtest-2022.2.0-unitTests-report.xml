@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<ResultsSession buildId="CICD_JavaProjectTemplate-2024-02-29" climode="true" execEnv="win32_x86_64" hasViols="true" id="1710613794651" lang="en_US" machine="CD-RWANG" prjModule="com.parasoft:jtestdemo" project="CICD_JavaProjectTemplate" tag="Unit Tests-com.parasoft:jtestdemo-${scontrol_branch}-win32_x86_64" time="2024-02-29T18:24:56+08:00" toolDispName="Jtest" toolId="jtest" toolName="DTP Engine for Java" toolVer="2022.2.0" user="Mrwan">
-   <TestConfig machine="CD-RWANG" name="Unit Tests" pseudoUrl="builtin://Unit Tests" user="Mrwan" />
+<ResultsSession buildId="CICD_JavaProjectTemplate-2024-02-29" climode="true" execEnv="win32_x86_64" hasViols="true" id="1710613794651" lang="en_US" machine="machine-name" prjModule="com.parasoft:jtestdemo" project="CICD_JavaProjectTemplate" tag="Unit Tests-com.parasoft:jtestdemo-${scontrol_branch}-win32_x86_64" time="2024-02-29T18:24:56+08:00" toolDispName="Jtest" toolId="jtest" toolName="DTP Engine for Java" toolVer="2022.2.0" user="user-name">
+   <TestConfig machine="machine-name" name="Unit Tests" pseudoUrl="builtin://Unit Tests" user="user-name" />
    <Authors>
-      <Author id="dev1" name="Mrwan" />
+      <Author id="dev1" name="user-name" />
    </Authors>
    <Analyzers>
       <Analyzer id="com.parasoft.jtest.coverage" name="Parasoft Coverage Analyzer" ver="10.6.1.202209181616" />
@@ -25,9 +25,9 @@
    <Scope>
       <Repositories />
       <Locations>
-         <Loc hash="-532868077" locRef="1" projId="com.parasoft:jtestdemo" projPath="/com.parasoft:jtestdemo" project="com.parasoft:jtestdemo" resProjPath="src/main/java/parasoft/ForUnit.java" totLns="15" uri="file://CD-RWANG/D:/RWorkspaces/project-workspace/CICD/jtestdemo/src/main/java/parasoft/ForUnit.java" />
-         <Loc hash="-411481399" locRef="2" projId="com.parasoft:jtestdemo" projPath="/com.parasoft:jtestdemo" project="com.parasoft:jtestdemo" resProjPath="src/main/java/parasoft/ForViolations.java" totLns="13" uri="file://CD-RWANG/D:/RWorkspaces/project-workspace/CICD/jtestdemo/src/main/java/parasoft/ForViolations.java" />
-         <Loc hash="845345690" locRef="3" projId="com.parasoft:jtestdemo" projPath="/com.parasoft:jtestdemo" project="com.parasoft:jtestdemo" resProjPath="src/test/java/parasoft/ForUnitTest.java" uri="file://CD-RWANG/D:/RWorkspaces/project-workspace/CICD/jtestdemo/src/test/java/parasoft/ForUnitTest.java" />
+         <Loc hash="-532868077" locRef="1" projId="com.parasoft:jtestdemo" projPath="/com.parasoft:jtestdemo" project="com.parasoft:jtestdemo" resProjPath="src/main/java/parasoft/ForUnit.java" totLns="15" uri="file://PARASOFT/D:/RWorkspaces/project-workspace/CICD/jtestdemo/src/main/java/parasoft/ForUnit.java" />
+         <Loc hash="-411481399" locRef="2" projId="com.parasoft:jtestdemo" projPath="/com.parasoft:jtestdemo" project="com.parasoft:jtestdemo" resProjPath="src/main/java/parasoft/ForViolations.java" totLns="13" uri="file://PARASOFT/D:/RWorkspaces/project-workspace/CICD/jtestdemo/src/main/java/parasoft/ForViolations.java" />
+         <Loc hash="845345690" locRef="3" projId="com.parasoft:jtestdemo" projPath="/com.parasoft:jtestdemo" project="com.parasoft:jtestdemo" resProjPath="src/test/java/parasoft/ForUnitTest.java" uri="file://PARASOFT/D:/RWorkspaces/project-workspace/CICD/jtestdemo/src/test/java/parasoft/ForUnitTest.java" />
       </Locations>
    </Scope>
    
@@ -87,7 +87,7 @@
       </FuncAPISecurity>
       
   <ExecViols>
-    <UnitViol loc="/com.parasoft:jtestdemo/src/main/java/parasoft/ForUnit.java" ln="11" sev="1" auth="Mrwan" analyzer="com.parasoft.jtest.unittests.analyzers.UTDataAnalyzer" locRef="1" cat="EXC" testId="parasoft.ForUnitTest|+|com.parasoft:jtestdemo#ForUnitTest.java#parasoft.ForUnitTest#test2()" lnHash="-1112281572" urgent="true" goals="1,">
+    <UnitViol loc="/com.parasoft:jtestdemo/src/main/java/parasoft/ForUnit.java" ln="11" sev="1" auth="user-name" analyzer="com.parasoft.jtest.unittests.analyzers.UTDataAnalyzer" locRef="1" cat="EXC" testId="parasoft.ForUnitTest|+|com.parasoft:jtestdemo#ForUnitTest.java#parasoft.ForUnitTest#test2()" lnHash="-1112281572" urgent="true" goals="1,">
       <Thr>
         <ThrPart type="java.lang.ArithmeticException" msg="java.lang.ArithmeticException: / by zero">
           <PathElem loc="/com.parasoft:jtestdemo/src/main/java/parasoft/ForUnit.java" ln="11" lnHash="-1112281572" locRef="1" desc="parasoft.ForUnit.divideByZero(ForUnit.java:11)" />
@@ -162,7 +162,7 @@
         </ThrPart>
       </Thr>
     </UnitViol>
-    <UnitViol loc="/com.parasoft:jtestdemo/src/test/java/parasoft/ForUnitTest.java" ln="18" sev="1" auth="Mrwan" analyzer="com.parasoft.jtest.unittests.analyzers.UTDataAnalyzer" locRef="3" cat="FAIL" testId="parasoft.ForUnitTest|+|com.parasoft:jtestdemo#ForUnitTest.java#parasoft.ForUnitTest#test1()" lnHash="-132130494" urgent="true" goals="1,">
+    <UnitViol loc="/com.parasoft:jtestdemo/src/test/java/parasoft/ForUnitTest.java" ln="18" sev="1" auth="user-name" analyzer="com.parasoft.jtest.unittests.analyzers.UTDataAnalyzer" locRef="3" cat="FAIL" testId="parasoft.ForUnitTest|+|com.parasoft:jtestdemo#ForUnitTest.java#parasoft.ForUnitTest#test1()" lnHash="-132130494" urgent="true" goals="1,">
       <Thr>
         <ThrPart type="org.opentest4j.AssertionFailedError" msg="org.opentest4j.AssertionFailedError: expected: &lt;1> but was: &lt;2>">
           <PathElem desc="org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)" />
@@ -249,9 +249,9 @@
       <Total fail="1" total="3" err="1" pass="1" name="Passed / Total" time="0:00:00.051" authErr="1;" authFail="1;">
          <Project fail="1" total="3" err="1" pass="1" name="com.parasoft:jtestdemo" time="0:00:00.051" authErr="1;" id="com.parasoft:jtestdemo" authFail="1;">
             <TestSuite locRef="3" root="true" name="parasoft.ForUnitTest" id="parasoft.ForUnitTest" fail="1" total="3" err="1" pass="1" time="0:00:00.051" authErr="1;" authFail="1;">
-               <Test auth="Mrwan" locRef="3" name="testDoSomething()" startTime="1709202289540" id="parasoft.ForUnitTest|+|com.parasoft:jtestdemo#ForUnitTest.java#parasoft.ForUnitTest#testDoSomething()" startPos="5" startLn="10" endLn="14" endPos="5" status="pass" total="1" pass="1" time="0:00:00.003" authErr="0;" authFail="0;" />
-               <Test auth="Mrwan" locRef="3" name="test2()" startTime="1709202289520" id="parasoft.ForUnitTest|+|com.parasoft:jtestdemo#ForUnitTest.java#parasoft.ForUnitTest#test2()" startPos="5" startLn="21" endLn="25" endPos="5" status="err" total="1" err="1" time="0:00:00.014" authErr="1;" authFail="0;" />
-               <Test auth="Mrwan" locRef="3" name="test1()" startTime="1709202289479" id="parasoft.ForUnitTest|+|com.parasoft:jtestdemo#ForUnitTest.java#parasoft.ForUnitTest#test1()" startPos="5" startLn="16" endLn="19" endPos="5" status="fail" fail="1" total="1" time="0:00:00.034" authErr="0;" authFail="1;" />
+               <Test auth="user-name" locRef="3" name="testDoSomething()" startTime="1709202289540" id="parasoft.ForUnitTest|+|com.parasoft:jtestdemo#ForUnitTest.java#parasoft.ForUnitTest#testDoSomething()" startPos="5" startLn="10" endLn="14" endPos="5" status="pass" total="1" pass="1" time="0:00:00.003" authErr="0;" authFail="0;" />
+               <Test auth="user-name" locRef="3" name="test2()" startTime="1709202289520" id="parasoft.ForUnitTest|+|com.parasoft:jtestdemo#ForUnitTest.java#parasoft.ForUnitTest#test2()" startPos="5" startLn="21" endLn="25" endPos="5" status="err" total="1" err="1" time="0:00:00.014" authErr="1;" authFail="0;" />
+               <Test auth="user-name" locRef="3" name="test1()" startTime="1709202289479" id="parasoft.ForUnitTest|+|com.parasoft:jtestdemo#ForUnitTest.java#parasoft.ForUnitTest#test1()" startPos="5" startLn="16" endLn="19" endPos="5" status="fail" fail="1" total="1" time="0:00:00.034" authErr="0;" authFail="1;" />
             </TestSuite>
          </Project>
       </Total>

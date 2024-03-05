@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<ResultsSession buildId="CICD_BankExample.NET-2024-01-29" climode="true" endTime="2024-01-29T15:23:11+08:00" execEnv="win32_x86_64" hasViols="true" id="1704801734806" lang="en_US" machine="DESKTOP-0Q6E4JP" prjModule="Parasoft.Dottest.Examples.Bank, ..." project="CICD_BankExample.NET" tag="cicd_BankExample.NET" time="2024-01-29T15:16:20+08:00" toolDispName="dotTEST" toolId="dottest" toolName="DTP Engine for .NET" toolVer="2023.1.1" user="devtest">
-   <TestConfig machine="DESKTOP-0Q6E4JP" name="dottest_settings" pseudoUrl="C:\Workspace\jenkins_original_code_workspace\workspace\cicd.findings.dottest.BankExample.pipeline.local_docs\test.properties" user="devtest" />
+<ResultsSession buildId="CICD_BankExample.NET-2024-01-29" climode="true" endTime="2024-01-29T15:23:11+08:00" execEnv="win32_x86_64" hasViols="true" id="1704801734806" lang="en_US" machine="machine-name" prjModule="Parasoft.Dottest.Examples.Bank, ..." project="CICD_BankExample.NET" tag="cicd_BankExample.NET" time="2024-01-29T15:16:20+08:00" toolDispName="dotTEST" toolId="dottest" toolName="DTP Engine for .NET" toolVer="2023.1.1" user="user-name">
+   <TestConfig machine="machine-name" name="dottest_settings" pseudoUrl="C:\Workspace\jenkins_original_code_workspace\workspace\cicd.findings.dottest.BankExample.pipeline.local_docs\test.properties" user="user-name" />
    <Authors>
-      <Author id="dev1" name="devtest" />
+      <Author id="dev1" name="user-name" />
    </Authors>
    <Analyzers>
       <Analyzer id="com.parasoft.xtest.dupcode.parser" name="Code Duplication Parser" ver="10.6.2.20230530" />
@@ -149,7 +149,7 @@
       </FuncAPISecurity>
       
   <ExecViols>
-    <UnitViol loc="BankExample.NET.WithTests/Parasoft.Dottest.Examples.Bank/BankUser.cs" ln="28" sev="1" auth="devtest" analyzer="com.parasoft.dottest" locRef="4" cat="FAIL" testId="Parasoft.Dottest.Examples.Bank.Tests.MSTest_Parasoft.Dottest.Examples.Bank.Tests.MSTest.BankUserTests.Test" lnHash="-1644930014" startPos="0" endPos="0" goals="0,">
+    <UnitViol loc="BankExample.NET.WithTests/Parasoft.Dottest.Examples.Bank/BankUser.cs" ln="28" sev="1" auth="user-name" analyzer="com.parasoft.dottest" locRef="4" cat="FAIL" testId="Parasoft.Dottest.Examples.Bank.Tests.MSTest_Parasoft.Dottest.Examples.Bank.Tests.MSTest.BankUserTests.Test" lnHash="-1644930014" startPos="0" endPos="0" goals="0,">
       <Thr>
         <ThrPart type="Failed" msg="Test method Parasoft.Dottest.Examples.Bank.Tests.MSTest.BankUserTests.Test threw exception: &#xd;&#xa;System.Text.RegularExpressions.RegexParseException: Invalid pattern '^[\w\-\+\&amp;\*]+(?:\.[\w\-\_\+\&amp;\*]+)*@(?:[\w-]+\.)+[a-zA-Z]2,7}$' at offset 26. Unrecognized escape sequence \\_.">
           <PathElem desc="System.Text.RegularExpressions.RegexParser.ScanCharEscape()" />
@@ -165,7 +165,7 @@
         </ThrPart>
       </Thr>
     </UnitViol>
-    <UnitViol loc="BankExample.NET.WithTests/Parasoft.Dottest.Examples.Bank/BankUser.cs" ln="28" sev="1" auth="devtest" locRef="4" lnHash="-1644930014" startPos="0" endPos="0" analyzer="com.parasoft.dottest" cat="FAIL" testId="Parasoft.Dottest.Examples.Bank.Tests.NUnit_[SUITE]Parasoft.Dottest.Examples.Bank.Tests.NUnit.BankUserTests.Test" tcId="Parasoft.Dottest.Examples.Bank.Tests.NUnit_Parasoft.Dottest.Examples.Bank.Tests.NUnit.BankUserTests.Test(&quot;foo.bar&quot;)" goals="0,">
+    <UnitViol loc="BankExample.NET.WithTests/Parasoft.Dottest.Examples.Bank/BankUser.cs" ln="28" sev="1" auth="user-name" locRef="4" lnHash="-1644930014" startPos="0" endPos="0" analyzer="com.parasoft.dottest" cat="FAIL" testId="Parasoft.Dottest.Examples.Bank.Tests.NUnit_[SUITE]Parasoft.Dottest.Examples.Bank.Tests.NUnit.BankUserTests.Test" tcId="Parasoft.Dottest.Examples.Bank.Tests.NUnit_Parasoft.Dottest.Examples.Bank.Tests.NUnit.BankUserTests.Test(&quot;foo.bar&quot;)" goals="0,">
       <Thr>
         <ThrPart type="Failed" msg="System.Text.RegularExpressions.RegexParseException : Invalid pattern '^[\w\-\+\&amp;\*]+(?:\.[\w\-\_\+\&amp;\*]+)*@(?:[\w-]+\.)+[a-zA-Z]2,7}$' at offset 26. Unrecognized escape sequence \\_.">
           <PathElem desc="System.Text.RegularExpressions.RegexParser.ScanCharEscape()" />
@@ -181,7 +181,7 @@
         </ThrPart>
       </Thr>
     </UnitViol>
-    <UnitViol loc="BankExample.NET.WithTests/Parasoft.Dottest.Examples.Bank/BankUser.cs" ln="28" sev="1" auth="devtest" locRef="4" lnHash="-1644930014" startPos="0" endPos="0" analyzer="com.parasoft.dottest" cat="FAIL" testId="Parasoft.Dottest.Examples.Bank.Tests.NUnit_[SUITE]Parasoft.Dottest.Examples.Bank.Tests.NUnit.BankUserTests.Test" tcId="Parasoft.Dottest.Examples.Bank.Tests.NUnit_Parasoft.Dottest.Examples.Bank.Tests.NUnit.BankUserTests.Test(&quot;&quot;)" goals="0,">
+    <UnitViol loc="BankExample.NET.WithTests/Parasoft.Dottest.Examples.Bank/BankUser.cs" ln="28" sev="1" auth="user-name" locRef="4" lnHash="-1644930014" startPos="0" endPos="0" analyzer="com.parasoft.dottest" cat="FAIL" testId="Parasoft.Dottest.Examples.Bank.Tests.NUnit_[SUITE]Parasoft.Dottest.Examples.Bank.Tests.NUnit.BankUserTests.Test" tcId="Parasoft.Dottest.Examples.Bank.Tests.NUnit_Parasoft.Dottest.Examples.Bank.Tests.NUnit.BankUserTests.Test(&quot;&quot;)" goals="0,">
       <Thr>
         <ThrPart type="Failed" msg="System.Text.RegularExpressions.RegexParseException : Invalid pattern '^[\w\-\+\&amp;\*]+(?:\.[\w\-\_\+\&amp;\*]+)*@(?:[\w-]+\.)+[a-zA-Z]2,7}$' at offset 26. Unrecognized escape sequence \\_.">
           <PathElem desc="System.Text.RegularExpressions.RegexParser.ScanCharEscape()" />
@@ -197,7 +197,7 @@
         </ThrPart>
       </Thr>
     </UnitViol>
-    <UnitViol loc="BankExample.NET.WithTests/Parasoft.Dottest.Examples.Bank/BankUser.cs" ln="28" sev="1" auth="devtest" locRef="4" lnHash="-1644930014" startPos="0" endPos="0" analyzer="com.parasoft.dottest" cat="FAIL" testId="Parasoft.Dottest.Examples.Bank.Tests.NUnit_[SUITE]Parasoft.Dottest.Examples.Bank.Tests.NUnit.BankUserTests.Test" tcId="Parasoft.Dottest.Examples.Bank.Tests.NUnit_Parasoft.Dottest.Examples.Bank.Tests.NUnit.BankUserTests.Test(null)" goals="0,">
+    <UnitViol loc="BankExample.NET.WithTests/Parasoft.Dottest.Examples.Bank/BankUser.cs" ln="28" sev="1" auth="user-name" locRef="4" lnHash="-1644930014" startPos="0" endPos="0" analyzer="com.parasoft.dottest" cat="FAIL" testId="Parasoft.Dottest.Examples.Bank.Tests.NUnit_[SUITE]Parasoft.Dottest.Examples.Bank.Tests.NUnit.BankUserTests.Test" tcId="Parasoft.Dottest.Examples.Bank.Tests.NUnit_Parasoft.Dottest.Examples.Bank.Tests.NUnit.BankUserTests.Test(null)" goals="0,">
       <Thr>
         <ThrPart type="Failed" msg="System.Text.RegularExpressions.RegexParseException : Invalid pattern '^[\w\-\+\&amp;\*]+(?:\.[\w\-\_\+\&amp;\*]+)*@(?:[\w-]+\.)+[a-zA-Z]2,7}$' at offset 26. Unrecognized escape sequence \\_.">
           <PathElem desc="System.Text.RegularExpressions.RegexParser.ScanCharEscape()" />
@@ -213,7 +213,7 @@
         </ThrPart>
       </Thr>
     </UnitViol>
-    <UnitViol loc="BankExample.NET.WithTests/Parasoft.Dottest.Examples.Bank/BankUser.cs" ln="28" sev="1" auth="devtest" locRef="4" lnHash="-1644930014" startPos="0" endPos="0" analyzer="com.parasoft.dottest" cat="FAIL" testId="Parasoft.Dottest.Examples.Bank.Tests.NUnit_[SUITE]Parasoft.Dottest.Examples.Bank.Tests.NUnit.BankUserTests.Test" tcId="Parasoft.Dottest.Examples.Bank.Tests.NUnit_Parasoft.Dottest.Examples.Bank.Tests.NUnit.BankUserTests.Test(&quot;@one.com&quot;)" goals="0,">
+    <UnitViol loc="BankExample.NET.WithTests/Parasoft.Dottest.Examples.Bank/BankUser.cs" ln="28" sev="1" auth="user-name" locRef="4" lnHash="-1644930014" startPos="0" endPos="0" analyzer="com.parasoft.dottest" cat="FAIL" testId="Parasoft.Dottest.Examples.Bank.Tests.NUnit_[SUITE]Parasoft.Dottest.Examples.Bank.Tests.NUnit.BankUserTests.Test" tcId="Parasoft.Dottest.Examples.Bank.Tests.NUnit_Parasoft.Dottest.Examples.Bank.Tests.NUnit.BankUserTests.Test(&quot;@one.com&quot;)" goals="0,">
       <Thr>
         <ThrPart type="Failed" msg="System.Text.RegularExpressions.RegexParseException : Invalid pattern '^[\w\-\+\&amp;\*]+(?:\.[\w\-\_\+\&amp;\*]+)*@(?:[\w-]+\.)+[a-zA-Z]2,7}$' at offset 26. Unrecognized escape sequence \\_.">
           <PathElem desc="System.Text.RegularExpressions.RegexParser.ScanCharEscape()" />
@@ -229,7 +229,7 @@
         </ThrPart>
       </Thr>
     </UnitViol>
-    <UnitViol loc="BankExample.NET.WithTests/Parasoft.Dottest.Examples.Bank/BankUser.cs" ln="28" sev="1" auth="devtest" locRef="4" lnHash="-1644930014" startPos="0" endPos="0" analyzer="com.parasoft.dottest" cat="FAIL" testId="Parasoft.Dottest.Examples.Bank.Tests.NUnit_[SUITE]Parasoft.Dottest.Examples.Bank.Tests.NUnit.BankUserTests.Test" tcId="Parasoft.Dottest.Examples.Bank.Tests.NUnit_Parasoft.Dottest.Examples.Bank.Tests.NUnit.BankUserTests.Test(&quot;foo.bar@foo.com.com&quot;)" goals="0,">
+    <UnitViol loc="BankExample.NET.WithTests/Parasoft.Dottest.Examples.Bank/BankUser.cs" ln="28" sev="1" auth="user-name" locRef="4" lnHash="-1644930014" startPos="0" endPos="0" analyzer="com.parasoft.dottest" cat="FAIL" testId="Parasoft.Dottest.Examples.Bank.Tests.NUnit_[SUITE]Parasoft.Dottest.Examples.Bank.Tests.NUnit.BankUserTests.Test" tcId="Parasoft.Dottest.Examples.Bank.Tests.NUnit_Parasoft.Dottest.Examples.Bank.Tests.NUnit.BankUserTests.Test(&quot;foo.bar@foo.com.com&quot;)" goals="0,">
       <Thr>
         <ThrPart type="Failed" msg="System.Text.RegularExpressions.RegexParseException : Invalid pattern '^[\w\-\+\&amp;\*]+(?:\.[\w\-\_\+\&amp;\*]+)*@(?:[\w-]+\.)+[a-zA-Z]2,7}$' at offset 26. Unrecognized escape sequence \\_.">
           <PathElem desc="System.Text.RegularExpressions.RegexParser.ScanCharEscape()" />
@@ -245,7 +245,7 @@
         </ThrPart>
       </Thr>
     </UnitViol>
-    <UnitViol loc="BankExample.NET.WithTests/Parasoft.Dottest.Examples.Bank/BankUser.cs" ln="28" sev="1" auth="devtest" locRef="4" lnHash="-1644930014" startPos="0" endPos="0" analyzer="com.parasoft.dottest" cat="FAIL" testId="Parasoft.Dottest.Examples.Bank.Tests.xUnit_[SUITE]Parasoft.Dottest.Examples.Bank.Tests.xUnit.BankUserTests.Test" tcId="Parasoft.Dottest.Examples.Bank.Tests.xUnit_Parasoft.Dottest.Examples.Bank.Tests.xUnit.BankUserTests.Test(sourceMail: &quot;&quot;)" goals="0,">
+    <UnitViol loc="BankExample.NET.WithTests/Parasoft.Dottest.Examples.Bank/BankUser.cs" ln="28" sev="1" auth="user-name" locRef="4" lnHash="-1644930014" startPos="0" endPos="0" analyzer="com.parasoft.dottest" cat="FAIL" testId="Parasoft.Dottest.Examples.Bank.Tests.xUnit_[SUITE]Parasoft.Dottest.Examples.Bank.Tests.xUnit.BankUserTests.Test" tcId="Parasoft.Dottest.Examples.Bank.Tests.xUnit_Parasoft.Dottest.Examples.Bank.Tests.xUnit.BankUserTests.Test(sourceMail: &quot;&quot;)" goals="0,">
       <Thr>
         <ThrPart type="Failed" msg="System.Text.RegularExpressions.RegexParseException : Invalid pattern '^[\w\-\+\&amp;\*]+(?:\.[\w\-\_\+\&amp;\*]+)*@(?:[\w-]+\.)+[a-zA-Z]2,7}$' at offset 26. Unrecognized escape sequence \\_.">
           <PathElem desc="System.Text.RegularExpressions.RegexParser.ScanCharEscape()" />
@@ -261,7 +261,7 @@
         </ThrPart>
       </Thr>
     </UnitViol>
-    <UnitViol loc="BankExample.NET.WithTests/Parasoft.Dottest.Examples.Bank/BankUser.cs" ln="28" sev="1" auth="devtest" locRef="4" lnHash="-1644930014" startPos="0" endPos="0" analyzer="com.parasoft.dottest" cat="FAIL" testId="Parasoft.Dottest.Examples.Bank.Tests.xUnit_[SUITE]Parasoft.Dottest.Examples.Bank.Tests.xUnit.BankUserTests.Test" tcId="Parasoft.Dottest.Examples.Bank.Tests.xUnit_Parasoft.Dottest.Examples.Bank.Tests.xUnit.BankUserTests.Test(sourceMail: &quot;foo.bar&quot;)" goals="0,">
+    <UnitViol loc="BankExample.NET.WithTests/Parasoft.Dottest.Examples.Bank/BankUser.cs" ln="28" sev="1" auth="user-name" locRef="4" lnHash="-1644930014" startPos="0" endPos="0" analyzer="com.parasoft.dottest" cat="FAIL" testId="Parasoft.Dottest.Examples.Bank.Tests.xUnit_[SUITE]Parasoft.Dottest.Examples.Bank.Tests.xUnit.BankUserTests.Test" tcId="Parasoft.Dottest.Examples.Bank.Tests.xUnit_Parasoft.Dottest.Examples.Bank.Tests.xUnit.BankUserTests.Test(sourceMail: &quot;foo.bar&quot;)" goals="0,">
       <Thr>
         <ThrPart type="Failed" msg="System.Text.RegularExpressions.RegexParseException : Invalid pattern '^[\w\-\+\&amp;\*]+(?:\.[\w\-\_\+\&amp;\*]+)*@(?:[\w-]+\.)+[a-zA-Z]2,7}$' at offset 26. Unrecognized escape sequence \\_.">
           <PathElem desc="System.Text.RegularExpressions.RegexParser.ScanCharEscape()" />
@@ -277,7 +277,7 @@
         </ThrPart>
       </Thr>
     </UnitViol>
-    <UnitViol loc="BankExample.NET.WithTests/Parasoft.Dottest.Examples.Bank/BankUser.cs" ln="28" sev="1" auth="devtest" locRef="4" lnHash="-1644930014" startPos="0" endPos="0" analyzer="com.parasoft.dottest" cat="FAIL" testId="Parasoft.Dottest.Examples.Bank.Tests.xUnit_[SUITE]Parasoft.Dottest.Examples.Bank.Tests.xUnit.BankUserTests.Test" tcId="Parasoft.Dottest.Examples.Bank.Tests.xUnit_Parasoft.Dottest.Examples.Bank.Tests.xUnit.BankUserTests.Test(sourceMail: null)" goals="0,">
+    <UnitViol loc="BankExample.NET.WithTests/Parasoft.Dottest.Examples.Bank/BankUser.cs" ln="28" sev="1" auth="user-name" locRef="4" lnHash="-1644930014" startPos="0" endPos="0" analyzer="com.parasoft.dottest" cat="FAIL" testId="Parasoft.Dottest.Examples.Bank.Tests.xUnit_[SUITE]Parasoft.Dottest.Examples.Bank.Tests.xUnit.BankUserTests.Test" tcId="Parasoft.Dottest.Examples.Bank.Tests.xUnit_Parasoft.Dottest.Examples.Bank.Tests.xUnit.BankUserTests.Test(sourceMail: null)" goals="0,">
       <Thr>
         <ThrPart type="Failed" msg="System.Text.RegularExpressions.RegexParseException : Invalid pattern '^[\w\-\+\&amp;\*]+(?:\.[\w\-\_\+\&amp;\*]+)*@(?:[\w-]+\.)+[a-zA-Z]2,7}$' at offset 26. Unrecognized escape sequence \\_.">
           <PathElem desc="System.Text.RegularExpressions.RegexParser.ScanCharEscape()" />
@@ -293,7 +293,7 @@
         </ThrPart>
       </Thr>
     </UnitViol>
-    <UnitViol loc="BankExample.NET.WithTests/Parasoft.Dottest.Examples.Bank/BankUser.cs" ln="28" sev="1" auth="devtest" locRef="4" lnHash="-1644930014" startPos="0" endPos="0" analyzer="com.parasoft.dottest" cat="FAIL" testId="Parasoft.Dottest.Examples.Bank.Tests.xUnit_[SUITE]Parasoft.Dottest.Examples.Bank.Tests.xUnit.BankUserTests.Test" tcId="Parasoft.Dottest.Examples.Bank.Tests.xUnit_Parasoft.Dottest.Examples.Bank.Tests.xUnit.BankUserTests.Test(sourceMail: &quot;foo.bar@foo.com.com&quot;)" goals="0,">
+    <UnitViol loc="BankExample.NET.WithTests/Parasoft.Dottest.Examples.Bank/BankUser.cs" ln="28" sev="1" auth="user-name" locRef="4" lnHash="-1644930014" startPos="0" endPos="0" analyzer="com.parasoft.dottest" cat="FAIL" testId="Parasoft.Dottest.Examples.Bank.Tests.xUnit_[SUITE]Parasoft.Dottest.Examples.Bank.Tests.xUnit.BankUserTests.Test" tcId="Parasoft.Dottest.Examples.Bank.Tests.xUnit_Parasoft.Dottest.Examples.Bank.Tests.xUnit.BankUserTests.Test(sourceMail: &quot;foo.bar@foo.com.com&quot;)" goals="0,">
       <Thr>
         <ThrPart type="Failed" msg="System.Text.RegularExpressions.RegexParseException : Invalid pattern '^[\w\-\+\&amp;\*]+(?:\.[\w\-\_\+\&amp;\*]+)*@(?:[\w-]+\.)+[a-zA-Z]2,7}$' at offset 26. Unrecognized escape sequence \\_.">
           <PathElem desc="System.Text.RegularExpressions.RegexParser.ScanCharEscape()" />
@@ -309,7 +309,7 @@
         </ThrPart>
       </Thr>
     </UnitViol>
-    <UnitViol loc="BankExample.NET.WithTests/Parasoft.Dottest.Examples.Bank/BankUser.cs" ln="28" sev="1" auth="devtest" locRef="4" lnHash="-1644930014" startPos="0" endPos="0" analyzer="com.parasoft.dottest" cat="FAIL" testId="Parasoft.Dottest.Examples.Bank.Tests.xUnit_[SUITE]Parasoft.Dottest.Examples.Bank.Tests.xUnit.BankUserTests.Test" tcId="Parasoft.Dottest.Examples.Bank.Tests.xUnit_Parasoft.Dottest.Examples.Bank.Tests.xUnit.BankUserTests.Test(sourceMail: &quot;@one.com&quot;)" goals="0,">
+    <UnitViol loc="BankExample.NET.WithTests/Parasoft.Dottest.Examples.Bank/BankUser.cs" ln="28" sev="1" auth="user-name" locRef="4" lnHash="-1644930014" startPos="0" endPos="0" analyzer="com.parasoft.dottest" cat="FAIL" testId="Parasoft.Dottest.Examples.Bank.Tests.xUnit_[SUITE]Parasoft.Dottest.Examples.Bank.Tests.xUnit.BankUserTests.Test" tcId="Parasoft.Dottest.Examples.Bank.Tests.xUnit_Parasoft.Dottest.Examples.Bank.Tests.xUnit.BankUserTests.Test(sourceMail: &quot;@one.com&quot;)" goals="0,">
       <Thr>
         <ThrPart type="Failed" msg="System.Text.RegularExpressions.RegexParseException : Invalid pattern '^[\w\-\+\&amp;\*]+(?:\.[\w\-\_\+\&amp;\*]+)*@(?:[\w-]+\.)+[a-zA-Z]2,7}$' at offset 26. Unrecognized escape sequence \\_.">
           <PathElem desc="System.Text.RegularExpressions.RegexParser.ScanCharEscape()" />

@@ -57,12 +57,12 @@ public class ParasoftFindingsParserTest {
         InputFile inputFile = mock(InputFile.class);
 
         // Test createNewIssues(InputFile sourceFile, ParasoftProduct product, SensorContext context)
-        when(inputFile.uri()).thenReturn(new URI("file:///D:/henlaa/src/sc3/parasoft-96505-repro/app/main.c"));
+        when(inputFile.uri()).thenReturn(new URI("file:///D:/PARASOFT/src/sc3/parasoft-96505-repro/app/main.c"));
         result = parasoftFindingsParser.createNewIssues(inputFile, ParasoftProduct.CPPTEST, context);
         assertEquals(0, result);
 
         // Test createNewIssues(InputFile sourceFile, ParasoftProduct product, SensorContext context)
-        when(inputFile.uri()).thenReturn(new URI("file:/D:/henlaa/src/sc3/parasoft-96505-repro/bootloader/main.c"));
+        when(inputFile.uri()).thenReturn(new URI("file:/D:/PARASOFT/src/sc3/parasoft-96505-repro/bootloader/main.c"));
         result = parasoftFindingsParser.createNewIssues(inputFile, ParasoftProduct.CPPTEST, context);
         assertEquals(0, result);
     }
@@ -99,13 +99,13 @@ public class ParasoftFindingsParserTest {
 
         // Test createNewIssues(InputFile sourceFile, ParasoftProduct product, SensorContext context)
         when(version.isGreaterThanOrEqual(nullable(Version.class))).thenReturn(true);
-        when(inputFile.uri()).thenReturn(new URI("file:///D:/henlaa/src/sc3/parasoft-96505-repro/app/main.c"));
+        when(inputFile.uri()).thenReturn(new URI("file:///D:/PARASOFT/src/sc3/parasoft-96505-repro/app/main.c"));
         result = parasoftFindingsParser.createNewIssues(inputFile, ParasoftProduct.CPPTEST, context);
         assertEquals(3, result);
 
         // Test createNewIssues(InputFile sourceFile, ParasoftProduct product, SensorContext context)
         when(version.isGreaterThanOrEqual(nullable(Version.class))).thenReturn(false);
-        when(inputFile.uri()).thenReturn(new URI("file:/D:/henlaa/src/sc3/parasoft-96505-repro/bootloader/main.c"));
+        when(inputFile.uri()).thenReturn(new URI("file:/D:/PARASOFT/src/sc3/parasoft-96505-repro/bootloader/main.c"));
         result = parasoftFindingsParser.createNewIssues(inputFile, ParasoftProduct.CPPTEST, context);
         assertEquals(3, result);
     }
