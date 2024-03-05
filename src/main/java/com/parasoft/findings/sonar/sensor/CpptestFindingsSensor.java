@@ -9,11 +9,14 @@
 package com.parasoft.findings.sonar.sensor;
 
 import com.parasoft.findings.sonar.ParasoftProduct;
+import com.parasoft.findings.sonar.importer.ParasoftDottestAndCpptestTestsParser;
 
 public class CpptestFindingsSensor extends AbstractParasoftFindingsSensor
 {
-    public CpptestFindingsSensor()
+    private final ParasoftDottestAndCpptestTestsParser parasoftDottestAndCpptestTestsParser;
+    public CpptestFindingsSensor(ParasoftDottestAndCpptestTestsParser parasoftDottestAndCpptestTestsParser)
     {
         super(ParasoftProduct.CPPTEST);
+        this.parasoftDottestAndCpptestTestsParser = parasoftDottestAndCpptestTestsParser;
     }
 }

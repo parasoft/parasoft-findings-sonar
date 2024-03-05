@@ -27,6 +27,7 @@ import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.measures.Metric;
+import org.sonar.api.scanner.ScannerSide;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -37,6 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@ScannerSide
 abstract class AbstractSOAtestAndJtestTestsParser {
 
     public void collect(SensorContext context, List<File> xunitFiles) {
@@ -80,7 +82,7 @@ abstract class AbstractSOAtestAndJtestTestsParser {
     private Map<InputFile, XUnitTestSuite> mapToInputFile(Map<String, XUnitTestSuite> testSuites, FileSystem fs) {
         Map<InputFile, XUnitTestSuite> result = new HashMap<>();
         testSuites.forEach((filePath, testSuite) -> {
-            InputFile resource = fs.inputFile(fs.predicates().hasPath(filePath));
+            InputFile resource = findResourceByFilePath(filePath, fs);
             if (resource != null) {
                 result.put(resource, testSuite);
             } else {
@@ -88,6 +90,10 @@ abstract class AbstractSOAtestAndJtestTestsParser {
             }
         });
         return result;
+    }
+
+    public InputFile findResourceByFilePath(String filePath, FileSystem fs) {
+        return fs.inputFile(fs.predicates().hasPath(filePath));
     }
 
     protected abstract boolean saveMeasuresOnFile(TestSummary testSummaryOnFile, InputFile inputFile, SensorContext context);

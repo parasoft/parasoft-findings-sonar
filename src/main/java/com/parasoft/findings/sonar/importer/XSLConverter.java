@@ -28,16 +28,19 @@ import net.sf.saxon.s9api.Xslt30Transformer;
 import net.sf.saxon.s9api.XsltCompiler;
 import net.sf.saxon.s9api.XsltExecutable;
 import org.sonar.api.batch.fs.FileSystem;
+import org.sonar.api.scanner.ScannerSide;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+@ScannerSide
 public class XSLConverter {
 
     public static final String XUNIT_XSL_NAME_SUFFIX = "xunit.xsl"; //$NON-NLS-1$
@@ -50,50 +53,41 @@ public class XSLConverter {
 
     private final FileSystem fs;
 
-    private final String xsl;
-
-    private final String targetReportNameSuffix;
-
-    public XSLConverter(FileSystem fs, String xslName, String targetReportNameSuffix) {
+    public XSLConverter(FileSystem fs) {
         this.fs = fs;
-        this.xsl = XSL_RESOURCE_DIR + xslName;
-        this.targetReportNameSuffix = targetReportNameSuffix;
     }
 
-    public List<File> transformReports(String[] reportPaths) {
-        List<File> targetReports = new ArrayList<>();
-
+    public List<File> transformReports(String[] reportPaths, ReportType reportType) {
+        Set<File> reportFiles = new LinkedHashSet<>();
         for (String reportPath : reportPaths) {
             File reportFile = new File(reportPath);
             if (!reportFile.isAbsolute()) {
                 reportFile = new File(fs.baseDir(), reportPath);
             }
-            transformReportFile(reportFile, targetReports);
+            reportFiles.add(reportFile);
         }
-        if (targetReports.isEmpty()) {
-            Logger.getLogger().warn(NLS.getFormatted(Messages.NoValidReportsFound, getReportType()));
-        }
-        return targetReports;
+
+        return transformReports(reportFiles, reportType);
     }
 
-    public List<File> transformReports(Set<File> reportFiles) {
+    public List<File> transformReports(Set<File> reportFiles, ReportType reportType) {
         List<File> targetReports = new ArrayList<>();
 
         for (File reportFile : reportFiles) {
-            transformReportFile(reportFile.getAbsoluteFile(), targetReports);
+            transformReportFile(reportFile.getAbsoluteFile(), targetReports, reportType);
         }
         if (targetReports.isEmpty()) {
-            Logger.getLogger().warn(NLS.getFormatted(Messages.NoValidReportsFound, getReportType()));
+            Logger.getLogger().warn(NLS.getFormatted(Messages.NoValidReportsFound, getReportTypeMessage(reportType)));
         }
         return targetReports;
     }
 
-    private void transformReportFile(File reportFile, List<File> targetReports) {
+    private void transformReportFile(File reportFile, List<File> targetReports, ReportType reportType) {
         if (!reportFile.isFile() || !reportFile.exists() || !reportFile.canRead()) {
-            Logger.getLogger().warn(NLS.getFormatted(Messages.SkippedInvalidReportFile, getReportType(), reportFile.getAbsolutePath()));
+            Logger.getLogger().warn(NLS.getFormatted(Messages.SkippedInvalidReportFile, getReportTypeMessage(reportType), reportFile.getAbsolutePath()));
         } else {
             Logger.getLogger().info(NLS.getFormatted(Messages.TransformingReport, reportFile.getAbsolutePath()));
-            File resultFile = transformReport(reportFile);
+            File resultFile = transformReport(reportFile, reportType);
             if (resultFile != null) {
                 Logger.getLogger().info(NLS.getFormatted(Messages.TransformedReport, resultFile.getAbsolutePath()));
                 targetReports.add(resultFile);
@@ -101,11 +95,11 @@ public class XSLConverter {
         }
     }
 
-    private File transformReport(File report) {
+    private File transformReport(File report, ReportType reportType) {
         try {
-            File result = new File(getTargetReportFilePath(report));
+            File result = new File(getTargetReportFilePath(report, reportType));
 
-            Source xsltFile = new StreamSource(getClass().getResourceAsStream(xsl));
+            Source xsltFile = new StreamSource(getClass().getResourceAsStream(getXsl(reportType)));
             Processor processor = new Processor(false);
             XsltCompiler compiler = processor.newXsltCompiler();
             XsltExecutable stylesheet = compiler.compile(xsltFile);
@@ -129,23 +123,53 @@ public class XSLConverter {
         }
     }
 
-    private String getTargetReportFilePath(File reportFile) {
+    private String getTargetReportFilePath(File reportFile, ReportType reportType) {
         String fileName = reportFile.getName();
         String filePath = reportFile.getAbsolutePath();
         int dotIndex = fileName.lastIndexOf(".");
         String fileNameWithoutExt = dotIndex > -1 ? fileName.substring(0, dotIndex) : fileName;
-        return filePath.replace(fileName, fileNameWithoutExt + targetReportNameSuffix);
+        return filePath.replace(fileName, fileNameWithoutExt + getTargetReportNameSuffix(reportType));
     }
 
-    private String getReportType() {
-        if (xsl.endsWith(XUNIT_XSL_NAME_SUFFIX)) {
-            return Messages.UnitTest;
-        } else if (xsl.endsWith(SOA_XUNIT_XSL_NAME_SUFFIX)) {
-            return Messages.SOAtest;
-        } else if (xsl.endsWith(COBERTURA_XSL_NAME_SUFFIX)) {
-            return Messages.Coverage;
-        } else {
-            throw new UnsupportedOperationException("Unsupported report type"); // should never happen
+    private String getTargetReportNameSuffix(ReportType reportType) {
+        switch (reportType) {
+            case UNIT_TEST:
+            case SOATEST:
+                return XUNIT_TARGET_REPORT_NAME_SUFFIX;
+            case COVERAGE:
+                return COBERTURA_TARGET_REPORT_NAME_SUFFIX;
+            default:
+                throw new UnsupportedOperationException("Unsupported report type"); // should never happen
         }
+    }
+
+    private String getXsl(ReportType reportType) {
+        switch (reportType) {
+            case UNIT_TEST:
+                return XSL_RESOURCE_DIR + XUNIT_XSL_NAME_SUFFIX;
+            case SOATEST:
+                return XSL_RESOURCE_DIR + SOA_XUNIT_XSL_NAME_SUFFIX;
+            case COVERAGE:
+                return XSL_RESOURCE_DIR + COBERTURA_XSL_NAME_SUFFIX;
+            default:
+                throw new UnsupportedOperationException("Unsupported report type"); // should never happen
+        }
+    }
+
+    private String getReportTypeMessage(ReportType reportType) {
+        switch (reportType) {
+            case UNIT_TEST:
+                return Messages.UnitTest;
+            case SOATEST:
+                return Messages.SOAtest;
+            case COVERAGE:
+                return Messages.Coverage;
+            default:
+                throw new UnsupportedOperationException("Unsupported report type"); // should never happen
+        }
+    }
+
+    public enum ReportType {
+        UNIT_TEST, SOATEST, COVERAGE
     }
 }

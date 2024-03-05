@@ -14,6 +14,9 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 
+import com.parasoft.findings.sonar.importer.ParasoftDottestAndCpptestTestsParser;
+import com.parasoft.findings.sonar.importer.JtestTestsParser;
+import com.parasoft.findings.sonar.importer.XSLConverter;
 import com.parasoft.findings.sonar.sensor.AbstractParasoftFindingsSensor;
 import com.parasoft.findings.sonar.sensor.CpptestFindingsSensor;
 import com.parasoft.findings.sonar.sensor.DottestFindingsSensor;
@@ -39,7 +42,7 @@ class FindingsSensorTest
         FilePredicates pred = mock(FilePredicates.class);
 
         when(context.config()).thenReturn(config);
-        when(config.getStringArray(any())).thenReturn(new String[] {"src/test/java/report.xml"});
+        when(config.getStringArray(any())).thenReturn(new String[] {"src/test/resources/jtest/Jtest-2022.2.0-static-report.xml"});
         when(context.fileSystem()).thenReturn(filesys);
         when(filesys.baseDir()).thenReturn(new File("."));
         when(filesys.predicates()).thenReturn(pred);
@@ -50,9 +53,9 @@ class FindingsSensorTest
 
     static Object[][] testBasic_Params() {
         return new Object[][] {
-            {new JtestFindingsSensor()},
-            {new DottestFindingsSensor()},
-            {new CpptestFindingsSensor()}
+            {new JtestFindingsSensor(mock(XSLConverter.class), mock(JtestTestsParser.class))},
+            {new DottestFindingsSensor(mock(ParasoftDottestAndCpptestTestsParser.class))},
+            {new CpptestFindingsSensor(mock(ParasoftDottestAndCpptestTestsParser.class))}
         };
     }
 }

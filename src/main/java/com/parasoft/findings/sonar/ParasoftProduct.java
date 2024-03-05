@@ -22,19 +22,19 @@ import static com.parasoft.findings.sonar.rules.AbstractRulesDefinition.BUILTIN_
 public enum ParasoftProduct {
     JTEST("Parasoft Jtest", "Java", Arrays.asList("java", "xml", "text"),
         Arrays.asList("parasoft-jtest-java", "parasoft-jtest-xml", "parasoft-jtest-text"), BUILTIN_RULES_DIR_NAME + "/jtest",
-        "sonar.parasoft.jtest.reportPaths", Messages.JtestReportPathName, Messages.JtestReportPathDesc,
+            ParasoftConstants.PARASOFT_JTEST_REPORT_PATHS_KEY, Messages.JtestReportPathName, Messages.JtestReportPathDesc,
         "integration/dtpserver/jtest/model", "rules/doc",
         "com.parasoft.jtest.flowanalyzer.rules.builtin", "com.parasoft.jtest.flowanalyzer"),
 
     DOTTEST("Parasoft dotTest", "C#", Arrays.asList("cs", "vbnet"),
         Arrays.asList("parasoft-dottest-cs", "parasoft-dottest-vbnet"), BUILTIN_RULES_DIR_NAME + "/dottest",
-        "sonar.parasoft.dottest.reportPaths", Messages.dotTestReportPathName, Messages.dotTestReportPathDesc,
+            ParasoftConstants.PARASOFT_DOTTEST_REPORT_PATHS_KEY, Messages.dotTestReportPathName, Messages.dotTestReportPathDesc,
         "integration/DTPServer/dotTEST/model", "rules/doc",
         "com.parasoft.dottest.flowanalyzer.rules.builtin", "com.parasoft.dottest.flowanalyzer"),
 
     CPPTEST("Parasoft C/C++Test", "C++", Arrays.asList("c", "cpp"),
         Arrays.asList("parasoft-cpptest-c", "parasoft-cpptest-cpp"), BUILTIN_RULES_DIR_NAME + "/cpptest",
-        "sonar.parasoft.cpptest.reportPaths", Messages.CppTestReportPathName, Messages.CppTestReportPathDesc,
+            ParasoftConstants.PARASOFT_CPPTEST_REPORT_PATHS_KEY, Messages.CppTestReportPathName, Messages.CppTestReportPathDesc,
         "integration/dtpserver/cpptest/model", "rules/docs",
         "com.parasoft.cpptest.flowanalyzer.rules.builtin", "com.parasoft.cpptest.flowanalyzer");
 
