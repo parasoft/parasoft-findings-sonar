@@ -6,20 +6,19 @@
 */
 
 
-package com.parasoft.findings.sonar.importer;
+package com.parasoft.findings.sonar.utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.stream.Stream;
 
-import com.parasoft.findings.sonar.utils.MapperUtil;
 import com.parasoft.findings.utils.results.violations.ViolationRuleUtil;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.sonar.api.rule.Severity;
 
-class ParasoftFindingParserTest
+class MapperUtilTest
 {
     @ParameterizedTest
     @MethodSource("testMapToSonarSeverityParams")

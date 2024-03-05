@@ -42,13 +42,13 @@ import static org.mockito.Mockito.when;
  * @see ParasoftIssuesParser
  * @author bmcglau
  */
-public class ParasoftFindingsParserTest {
+public class ParasoftIssuesParserTest {
 
     @Test
-    public void testParasoftFindingsParser1() throws URISyntaxException {
+    public void testParasoftIssuesParser1() throws URISyntaxException {
         // Test loadFindings(File file)
-        ParasoftIssuesParser parasoftFindingsParser = new ParasoftIssuesParser(new Properties());
-        int result = parasoftFindingsParser.loadFindings(new File("src/test/resources/cpptest/Cpptest-std-2023.1.1-static-report.xml"));
+        ParasoftIssuesParser parasoftIssuesParser = new ParasoftIssuesParser(new Properties());
+        int result = parasoftIssuesParser.loadFindings(new File("src/test/resources/cpptest/Cpptest-std-2023.1.1-static-report.xml"));
         assertEquals(6, result);
 
         SensorContext context = mock(SensorContext.class);
@@ -58,20 +58,20 @@ public class ParasoftFindingsParserTest {
 
         // Test createNewIssues(InputFile sourceFile, ParasoftProduct product, SensorContext context)
         when(inputFile.uri()).thenReturn(new URI("file:///D:/PARASOFT/src/sc3/parasoft-96505-repro/app/main.c"));
-        result = parasoftFindingsParser.createNewIssues(inputFile, ParasoftProduct.CPPTEST, context);
+        result = parasoftIssuesParser.createNewIssues(inputFile, ParasoftProduct.CPPTEST, context);
         assertEquals(0, result);
 
         // Test createNewIssues(InputFile sourceFile, ParasoftProduct product, SensorContext context)
         when(inputFile.uri()).thenReturn(new URI("file:/D:/PARASOFT/src/sc3/parasoft-96505-repro/bootloader/main.c"));
-        result = parasoftFindingsParser.createNewIssues(inputFile, ParasoftProduct.CPPTEST, context);
+        result = parasoftIssuesParser.createNewIssues(inputFile, ParasoftProduct.CPPTEST, context);
         assertEquals(0, result);
     }
 
     @Test
-    public void testParasoftFindingsParser2() throws URISyntaxException {
+    public void testParasoftIssuesParser2() throws URISyntaxException {
         // Test loadFindings(File file)
-        ParasoftIssuesParser parasoftFindingsParser = new ParasoftIssuesParser(new Properties());
-        int result = parasoftFindingsParser.loadFindings(new File("src/test/resources/cpptest/Cpptest-std-2023.1.1-static-report.xml"));
+        ParasoftIssuesParser parasoftIssuesParser = new ParasoftIssuesParser(new Properties());
+        int result = parasoftIssuesParser.loadFindings(new File("src/test/resources/cpptest/Cpptest-std-2023.1.1-static-report.xml"));
         assertEquals(6, result);
 
         SensorContext context = mock(SensorContext.class);
@@ -100,13 +100,13 @@ public class ParasoftFindingsParserTest {
         // Test createNewIssues(InputFile sourceFile, ParasoftProduct product, SensorContext context)
         when(version.isGreaterThanOrEqual(nullable(Version.class))).thenReturn(true);
         when(inputFile.uri()).thenReturn(new URI("file:///D:/PARASOFT/src/sc3/parasoft-96505-repro/app/main.c"));
-        result = parasoftFindingsParser.createNewIssues(inputFile, ParasoftProduct.CPPTEST, context);
+        result = parasoftIssuesParser.createNewIssues(inputFile, ParasoftProduct.CPPTEST, context);
         assertEquals(3, result);
 
         // Test createNewIssues(InputFile sourceFile, ParasoftProduct product, SensorContext context)
         when(version.isGreaterThanOrEqual(nullable(Version.class))).thenReturn(false);
         when(inputFile.uri()).thenReturn(new URI("file:/D:/PARASOFT/src/sc3/parasoft-96505-repro/bootloader/main.c"));
-        result = parasoftFindingsParser.createNewIssues(inputFile, ParasoftProduct.CPPTEST, context);
+        result = parasoftIssuesParser.createNewIssues(inputFile, ParasoftProduct.CPPTEST, context);
         assertEquals(3, result);
     }
 }

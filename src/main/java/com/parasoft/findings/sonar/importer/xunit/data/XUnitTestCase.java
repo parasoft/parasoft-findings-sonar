@@ -56,4 +56,7 @@ public class XUnitTestCase {
         this.stackTrace = stackTrace;
     }
 
+    public String getStackTrace() {
+        return stackTrace;
+    }
 }
