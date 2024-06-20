@@ -57,6 +57,7 @@ public class ParasoftIssuesParserTest {
         InputFile inputFile = mock(InputFile.class);
 
         // Test createNewIssues(InputFile sourceFile, ParasoftProduct product, SensorContext context)
+        when(inputFile.isFile()).thenReturn(true);
         when(inputFile.uri()).thenReturn(new URI("file:///D:/PARASOFT/src/sc3/parasoft-96505-repro/app/main.c"));
         result = parasoftIssuesParser.createNewIssues(inputFile, ParasoftProduct.CPPTEST, context);
         assertEquals(0, result);
@@ -82,6 +83,7 @@ public class ParasoftIssuesParserTest {
         when(context.runtime()).thenReturn(sonarRuntime);
         when(context.activeRules()).thenReturn(activeRulesResult);
         InputFile inputFile = mock(InputFile.class);
+        when(inputFile.isFile()).thenReturn(true);
 
         NewIssue newIssueResult = mock(NewIssue.class);
         when(newIssueResult.overrideSeverity(nullable(org.sonar.api.batch.rule.Severity.class))).thenReturn(newIssueResult);
@@ -103,10 +105,38 @@ public class ParasoftIssuesParserTest {
         result = parasoftIssuesParser.createNewIssues(inputFile, ParasoftProduct.CPPTEST, context);
         assertEquals(3, result);
 
+        when(inputFile.uri()).thenReturn(new URI("file://user/D:/PARASOFT/src/sc3/parasoft-96505-repro/app/main.c"));
+        result = parasoftIssuesParser.createNewIssues(inputFile, ParasoftProduct.CPPTEST, context);
+        assertEquals(3, result);
+
+        if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+            when(inputFile.uri()).thenReturn(new URI("file:///d:/PARASOFT/src/sc3/parasoft-96505-repro/app/main.c"));
+            result = parasoftIssuesParser.createNewIssues(inputFile, ParasoftProduct.CPPTEST, context);
+            assertEquals(3, result);
+
+            when(inputFile.uri()).thenReturn(new URI("file://user/d:/PARASOFT/src/sc3/parasoft-96505-repro/app/main.c"));
+            result = parasoftIssuesParser.createNewIssues(inputFile, ParasoftProduct.CPPTEST, context);
+            assertEquals(3, result);
+        }
+
         // Test createNewIssues(InputFile sourceFile, ParasoftProduct product, SensorContext context)
         when(version.isGreaterThanOrEqual(nullable(Version.class))).thenReturn(false);
         when(inputFile.uri()).thenReturn(new URI("file:/D:/PARASOFT/src/sc3/parasoft-96505-repro/bootloader/main.c"));
         result = parasoftIssuesParser.createNewIssues(inputFile, ParasoftProduct.CPPTEST, context);
         assertEquals(3, result);
+
+        when(inputFile.uri()).thenReturn(new URI("file://user/D:/PARASOFT/src/sc3/parasoft-96505-repro/bootloader/main.c"));
+        result = parasoftIssuesParser.createNewIssues(inputFile, ParasoftProduct.CPPTEST, context);
+        assertEquals(3, result);
+
+        if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+            when(inputFile.uri()).thenReturn(new URI("file:/d:/PARASOFT/src/sc3/parasoft-96505-repro/bootloader/main.c"));
+            result = parasoftIssuesParser.createNewIssues(inputFile, ParasoftProduct.CPPTEST, context);
+            assertEquals(3, result);
+
+            when(inputFile.uri()).thenReturn(new URI("file://user/d:/PARASOFT/src/sc3/parasoft-96505-repro/bootloader/main.c"));
+            result = parasoftIssuesParser.createNewIssues(inputFile, ParasoftProduct.CPPTEST, context);
+            assertEquals(3, result);
+        }
     }
 }
