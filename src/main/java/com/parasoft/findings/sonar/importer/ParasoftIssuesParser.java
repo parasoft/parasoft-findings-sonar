@@ -54,7 +54,7 @@ public class ParasoftIssuesParser
 
     private XmlReportViolationsImporter _importer = null;
 
-    private final Map<String, Set<IRuleViolation>> _violations = Collections.synchronizedMap(new HashMap<>());
+    private final Map<File, Set<IRuleViolation>> _violations = Collections.synchronizedMap(new HashMap<>());
 
     /**
      * Creates a new instance of {@link ParasoftIssuesParser}.
@@ -84,22 +84,22 @@ public class ParasoftIssuesParser
                 }
                 ResultLocation location = violation.getResultLocation();
                 ITestableInput testableInput = location != null ? location.getTestableInput() : null;
-                String inputPath = null;
+                File inputFile = null;
                 if (testableInput != null) {
                     if (testableInput instanceof IFileTestableInput) {
-                        inputPath = ((IFileTestableInput) testableInput).getFileLocation().toURI().getPath();
+                        inputFile = new File(((IFileTestableInput) testableInput).getFileLocation().toURI().getPath()).getAbsoluteFile();
                     } else {
                         Logger.getLogger().error(NLS.getFormatted(Messages.InputIsNotInstanceOfIFileTestableInput, testableInput.getClass().getSimpleName()));
                     }
                 }
-                if (inputPath == null) {
+                if (inputFile == null) {
                     continue;
                 }
-                var violations = _violations.get(inputPath);
+                var violations = _violations.get(inputFile);
                 if (violations == null) {
                     violations = new HashSet<>();
-                    _violations.put(inputPath, violations);
-                    Logger.getLogger().info(NLS.getFormatted(Messages.AddedLocationWithFinding, inputPath));
+                    _violations.put(inputFile, violations);
+                    Logger.getLogger().info(NLS.getFormatted(Messages.AddedLocationWithFinding, inputFile));
                 }
                 violations.add(violation);
                 loadedFindings++;
@@ -113,18 +113,23 @@ public class ParasoftIssuesParser
         return loadedFindings;
     }
 
-    public Set<IRuleViolation> getFindings(String inputFilePath)
+    public Set<IRuleViolation> getFindings(File inputFile)
     {
-        return _violations.get(inputFilePath);
+        return _violations.get(inputFile);
     }
 
     public int createNewIssues(InputFile sourceFile, ParasoftProduct product, SensorContext context)
     {
         ActiveRules activeRules = context.activeRules();
-        String inputFilePath = sourceFile.uri().getPath();
-        var findings = getFindings(inputFilePath);
+        File source;
+        if (sourceFile.isFile()) {
+            source = new File(sourceFile.uri().getPath()).getAbsoluteFile();
+        } else {
+            return 0;
+        }
+        var findings = getFindings(source);
         if (CollectionUtil.isEmpty(findings)) {
-            Logger.getLogger().info(NLS.getFormatted(Messages.NoFindingsFor, sourceFile.toString()));
+            Logger.getLogger().info(NLS.getFormatted(Messages.NoFindingsFor, source.toString()));
             return 0;
         }
         int findingsCount = 0;

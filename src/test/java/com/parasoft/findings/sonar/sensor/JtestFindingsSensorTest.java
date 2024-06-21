@@ -55,7 +55,12 @@ public class JtestFindingsSensorTest {
         new JtestFindingsSensor(new XSLConverter(context.fileSystem()), new JtestTestsParser()).execute(context);
 
         assertThat(logTester.logs(Level.INFO)).contains("4 findings imported");
-        assertThat(logTester.logs(Level.INFO)).contains("Added location with finding(s): /D:/RWorkspaces/project-workspace/CICD/jtestdemo/src/main/java/parasoft/ForViolations.java");
+        if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+            assertThat(logTester.logs(Level.INFO)).contains("Added location with finding(s): D:\\RWorkspaces\\project-workspace\\CICD\\jtestdemo\\src\\main\\java\\parasoft\\ForViolations.java");
+        } else {
+            assertThat(logTester.logs(Level.INFO)).contains("Added location with finding(s): /D:/RWorkspaces/project-workspace/CICD/jtestdemo/src/main/java/parasoft/ForViolations.java");
+        }
+
         assertThat(logTester.logs(Level.ERROR   )).contains("No source files found");
     }
 

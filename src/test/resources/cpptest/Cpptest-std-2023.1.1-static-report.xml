@@ -28,8 +28,8 @@
    <Scope>
       <Repositories />
       <Locations>
-         <Loc auth="user-name" hash="-1471552250" locRef="1" projId="parasoft-96505-repro" projPath="/parasoft-96505-repro" project="parasoft-96505-repro" resProjPath="app/main.c" totLns="4" uri="file://PARASOFT/D:/PARASOFT/src/sc3/parasoft-96505-repro/app/main.c" />
-         <Loc auth="user-name" hash="-1120479048" locRef="2" projId="parasoft-96505-repro" projPath="/parasoft-96505-repro" project="parasoft-96505-repro" resProjPath="bootloader/main.c" totLns="9" uri="file://PARASOFT/D:/PARASOFT/src/sc3/parasoft-96505-repro/bootloader/main.c" />
+         <Loc auth="user-name" hash="-1471552250" locRef="1" projId="parasoft-96505-repro" projPath="/parasoft-96505-repro" project="parasoft-96505-repro" resProjPath="app/main.c" totLns="4" uri="file://user/D:/PARASOFT/src/sc3/parasoft-96505-repro/app/main.c" />
+         <Loc auth="user-name" hash="-1120479048" locRef="2" projId="parasoft-96505-repro" projPath="/parasoft-96505-repro" project="parasoft-96505-repro" resProjPath="bootloader/main.c" totLns="9" uri="file:///D:/PARASOFT/src/sc3/parasoft-96505-repro/bootloader/main.c" />
       </Locations>
    </Scope>
 
