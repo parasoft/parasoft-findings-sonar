@@ -56,7 +56,7 @@ abstract class AbstractSOAtestAndJtestTestsParser {
         XUnitTestsContainer xUnitTestsContainerOnProject = new XUnitTestsContainer();
         for (File report : reports) {
             try {
-                Logger.getLogger().info(NLS.getFormatted(Messages.ParsingXUnitReport, report));
+                Logger.getLogger().info(NLS.getFormatted(Messages.ParsingXUnitReport, report.getAbsoluteFile()));
                 xUnitTestsContainerOnProject.mergeFrom(xUnitSAXParser.parse(report));
             } catch (ParserConfigurationException | IOException | SAXException e) {
                 throw new InvalidReportException(NLS.getFormatted(Messages.FailedToParseXUnitReport, report), e);

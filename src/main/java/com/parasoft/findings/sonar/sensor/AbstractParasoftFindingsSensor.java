@@ -109,7 +109,7 @@ public abstract class AbstractParasoftFindingsSensor
         ParasoftDottestAndCpptestTestsParser testsParser = new ParasoftDottestAndCpptestTestsParser();
         TestSummary unitTestSummaryForProject = new TestSummary();
         for (var file : reportFiles.keySet()) {
-            Logger.getLogger().info(NLS.getFormatted(Messages.ParsingReportFile, Messages.UnitTest, file));
+            Logger.getLogger().info(NLS.getFormatted(Messages.ParsingReportFile, Messages.UnitTest, file.getAbsoluteFile()));
 
             TestSummary unitTestSummaryForReport = testsParser.loadTestResults(reportFiles.get(file));
 
@@ -134,7 +134,7 @@ public abstract class AbstractParasoftFindingsSensor
             return;
         }
         for (var file : reportFiles) {
-            Logger.getLogger().info(NLS.getFormatted(Messages.ParsingReportFile, Messages.StaticAnalysis, file));
+            Logger.getLogger().info(NLS.getFormatted(Messages.ParsingReportFile, Messages.StaticAnalysis, file.getAbsoluteFile()));
             loadFindings(file, findingsParser, context);
         }
     }
