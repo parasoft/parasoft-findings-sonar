@@ -138,5 +138,13 @@ public class ParasoftIssuesParserTest {
             result = parasoftIssuesParser.createNewIssues(inputFile, ParasoftProduct.CPPTEST, context);
             assertEquals(3, result);
         }
+
+        when(inputFile.uri()).thenReturn(new URI("file:/d:/not/exist/in/report"));
+        result = parasoftIssuesParser.createNewIssues(inputFile, ParasoftProduct.CPPTEST, context);
+        assertEquals(0, result);
+
+        when(inputFile.isFile()).thenReturn(false);
+        result = parasoftIssuesParser.createNewIssues(inputFile, ParasoftProduct.CPPTEST, context);
+        assertEquals(0, result);
     }
 }

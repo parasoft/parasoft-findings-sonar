@@ -129,7 +129,7 @@ public class ParasoftIssuesParser
         }
         var findings = getFindings(source);
         if (CollectionUtil.isEmpty(findings)) {
-            Logger.getLogger().info(NLS.getFormatted(Messages.NoFindingsFor, sourceFile.toString()));
+            Logger.getLogger().info(NLS.getFormatted(Messages.NoFindingsFor, source.toString()));
             return 0;
         }
         int findingsCount = 0;
