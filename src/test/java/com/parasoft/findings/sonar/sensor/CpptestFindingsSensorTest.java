@@ -64,7 +64,7 @@ public class CpptestFindingsSensorTest {
             new CpptestFindingsSensor(new ParasoftDottestAndCpptestTestsParser()).execute(context);
 
             verify(logger, times(1)).info("No Parasoft unit test report(s) specified");
-            verify(logger, times(1)).info("Parsing Parasoft static analysis XML report: " + new File(BASE_DIR, "Cpptest-std-2023.1.1-static-report.xml"));
+            verify(logger, times(1)).info("Parsing Parasoft static analysis XML report: " + new File(BASE_DIR, "Cpptest-std-2023.1.1-static-report.xml").getAbsoluteFile());
             verify(logger, times(1)).info("6 findings imported");
             verify(logger, times(1)).error("No source files found");
         }
@@ -83,9 +83,9 @@ public class CpptestFindingsSensorTest {
 
             new CpptestFindingsSensor(new ParasoftDottestAndCpptestTestsParser()).execute(context);
 
-            verify(logger, times(1)).info("Parsing Parasoft unit test XML report: " + new File(BASE_DIR, "Cpptest-pro-2023.2.0-static-and-unitTests-report.xml"));
+            verify(logger, times(1)).info("Parsing Parasoft unit test XML report: " + new File(BASE_DIR, "Cpptest-pro-2023.2.0-static-and-unitTests-report.xml").getAbsoluteFile());
             verify(logger, times(1)).info("Added Parasoft unit test results for project: Total: 162, Errors: 0, Failures: 36, Duration: 45,203ms");
-            verify(logger, times(1)).info("Parsing Parasoft static analysis XML report: " + new File(BASE_DIR, "Cpptest-pro-2023.2.0-static-and-unitTests-report.xml"));
+            verify(logger, times(1)).info("Parsing Parasoft static analysis XML report: " + new File(BASE_DIR, "Cpptest-pro-2023.2.0-static-and-unitTests-report.xml").getAbsoluteFile());
             verify(logger, times(1)).info("1,781 findings imported");
             verify(logger, times(1)).error("No source files found");
         }
