@@ -56,7 +56,7 @@
                         </xsl:variable>
                         <xsl:variable name="encodedPipelineBuildWorkingDirectory">
                              <xsl:if test="string($uncodedPipelineBuildWorkingDirectory) != ''">
-                                <!-- Replace % to %25 and space to %20 to get an encoded path-->
+                                <!-- Replace % with %25 and space with %20 to get an encoded path-->
                                 <xsl:value-of select="replace(replace($uncodedPipelineBuildWorkingDirectory, '%', '%25'), ' ', '%20')"/>
                             </xsl:if>
                         </xsl:variable>
@@ -65,7 +65,7 @@
                                 <xsl:when test="string($uncodedPipelineBuildWorkingDirectory) != '' and contains(@uri, $uncodedPipelineBuildWorkingDirectory)">
                                     <xsl:value-of select="$uncodedPipelineBuildWorkingDirectory"/>
                                 </xsl:when>
-                                <!-- Using encoded pipeline build working directory when the uri arrtibute of <Loc> tag in Parasoft tool report(e.g. jtest report) is encoded -->
+                                <!-- Using encoded pipeline build working directory when the uri attribute of <Loc> tag in Parasoft tool report(e.g. jtest report) is encoded -->
                                 <xsl:when test="string($encodedPipelineBuildWorkingDirectory) != '' and contains(@uri, $encodedPipelineBuildWorkingDirectory)">
                                     <xsl:value-of select="$encodedPipelineBuildWorkingDirectory"/>
                                 </xsl:when>
@@ -268,19 +268,19 @@
     </xsl:template>
 
     <xsl:template name="generateClassElementByItemRefs">
-        <!-- All itemRef from /CoverageData/CvgData/Stats/Item which belong to current class -->
+        <!-- All itemRef from /CoverageData/CvgData/Stats/Item which belong to the current class -->
         <xsl:param name="itemRefs"/>
         <xsl:param name="cvgDataNode"/>
         <xsl:param name="className"/>
         <xsl:param name="filePath"/>
 
-        <!-- Generate string which contains unique line numbers of the current class(referenced by itemRefs) -->
+        <!-- Generate string which contains unique line numbers of the current class (referenced by itemRefs) -->
         <xsl:variable name="itemRefsString" select="concat(' ', string-join($itemRefs, ' '), ' ')"/>
         <xsl:variable name="statCvgElems" select="$cvgDataNode/Static/StatCvg[contains($itemRefsString, concat(' ', @itemRef, ' '))]/@elems"/>
         <xsl:variable name="statCvgElemsString" select="string-join($statCvgElems, ' ')"/>
         <xsl:variable name="lineNumbers" select="distinct-values(tokenize($statCvgElemsString, '\s+'))"/>
 
-        <!-- This map is used to store unique line numbers. key: line number, value: coverd times -->
+        <!-- This map is used to store unique line numbers. key: line number, value: covered times -->
         <xsl:variable name="linesMap" as="map(xs:string, xs:integer)">
             <xsl:map>
                 <xsl:for-each select="$lineNumbers">
@@ -291,6 +291,32 @@
                         </xsl:call-template>
                     </xsl:variable>
                     <xsl:map-entry key="string(.)" select="xs:integer($lineCoveredTimes)"/>
+                </xsl:for-each>
+            </xsl:map>
+        </xsl:variable>
+
+        <xsl:variable name="verboseLineNumbers" select="tokenize($statCvgElemsString, '\s+')"/>
+        <xsl:variable name="statCvgHashes" select="$cvgDataNode/Static/StatCvg[contains($itemRefsString, concat(' ', @itemRef, ' '))]/@hashes"/>
+        <xsl:variable name="lineHashes" select="tokenize(string-join($statCvgHashes, ' '), '\s+')"/>
+
+        <!-- This variable is used to store the lineNumber(@elems) and lineHash(@hashes) pair according to the index -->
+        <xsl:variable name="lineHashPairs">
+            <xsl:for-each select="$verboseLineNumbers">
+                <xsl:variable name="index" select="position()"/>
+                <xsl:variable name="lineHash" select="$lineHashes[$index]"/>
+                <xsl:element name="lineHashPair">
+                    <xsl:attribute name="lineNumber" select="string(.)"/>
+                    <xsl:attribute name="lineHash" select="string($lineHash)" />
+                </xsl:element>
+            </xsl:for-each>
+        </xsl:variable>
+        <!-- This map is used to store unique line numbers and it's line hash. key: line number, value: line hash -->
+        <xsl:variable name="lineHashesMap" as="map(xs:string, xs:string)">
+            <xsl:map>
+                <xsl:for-each select="$lineNumbers">
+                    <xsl:variable name="line" select="."/>
+                    <xsl:variable name="lineHash" select="$lineHashPairs/lineHashPair[@lineNumber=$line]/@lineHash"/>
+                    <xsl:map-entry key="string(.)" select="string($lineHash[1])"/>
                 </xsl:for-each>
             </xsl:map>
         </xsl:variable>
@@ -332,6 +358,9 @@
                             <xsl:attribute name="hits">
                                 <xsl:value-of select="map:get($linesMap, $lineNumber)"/>
                             </xsl:attribute>
+                            <xsl:attribute name="hash">
+                                <xsl:value-of select="map:get($lineHashesMap, $lineNumber)"/>
+                            </xsl:attribute>
                         </xsl:element>
                     </xsl:for-each>
                 </xsl:element>
@@ -355,7 +384,7 @@
     <xsl:template name="getLineCoveredTimes">
         <xsl:param name="cvgDataNode"/>
         <xsl:param name="lineNumber"/>
-        <!-- Leading and trailing space (' ') around the search string are included to avoid incorrect matches when using 'contains()' -->
+        <!-- Leading and trailing spaces (' ') around the search string are included to avoid incorrect matches when using 'contains()' -->
         <xsl:variable name="ctxCvgNodes" select="$cvgDataNode/Dynamic/DynCvg/CtxCvg[contains(concat(' ', @elemRefs, ' '), concat(' ', $lineNumber, ' '))]"/>
         <xsl:value-of select="count(tokenize(string-join($ctxCvgNodes/@testRefs, ' '), '\s+'))"/>
     </xsl:template>
