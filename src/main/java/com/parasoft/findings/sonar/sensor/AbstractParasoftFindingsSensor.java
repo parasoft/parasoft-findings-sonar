@@ -17,11 +17,13 @@
 package com.parasoft.findings.sonar.sensor;
 
 import java.io.File;
+import java.io.StringReader;
 import java.util.*;
 
 import com.parasoft.findings.sonar.*;
 import com.parasoft.findings.sonar.importer.ParasoftDottestAndCpptestTestsParser;
 import com.parasoft.findings.sonar.importer.TestSummary;
+import com.parasoft.findings.utils.common.IStringConstants;
 import com.parasoft.findings.utils.common.nls.NLS;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -33,6 +35,9 @@ import org.sonar.api.scanner.ScannerSide;
 import org.sonar.api.scanner.sensor.ProjectSensor;
 
 import com.parasoft.findings.sonar.importer.ParasoftIssuesParser;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * Global sensor that is executed as a part of sonar runtime.
@@ -71,6 +76,11 @@ public abstract class AbstractParasoftFindingsSensor
             if (reportFile != null) {
                 try {
                     SAXReader reader = new SAXReader();
+                    reader.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true); //$NON-NLS-1$
+                    reader.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false); //$NON-NLS-1$
+                    reader.setFeature("http://xml.org/sax/features/external-general-entities", false); //$NON-NLS-1$
+                    reader.setFeature("http://xml.org/sax/features/external-parameter-entities", false); //$NON-NLS-1$
+                    reader.setEntityResolver(new EmptyEntityResolver());
                     Document document = reader.read(reportFile);
                     Element rootElement = document.getRootElement();
                     ReportType reportType = determineReportType(rootElement);
@@ -88,7 +98,7 @@ public abstract class AbstractParasoftFindingsSensor
                         default:
                             Logger.getLogger().warn(NLS.getFormatted(Messages.SkippedInvalidReport, reportFile.getAbsolutePath()));
                     }
-                } catch (DocumentException e) {
+                } catch (DocumentException | SAXException e) { // parasoft-suppress OWASP2021.A9.LGE "This is intentionally designed to ensure exceptions during report parsing don't cause the build to fail."
                     Logger.getLogger().error(NLS.getFormatted(Messages.SkippedInvalidReport, reportFile.getAbsolutePath()), e);
                 }
             }
@@ -189,5 +199,14 @@ public abstract class AbstractParasoftFindingsSensor
 
     enum ReportType {
         XML_STATIC_AND_TESTS, XML_STATIC, XML_TESTS, UNKNOWN
+    }
+
+    // This would prevent making any calls to resolve URL references to external DTD
+    private static class EmptyEntityResolver
+            implements EntityResolver {
+        @Override
+        public InputSource resolveEntity(String publicID, String systemID) {
+            return new InputSource(new StringReader(IStringConstants.EMPTY));
+        }
     }
 }

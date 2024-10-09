@@ -52,8 +52,9 @@ public abstract class AbstractRulesDefinition
             Class<?> versionClass = Class.forName("org.sonar.api.server.rule.RulesDefinition$OwaspTop10Version"); //$NON-NLS-1$
             ADD_OWASP_METHOD = NewRule.class.getMethod("addOwaspTop10", versionClass, OwaspTop10[].class); //$NON-NLS-1$
             Y2021_VERSION = getY2021Version(versionClass);
-        } catch (ClassNotFoundException | NoSuchMethodException | SecurityException e) {
+        } catch (ClassNotFoundException | NoSuchMethodException | SecurityException e) { // parasoft-suppress OWASP2021.A9.LGE "This is intentionally designed to ensure exceptions during rules definition don't cause the build to fail."
             // Ignore - OWASP 2021 is not supported for this version of SonarQube.
+            Logger.getLogger().error(NLS.getFormatted(Messages.FailedToDefineRules), e);
         }
     }
 
@@ -109,7 +110,7 @@ public abstract class AbstractRulesDefinition
                         Logger.getLogger().info(NLS.getFormatted(Messages.LoadingRules, rulesFile.getName()));
                         var importer = new RuleDescriptionImporter();
                         addRules(rulesFile.getName(), importer.performImport(rulesFile));
-                    } catch (Exception e) { // parasoft-suppress OWASP2021.A5.NCE "This is intentionally designed to ensure exceptions during rules file reading don't cause the process to fail."
+                    } catch (Exception e) { // parasoft-suppress OWASP2021.A5.NCE "This is intentionally designed to ensure exceptions during rules file reading don't cause the process to fail."// parasoft-suppress OWASP2021.A9.LGE "This is intentionally designed to ensure exceptions during rules file reading don't cause the build to fail."
                         Logger.getLogger().error(NLS.getFormatted(Messages.ErrorReadingRulesFile, rulesFile.getName()), e);
                     }
                 }
@@ -134,7 +135,7 @@ public abstract class AbstractRulesDefinition
             try {
                 _tempPath = Files.createTempDirectory("parasoft_findings_sonar_").toFile().getAbsolutePath(); //$NON-NLS-1$
                 Logger.getLogger().info(NLS.getFormatted(Messages.TemporaryFolderIsCreated, _tempPath));
-            } catch (IOException e) {
+            } catch (IOException e) { // parasoft-suppress OWASP2021.A9.LGE "This is intentionally designed to ensure exceptions during temporary folder creating don't cause the build to fail."
                 Logger.getLogger().error(NLS.getFormatted(Messages.FailedToCreateTemporaryFolder), e);
                 return false;
             }
@@ -148,7 +149,7 @@ public abstract class AbstractRulesDefinition
                     String expectedBuiltinRulesStoragePath = new File(_tempPath, BUILTIN_RULES_DIR_NAME).getAbsolutePath();
                     _pluginJarFile.extractFile(BUILTIN_RULES_PATH, _tempPath, BUILTIN_RULES_DIR_NAME);
                     Logger.getLogger().info(NLS.getFormatted(Messages.RuleFilesHaveBeenExtracted, expectedBuiltinRulesStoragePath));
-                } catch (ZipException | URISyntaxException e) {
+                } catch (ZipException | URISyntaxException e) { // parasoft-suppress OWASP2021.A9.LGE "This is intentionally designed to ensure exceptions during built-in rule files extracting don't cause the build to fail."
                     Logger.getLogger().error(NLS.getFormatted(Messages.FailedToExtractRuleFiles, _pluginJarFile), e);
                     return false;
                 }
@@ -180,7 +181,7 @@ public abstract class AbstractRulesDefinition
             } else if (ParasoftConstants.CHINESE_FOLDER_NAME.equals(localizedRuleFolder) && chineseRulesDirectory.exists()) {
                 FileUtil.recursiveCopy(chineseRulesDirectory, cpptestRulesDirectory);
             }
-        } catch (IOException e) {
+        } catch (IOException e) { // parasoft-suppress OWASP2021.A9.LGE "This is intentionally designed to ensure exceptions during localized rule files handling don't cause the build to fail."
             Logger.getLogger().error(NLS.getFormatted(Messages.ErrorHandlingLocalizedRuleFiles), e);
         }
 
@@ -288,7 +289,7 @@ public abstract class AbstractRulesDefinition
                 if (Y2021_VERSION != null && ADD_OWASP_METHOD != null) {
                     try {
                         ADD_OWASP_METHOD.invoke(newRule, Y2021_VERSION, new OwaspTop10[] {value});
-                    } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                    } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) { // parasoft-suppress OWASP2021.A9.LGE "This is intentionally designed to ensure exceptions during OWASP 2021 standard setting don't cause the build to fail."
                         Logger.getLogger().info(NLS.getFormatted(Messages.UnableToSetOWASPStandardForRule, ruleDescription.getRuleId()), e);
                     }
                 }
@@ -331,8 +332,8 @@ public abstract class AbstractRulesDefinition
             try {
                 newRule.addCwe(Integer.parseInt(ruleIdParts[i]));
                 return;
-            } catch (NumberFormatException e) {
-                // Ignore
+            } catch (NumberFormatException e) { // parasoft-suppress OWASP2021.A9.LGE "This is intentionally designed to ensure exceptions during rule id parsing don't cause the build to fail."
+                Logger.getLogger().error(NLS.getFormatted(Messages.FailedToParseRuleId, ruleIdParts[i]), e);
             }
         }
         Logger.getLogger().warn(NLS.getFormatted(Messages.DoesNotHaveACWEIDInItsRuleId, ruleDescription.getRuleId()));
@@ -370,7 +371,7 @@ public abstract class AbstractRulesDefinition
             if (docFile != null) {
                 try {
                     return FileUtil.readFile(docFile, IStringConstants.UTF_8);
-                } catch (IOException e) {
+                } catch (IOException e) {// parasoft-suppress OWASP2021.A9.LGE "This is intentionally designed to ensure exceptions during docs file reading don't cause the build to fail."
                     Logger.getLogger().error(NLS.getFormatted(Messages.UnableToReadDocsFile, docFile.getAbsolutePath()), e);
                 }
             } else {

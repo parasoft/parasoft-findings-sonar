@@ -117,7 +117,7 @@ public class XSLConverter {
 
             transformer.transform(new StreamSource(report), out);
             return result;
-        } catch (Exception e) { // parasoft-suppress OWASP2021.A5.NCE "This is intentionally designed to ensure exceptions during report transforming don't cause the process to fail."
+        } catch (Exception e) { // parasoft-suppress OWASP2021.A5.NCE "This is intentionally designed to ensure exceptions during report transforming don't cause the process to fail." // parasoft-suppress OWASP2021.A9.LGE "This is intentionally designed to ensure exceptions during report transforming don't cause the process to fail."
             Logger.getLogger().error(NLS.getFormatted(Messages.FailedToTransformReport, report.getAbsolutePath()), e);
             return null;
         }

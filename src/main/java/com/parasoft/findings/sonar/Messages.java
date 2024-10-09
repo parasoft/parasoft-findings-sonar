@@ -90,6 +90,9 @@ public final class Messages
     public static String DoesNotHaveACWEIDInItsRuleId;
     public static String UnableToReadDocsFile;
     public static String FailedToDetermineLocalFile;
+    public static String FailedToDefineRules;
+    public static String FailedToParseRuleId;
+    public static String FailedToInitializeSAXParserFactory;
 
     static {
         // initialize resource bundle

@@ -21,6 +21,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -29,9 +30,14 @@ import java.io.IOException;
 
 public class XUnitSAXParser {
 
-    private final static SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
-
     public XUnitTestsContainer parse(File xUnitXmlFile) throws ParserConfigurationException, SAXException, IOException {
+            SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
+            // https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html#jaxb-unmarshaller
+            saxParserFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            saxParserFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            saxParserFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            saxParserFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+            saxParserFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             SAXParser saxParser = saxParserFactory.newSAXParser();
             XUnitTestsContainer xUnitTestsContainer = new XUnitTestsContainer();
             saxParser.parse(xUnitXmlFile, new XUnitSAXParserHandler(xUnitTestsContainer));
@@ -84,7 +90,7 @@ public class XUnitSAXParser {
             }
             try {
                 return Math.round(Double.parseDouble(value) * 1000);
-            } catch (Exception e) { // parasoft-suppress OWASP2021.A5.NCE "This is intentionally designed to ensure exceptions during double parsing don't cause the process to fail."
+            } catch (Exception e) { // parasoft-suppress OWASP2021.A5.NCE "This is intentionally designed to ensure exceptions during double parsing don't cause the process to fail." // parasoft-suppress OWASP2021.A9.LGE "This is intentionally designed to ensure exceptions during time attribute obtaining don't cause the process to fail."
                 return 0L;
             }
         }
