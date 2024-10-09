@@ -109,7 +109,7 @@ public abstract class AbstractRulesDefinition
                         Logger.getLogger().info(NLS.getFormatted(Messages.LoadingRules, rulesFile.getName()));
                         var importer = new RuleDescriptionImporter();
                         addRules(rulesFile.getName(), importer.performImport(rulesFile));
-                    } catch (Exception e) {
+                    } catch (Exception e) { // parasoft-suppress OWASP2021.A5.NCE "This is intentionally designed to ensure exceptions during rules file reading don't cause the process to fail."
                         Logger.getLogger().error(NLS.getFormatted(Messages.ErrorReadingRulesFile, rulesFile.getName()), e);
                     }
                 }

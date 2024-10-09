@@ -84,7 +84,7 @@ public class XUnitSAXParser {
             }
             try {
                 return Math.round(Double.parseDouble(value) * 1000);
-            } catch (Exception e) {
+            } catch (Exception e) { // parasoft-suppress OWASP2021.A5.NCE "This is intentionally designed to ensure exceptions during double parsing don't cause the process to fail."
                 return 0L;
             }
         }
