@@ -105,7 +105,7 @@ public class ParasoftIssuesParser
                 loadedFindings++;
             }
 
-        } catch (FileNotFoundException exception) { // parasoft-suppress OWASP2021.A9.LGE "This is intentionally designed to ensure exceptions during findings loading don't cause the build to fail."
+        } catch (FileNotFoundException exception) {
             Logger.getLogger().error(exception.getMessage(), exception);
         } finally {
             IOUtils.close(input);

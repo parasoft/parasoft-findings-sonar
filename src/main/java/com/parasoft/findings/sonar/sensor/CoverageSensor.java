@@ -128,7 +128,7 @@ public class CoverageSensor implements ProjectSensor {
                 }
             }
             Logger.getLogger().info(NLS.getFormatted(Messages.UploadedCodeCoverageData));
-        } catch (Exception e) { // parasoft-suppress OWASP2021.A5.NCE "This is intentionally designed to ensure exceptions during cobertura report loading don't cause the process to fail." // parasoft-suppress OWASP2021.A9.LGE "This is intentionally designed to ensure exceptions during Cobertura report uploading don't cause the build to fail."
+        } catch (Exception e) { // parasoft-suppress OWASP2021.A5.NCE "This is intentionally designed to ensure exceptions during cobertura report loading don't cause the process to fail."
             Logger.getLogger().error(NLS.getFormatted(Messages.FailedToLoadCoberturaReport, report.getAbsolutePath()), e);
         }
     }

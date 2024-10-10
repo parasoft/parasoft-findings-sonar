@@ -98,7 +98,7 @@ public abstract class AbstractParasoftFindingsSensor
                         default:
                             Logger.getLogger().warn(NLS.getFormatted(Messages.SkippedInvalidReport, reportFile.getAbsolutePath()));
                     }
-                } catch (DocumentException | SAXException e) { // parasoft-suppress OWASP2021.A9.LGE "This is intentionally designed to ensure exceptions during report parsing don't cause the build to fail."
+                } catch (DocumentException | SAXException e) {
                     Logger.getLogger().error(NLS.getFormatted(Messages.SkippedInvalidReport, reportFile.getAbsolutePath()), e);
                 }
             }

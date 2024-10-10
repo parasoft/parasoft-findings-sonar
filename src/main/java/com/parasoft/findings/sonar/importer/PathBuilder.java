@@ -169,7 +169,7 @@ public class PathBuilder
             int startOffset = range.getStartLineOffset();
             return startOffset >= 0 && startOffset < line.length() ?
                     line.substring(startOffset) : line;
-        } catch (IOException e) { // parasoft-suppress OWASP2021.A9.LGE "This is intentionally designed to ensure exceptions during source text obtaining don't cause the process to fail."
+        } catch (IOException e) {
             Logger.getLogger().error(e);
         }
         return null;

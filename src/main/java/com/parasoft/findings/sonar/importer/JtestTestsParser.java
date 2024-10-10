@@ -36,7 +36,7 @@ public class JtestTestsParser extends AbstractSOAtestAndJtestTestsParser {
             Logger.getLogger().info(NLS.getFormatted(Messages.AddedUnitTestResultsForFile, inputFile));
             Logger.getLogger().info(testSummaryOnFile);
             return true;
-        } catch (UnsupportedOperationException e) { // parasoft-suppress OWASP2021.A9.LGE "This is intentionally designed to ensure exceptions during measures saving don't cause the build to fail."
+        } catch (UnsupportedOperationException e) {
             Logger.getLogger().warn(NLS.getFormatted(Messages.SkipAddingUnitTestResultsForFile, inputFile));
             Logger.getLogger().debug(e.getMessage());
             return false;
