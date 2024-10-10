@@ -15,6 +15,7 @@
  */
 package com.parasoft.findings.sonar.importer.xunit;
 
+import com.parasoft.findings.sonar.Logger;
 import com.parasoft.findings.sonar.importer.xunit.data.XUnitTestCase;
 import com.parasoft.findings.sonar.importer.xunit.data.XUnitTestsContainer;
 import org.xml.sax.Attributes;
@@ -29,9 +30,11 @@ import java.io.IOException;
 
 public class XUnitSAXParser {
 
-    private final static SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
-
     public XUnitTestsContainer parse(File xUnitXmlFile) throws ParserConfigurationException, SAXException, IOException {
+            SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
+            saxParserFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);//$NON-NLS-1$
+            saxParserFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);//$NON-NLS-1$
+            saxParserFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);//$NON-NLS-1$
             SAXParser saxParser = saxParserFactory.newSAXParser();
             XUnitTestsContainer xUnitTestsContainer = new XUnitTestsContainer();
             saxParser.parse(xUnitXmlFile, new XUnitSAXParserHandler(xUnitTestsContainer));
@@ -85,6 +88,7 @@ public class XUnitSAXParser {
             try {
                 return Math.round(Double.parseDouble(value) * 1000);
             } catch (Exception e) { // parasoft-suppress OWASP2021.A5.NCE "This is intentionally designed to ensure exceptions during double parsing don't cause the process to fail."
+                Logger.getLogger().debug(e.getMessage());
                 return 0L;
             }
         }

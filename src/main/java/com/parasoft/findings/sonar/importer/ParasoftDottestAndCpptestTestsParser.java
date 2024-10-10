@@ -70,6 +70,7 @@ public class ParasoftDottestAndCpptestTestsParser {
         try {
             return Integer.parseInt(value);
         } catch (Exception e) { // parasoft-suppress OWASP2021.A5.NCE "This is intentionally designed to ensure exceptions during int parsing don't cause the process to fail."
+            Logger.getLogger().debug(e.getMessage());
             return 0;
         }
     }
@@ -84,6 +85,7 @@ public class ParasoftDottestAndCpptestTestsParser {
             LocalTime localTime = LocalTime.parse(value, formatter);
             return localTime.toNanoOfDay() / 1_000_000;
         } catch (Exception e) { // parasoft-suppress OWASP2021.A5.NCE "This is intentionally designed to ensure exceptions during time formatting don't cause the process to fail."
+            Logger.getLogger().debug(e.getMessage());
             return 0L;
         }
     }
