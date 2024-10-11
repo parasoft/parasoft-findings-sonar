@@ -81,7 +81,6 @@ public class CoverageSensor implements ProjectSensor {
         try {
             SAXReader reader = new SAXReader();
             reader.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true); //$NON-NLS-1$
-            reader.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false); //$NON-NLS-1$
             reader.setFeature("http://xml.org/sax/features/external-general-entities", false); //$NON-NLS-1$
             reader.setFeature("http://xml.org/sax/features/external-parameter-entities", false); //$NON-NLS-1$
             reader.setEntityResolver(new EmptyEntityResolver());
