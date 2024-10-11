@@ -13,6 +13,7 @@ import com.parasoft.findings.sonar.ParasoftConstants;
 import com.parasoft.findings.sonar.exception.InvalidReportException;
 import com.parasoft.findings.sonar.exception.CoverageSourceMismatchException;
 import com.parasoft.findings.sonar.importer.XSLConverter;
+import com.parasoft.findings.utils.common.IStringConstants;
 import com.parasoft.findings.utils.common.nls.NLS;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -23,8 +24,11 @@ import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.batch.sensor.coverage.NewCoverage;
 import org.sonar.api.scanner.sensor.ProjectSensor;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
 
 import java.io.File;
+import java.io.StringReader;
 import java.util.List;
 
 public class CoverageSensor implements ProjectSensor {
@@ -76,6 +80,10 @@ public class CoverageSensor implements ProjectSensor {
         Logger.getLogger().info(NLS.getFormatted(Messages.UploadCodeCoverageData, report.getAbsoluteFile()));
         try {
             SAXReader reader = new SAXReader();
+            reader.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true); //$NON-NLS-1$
+            reader.setFeature("http://xml.org/sax/features/external-general-entities", false); //$NON-NLS-1$
+            reader.setFeature("http://xml.org/sax/features/external-parameter-entities", false); //$NON-NLS-1$
+            reader.setEntityResolver(new EmptyEntityResolver());
             Document document = reader.read(report);
 
             Element root = document.getRootElement();
@@ -124,4 +132,12 @@ public class CoverageSensor implements ProjectSensor {
         }
     }
 
+    // This would prevent making any calls to resolve URL references to external DTD
+    private static class EmptyEntityResolver
+            implements EntityResolver {
+        @Override
+        public InputSource resolveEntity(String publicID, String systemID) {
+            return new InputSource(new StringReader(IStringConstants.EMPTY));
+        }
+    }
 }

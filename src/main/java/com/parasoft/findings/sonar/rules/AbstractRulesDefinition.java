@@ -54,6 +54,7 @@ public abstract class AbstractRulesDefinition
             Y2021_VERSION = getY2021Version(versionClass);
         } catch (ClassNotFoundException | NoSuchMethodException | SecurityException e) {
             // Ignore - OWASP 2021 is not supported for this version of SonarQube.
+            Logger.getLogger().debug(e.getMessage());
         }
     }
 
@@ -332,7 +333,7 @@ public abstract class AbstractRulesDefinition
                 newRule.addCwe(Integer.parseInt(ruleIdParts[i]));
                 return;
             } catch (NumberFormatException e) {
-                // Ignore
+                Logger.getLogger().debug(e.getMessage());
             }
         }
         Logger.getLogger().warn(NLS.getFormatted(Messages.DoesNotHaveACWEIDInItsRuleId, ruleDescription.getRuleId()));
