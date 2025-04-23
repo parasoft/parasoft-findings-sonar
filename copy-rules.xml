@@ -42,10 +42,10 @@
                         <property name="jtest.doc.zip" value="${jtestRootPath}/rules/doc.zip"/>
 
                         <if>
-                            <available file="${jtest.doc.dir}" type="dir"/>
+                            <not>
+                                <available file="${jtest.doc.dir}" type="dir"/>
+                            </not>
                             <then>
-                            </then>
-                            <else>
                                 <if>
                                     <available file="${jtest.doc.zip}"/>
                                     <then>
@@ -55,7 +55,7 @@
                                         <fail message="The Jtest doc folder and doc.zip file from path ${jtestRootPath}/rules do not exist"/>
                                     </else>
                                 </if>
-                            </else>
+                            </then>
                         </if>
 
                         <copy todir="${project.build.rulesPath}/jtest/integration/dtpserver/jtest/model">
@@ -75,10 +75,10 @@
                         <property name="dottest.doc.zip" value="${dottestRootPath}/rules/doc.zip"/>
 
                         <if>
-                            <available file="${dottest.doc.dir}" type="dir"/>
+                            <not>
+                                <available file="${dottest.doc.dir}" type="dir"/>
+                            </not>
                             <then>
-                            </then>
-                            <else>
                                 <if>
                                     <available file="${dottest.doc.zip}"/>
                                     <then>
@@ -88,7 +88,7 @@
                                         <fail message="The Dottest doc folder and doc.zip file from path ${dottestRootPath}/rules do not exist"/>
                                     </else>
                                 </if>
-                            </else>
+                            </then>
                         </if>
 
                         <copy todir="${project.build.rulesPath}/dottest/integration/DTPServer/dotTEST/model">
@@ -108,10 +108,10 @@
                         <property name="cpptest.docs.zip" value="${cpptestRootPath}/rules/docs.zip"/>
 
                         <if>
-                            <available file="${cpptest.docs.dir}" type="dir"/>
+                            <not>
+                                <available file="${cpptest.docs.dir}" type="dir"/>
+                            </not>
                             <then>
-                            </then>
-                            <else>
                                 <if>
                                     <available file="${cpptest.docs.zip}"/>
                                     <then>
@@ -121,7 +121,7 @@
                                         <fail message="The Cpptest docs folder and docs.zip file from path ${cpptestRootPath}/rules do not exist"/>
                                     </else>
                                 </if>
-                            </else>
+                            </then>
                         </if>
 
                         <copy todir="${project.build.rulesPath}/cpptest/integration/dtpserver/cpptest/model">
