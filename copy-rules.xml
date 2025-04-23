@@ -38,11 +38,30 @@
                 <if>
                     <isfalse value="${emptyJtestRootPath}"/>
                     <then>
+                        <property name="jtest.doc.dir" value="${jtestRootPath}/rules/doc"/>
+                        <property name="jtest.doc.zip" value="${jtestRootPath}/rules/doc.zip"/>
+
+                        <if>
+                            <available file="${jtest.doc.dir}" type="dir"/>
+                            <then>
+                                <echo message="The Jtest rules doc exists." level="info"/>
+                            </then>
+                            <else>
+                                <if>
+                                    <available file="${jtest.doc.zip}"/>
+                                    <then>
+                                        <echo message="Extracting Jtest doc.zip file..." level="info"/>
+                                        <unzip src="${jtest.doc.zip}" dest="${jtestRootPath}/rules"/>
+                                    </then>
+                                </if>
+                            </else>
+                        </if>
+
                         <copy todir="${project.build.rulesPath}/jtest/integration/dtpserver/jtest/model">
                             <fileset dir="${jtestRootPath}/integration/dtpserver/jtest/model"/>
                         </copy>
                         <copy todir="${project.build.rulesPath}/jtest/rules/doc">
-                            <fileset dir="${jtestRootPath}/rules/doc" includes="*.html, **/*.html"/>
+                            <fileset dir="${jtest.doc.dir}" includes="*.html, **/*.html"/>
                         </copy>
                         <echo message="Rules from Jtest installation are loaded." level="info"/>
                     </then>
@@ -51,11 +70,30 @@
                 <if>
                     <isfalse value="${emptyDottestRootPath}"/>
                     <then>
+                        <property name="dottest.doc.dir" value="${dottestRootPath}/rules/doc"/>
+                        <property name="dottest.doc.zip" value="${dottestRootPath}/rules/doc.zip"/>
+
+                        <if>
+                            <available file="${dottest.doc.dir}" type="dir"/>
+                            <then>
+                                <echo message="The Dottest rules doc exists." level="info"/>
+                            </then>
+                            <else>
+                                <if>
+                                    <available file="${dottest.doc.zip}"/>
+                                    <then>
+                                        <echo message="Extracting Dottest doc.zip file..." level="info"/>
+                                        <unzip src="${dottest.doc.zip}" dest="${dottestRootPath}/rules"/>
+                                    </then>
+                                </if>
+                            </else>
+                        </if>
+
                         <copy todir="${project.build.rulesPath}/dottest/integration/DTPServer/dotTEST/model">
                             <fileset dir="${dottestRootPath}/integration/DTPServer/dotTEST/model"/>
                         </copy>
                         <copy todir="${project.build.rulesPath}/dottest/rules/doc">
-                            <fileset dir="${dottestRootPath}/rules/doc" includes="*.html, **/*.html"/>
+                            <fileset dir="${dottest.doc.dir}" includes="*.html, **/*.html"/>
                         </copy>
                         <echo message="Rules from Dottest installation are loaded." level="info"/>
                     </then>
@@ -64,11 +102,30 @@
                 <if>
                     <isfalse value="${emptyCpptestRootPath}"/>
                     <then>
+                        <property name="cpptest.docs.dir" value="${cpptestRootPath}/rules/docs"/>
+                        <property name="cpptest.docs.zip" value="${cpptestRootPath}/rules/docs.zip"/>
+
+                        <if>
+                            <available file="${cpptest.docs.dir}" type="dir"/>
+                            <then>
+                                <echo message="The Cpptest rules docs exists." level="info"/>
+                            </then>
+                            <else>
+                                <if>
+                                    <available file="${cpptest.docs.zip}"/>
+                                    <then>
+                                        <echo message="Extracting Cpptest docs.zip file..." level="info"/>
+                                        <unzip src="${cpptest.docs.zip}" dest="${cpptestRootPath}/rules"/>
+                                    </then>
+                                </if>
+                            </else>
+                        </if>
+
                         <copy todir="${project.build.rulesPath}/cpptest/integration/dtpserver/cpptest/model">
                             <fileset dir="${cpptestRootPath}/integration/dtpserver/cpptest/model"/>
                         </copy>
                         <copy todir="${project.build.rulesPath}/cpptest/rules/docs">
-                            <fileset dir="${cpptestRootPath}/rules/docs" includes="*.html, **/*.html"/>
+                            <fileset dir="${cpptest.docs.dir}" includes="*.html, **/*.html"/>
                         </copy>
                         <echo message="Rules from Cpptest installation are loaded." level="info"/>
                     </then>
