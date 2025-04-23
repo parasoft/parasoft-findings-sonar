@@ -44,15 +44,16 @@
                         <if>
                             <available file="${jtest.doc.dir}" type="dir"/>
                             <then>
-                                <echo message="The Jtest rules doc exists." level="info"/>
                             </then>
                             <else>
                                 <if>
                                     <available file="${jtest.doc.zip}"/>
                                     <then>
-                                        <echo message="Extracting Jtest doc.zip file..." level="info"/>
                                         <unzip src="${jtest.doc.zip}" dest="${jtestRootPath}/rules"/>
                                     </then>
+                                    <else>
+                                        <fail message="The Jtest doc folder and doc.zip file from path ${jtestRootPath}/rules do not exist"/>
+                                    </else>
                                 </if>
                             </else>
                         </if>
@@ -76,15 +77,16 @@
                         <if>
                             <available file="${dottest.doc.dir}" type="dir"/>
                             <then>
-                                <echo message="The Dottest rules doc exists." level="info"/>
                             </then>
                             <else>
                                 <if>
                                     <available file="${dottest.doc.zip}"/>
                                     <then>
-                                        <echo message="Extracting Dottest doc.zip file..." level="info"/>
                                         <unzip src="${dottest.doc.zip}" dest="${dottestRootPath}/rules"/>
                                     </then>
+                                    <else>
+                                        <fail message="The Dottest doc folder and doc.zip file from path ${dottestRootPath}/rules do not exist"/>
+                                    </else>
                                 </if>
                             </else>
                         </if>
@@ -108,15 +110,16 @@
                         <if>
                             <available file="${cpptest.docs.dir}" type="dir"/>
                             <then>
-                                <echo message="The Cpptest rules docs exists." level="info"/>
                             </then>
                             <else>
                                 <if>
                                     <available file="${cpptest.docs.zip}"/>
                                     <then>
-                                        <echo message="Extracting Cpptest docs.zip file..." level="info"/>
                                         <unzip src="${cpptest.docs.zip}" dest="${cpptestRootPath}/rules"/>
                                     </then>
+                                    <else>
+                                        <fail message="The Cpptest docs folder and docs.zip file from path ${cpptestRootPath}/rules do not exist"/>
+                                    </else>
                                 </if>
                             </else>
                         </if>
