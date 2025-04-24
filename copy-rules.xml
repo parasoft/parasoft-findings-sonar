@@ -52,7 +52,7 @@
                                         <unzip src="${jtest.doc.zip}" dest="${jtestRootPath}/rules"/>
                                     </then>
                                     <else>
-                                        <fail message="The Jtest doc folder and doc.zip file from path ${jtestRootPath}/rules do not exist"/>
+                                        <fail message="Cannot find 'doc' folder or 'doc.zip' file in the '${jtestRootPath}/rules' directory"/>
                                     </else>
                                 </if>
                             </then>
@@ -85,7 +85,7 @@
                                         <unzip src="${dottest.doc.zip}" dest="${dottestRootPath}/rules"/>
                                     </then>
                                     <else>
-                                        <fail message="The Dottest doc folder and doc.zip file from path ${dottestRootPath}/rules do not exist"/>
+                                        <fail message="Cannot find 'doc' folder or 'doc.zip' file in the '${dottestRootPath}/rules' directory"/>
                                     </else>
                                 </if>
                             </then>
@@ -118,7 +118,7 @@
                                         <unzip src="${cpptest.docs.zip}" dest="${cpptestRootPath}/rules"/>
                                     </then>
                                     <else>
-                                        <fail message="The Cpptest docs folder and docs.zip file from path ${cpptestRootPath}/rules do not exist"/>
+                                        <fail message="Cannot find 'docs' folder or 'docs.zip' file in the '${cpptestRootPath}/rules' directory"/>
                                     </else>
                                 </if>
                             </then>
