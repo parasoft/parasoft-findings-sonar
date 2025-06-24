@@ -156,7 +156,7 @@
         <profile>
             <id>remote-docs</id>
             <properties>
-                <docs.url>https://trove.parasoft.com/projects/TEC/repos/docs-marketplace_plugins/browse/files/Parasoft_Findings_for_SonarQube.pdf</docs.url>
+                <docs.url>https://trove.parasoft.com/projects/TEC/repos/docs-marketplace_plugins/raw/files/Parasoft_Findings_for_SonarQube.pdf</docs.url>
                 <docs.directory>${project.build.directory}/antrun/download-docs</docs.directory>
             </properties>
             <build>
