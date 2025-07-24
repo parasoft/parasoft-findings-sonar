@@ -6,7 +6,7 @@
 
     <groupId>com.parasoft</groupId>
     <artifactId>parasoft-findings-sonar</artifactId>
-    <version>10.6.2-SNAPSHOT</version>
+    <version>${toolsVersion}</version>
     <packaging>sonar-plugin</packaging>
 
     <name>Parasoft Findings Plugin</name>
@@ -18,7 +18,7 @@
         <sonar.apiMinVersion>8.9.0.43852</sonar.apiMinVersion>
         <jdk.min.version>11</jdk.min.version>
         <project.build.rulesPath>${project.basedir}/target/classes/com/parasoft/findings/sonar/res/builtinRules</project.build.rulesPath>
-        <toolsVersion>${project.version}</toolsVersion>
+        <toolsVersion>2025.2</toolsVersion>
     </properties>
 
     <licenses>
