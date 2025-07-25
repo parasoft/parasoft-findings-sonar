@@ -18,7 +18,7 @@
         <sonar.apiMinVersion>8.9.0.43852</sonar.apiMinVersion>
         <jdk.min.version>11</jdk.min.version>
         <project.build.rulesPath>${project.basedir}/target/classes/com/parasoft/findings/sonar/res/builtinRules</project.build.rulesPath>
-        <toolsVersion>2025.2</toolsVersion>
+        <toolsVersion>2025.2-SNAPSHOT</toolsVersion>
     </properties>
 
     <licenses>
