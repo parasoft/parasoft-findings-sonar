@@ -89,6 +89,52 @@ public class JtestFindingsSensorTest {
     }
 
     @Test
+    public void testExecute_UnitTestReport_zero_total_tests() {
+        SensorContextTester context = SensorContextTester.create(BASE_DIR);
+        MapSettings settings = new MapSettings();
+        settings.setProperty(PARASOFT_JTEST_REPORT_PATHS_KEY, new File(BASE_DIR,"jTest_2025.2.0_unit_zero_total_test.xml").getAbsolutePath());
+        context.setSettings(settings);
+        context.fileSystem()
+                .add(resource("src/main/java/parasoft/ForUnit.java", InputFile.Type.MAIN))
+                .add(resource("src/test/java/parasoft/ForUnitTest.java", InputFile.Type.TEST));
+
+        FileSystem spyFileSystem = spy(context.fileSystem());
+        doReturn(new File("E:/Rworkspace/project-workspace/CICD/parasoft-findings-utils")).when(spyFileSystem).baseDir();
+        new JtestFindingsSensor(new XSLConverter(spyFileSystem), new JtestTestsParser()).execute(context);
+
+        assertThat(new File(BASE_DIR, "jTest_2025.2.0_unit_zero_total_test" + XUNIT_TARGET_REPORT_NAME_SUFFIX)).isFile().size().isGreaterThan(0);
+
+        assertThat(logTester.logs(Level.INFO)).contains("Added Parasoft unit test results for project: Total: 0, Errors: 0, Failures: 0, Duration: 0ms");
+        assertThat(context.measures(":src/test/java/parasoft/ForUnitTest.java")).hasSize(0);
+        assertThat(context.measure(":src/test/java/parasoft/ForUnitTest.java", CoreMetrics.TESTS)).isNull();
+        assertThat(context.measure(":src/test/java/parasoft/ForUnitTest.java", CoreMetrics.TEST_ERRORS)).isNull();
+        assertThat(context.measure(":src/test/java/parasoft/ForUnitTest.java", CoreMetrics.TEST_FAILURES)).isNull();
+    }
+
+    @Test
+    public void testExecute_UnitTestReport_no_ExecutedTestsDetails_tag() {
+        SensorContextTester context = SensorContextTester.create(BASE_DIR);
+        MapSettings settings = new MapSettings();
+        settings.setProperty(PARASOFT_JTEST_REPORT_PATHS_KEY, new File(BASE_DIR,"jTest_2025.2.0_unit_no_ExecutedTestsDetails_tag.xml").getAbsolutePath());
+        context.setSettings(settings);
+        context.fileSystem()
+                .add(resource("src/main/java/parasoft/ForUnit.java", InputFile.Type.MAIN))
+                .add(resource("src/test/java/parasoft/ForUnitTest.java", InputFile.Type.TEST));
+
+        FileSystem spyFileSystem = spy(context.fileSystem());
+        doReturn(new File("E:/Rworkspace/project-workspace/CICD/parasoft-findings-utils")).when(spyFileSystem).baseDir();
+        new JtestFindingsSensor(new XSLConverter(spyFileSystem), new JtestTestsParser()).execute(context);
+
+        assertThat(new File(BASE_DIR, "jTest_2025.2.0_unit_no_ExecutedTestsDetails_tag" + XUNIT_TARGET_REPORT_NAME_SUFFIX)).isFile().size().isGreaterThan(0);
+
+        assertThat(logTester.logs(Level.INFO)).contains("Added Parasoft unit test results for project: Total: 0, Errors: 0, Failures: 0, Duration: 0ms");
+        assertThat(context.measures(":src/test/java/parasoft/ForUnitTest.java")).hasSize(0);
+        assertThat(context.measure(":src/test/java/parasoft/ForUnitTest.java", CoreMetrics.TESTS)).isNull();
+        assertThat(context.measure(":src/test/java/parasoft/ForUnitTest.java", CoreMetrics.TEST_ERRORS)).isNull();
+        assertThat(context.measure(":src/test/java/parasoft/ForUnitTest.java", CoreMetrics.TEST_FAILURES)).isNull();
+    }
+
+    @Test
     public void testExecute_unitTestReport_sourceNotFound() {
         SensorContextTester context = SensorContextTester.create(BASE_DIR);
         MapSettings settings = new MapSettings();
